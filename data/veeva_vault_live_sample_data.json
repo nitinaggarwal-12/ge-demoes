@@ -1,195 +1,107 @@
 {
-  "vault_instance": {
-    "vault_dns": "phxxxx04.veevavault.com",
-    "domain_url": "https://phxxxx04.veevavault.com",
-    "vault_id": 98412,
-    "vault_name": "Enterprise GxP Clinical, Regulatory & Quality Vault",
-    "okta_domain": "dexxxx89.okta.com",
-    "auth_server_id": "auxxy7z1",
-    "oauth_profile_id": "oaxxxx9c",
-    "client_id": "0oxxxx7d",
-    "session_exchange_endpoint": "https://login.veevavault.com/auth/oauth/session/oaxxxx9c"
-  },
+  "vault_instance": "https://sbxxxxal.veevavault.com",
+  "vault_dns": "sbxxxxal.veevavault.com",
+  "okta_domain": "prxxxx-2.oktapreview.com",
+  "okta_auth_server_id": "auxxxxd7",
+  "oauth_client_id": "0oxxxxd7",
+  "oidc_profile_id": "_4xxxxbd",
+  "federated_session_endpoint": "https://login.veevavault.com/auth/oauth/session/_4xxxxbd",
+  "prober_connection_id": "dnd-veeva-veevavault-qa-mst",
+  "user_id": "29516498",
   "documents": [
     {
-      "id": 4819,
-      "document_number__v": "VV-DOC-004819",
-      "name__v": "Phase III Clinical Study Report (CSR) — Study ONCO-304 (Final Analysis)",
-      "type__v": "Clinical (clinical__v)",
-      "subtype__v": "Clinical Study Report (clinical_study_report__v)",
-      "classification__v": "Final CSR (final_csr__v)",
-      "status__v": "Approved for Submission (approved__v)",
+      "id": 30201,
+      "document_number__v": "DOC-030201",
+      "name__v": "Central Trial Insurance Policy — Clinical Trial Master File",
+      "type__v": "central_trial_documents__c",
+      "subtype__v": "product_and_trial_documentation__c",
+      "classification__v": "clinical_trial_insurance__c",
+      "major_version_number__v": 0,
+      "minor_version_number__v": 1,
+      "status__v": "Steady State",
       "lifecycle__v": "Clinical Document Lifecycle",
+      "rendition_type__v": "viewable_rendition__v",
+      "relationship_id__v": 393,
+      "owner__v": "u29516498 (connectorsuserqa@dexxxxte.com)",
+      "version_modified_date__v": "2026-08-18T14:22:10.000Z"
+    },
+    {
+      "id": 30401,
+      "document_number__v": "DOC-030401",
+      "name__v": "Protocol Amendment & Clinical Site Attachments Package",
+      "type__v": "central_trial_documents__c",
+      "subtype__v": "product_and_trial_documentation__c",
+      "classification__v": "protocol_amendment__c",
+      "major_version_number__v": 0,
+      "minor_version_number__v": 1,
+      "status__v": "Approved",
+      "lifecycle__v": "Clinical Document Lifecycle",
+      "annotation_id__v": 479,
+      "attachments_count__v": 2,
+      "owner__v": "u29516498 (connectorsuserqa@dexxxxte.com)",
+      "version_modified_date__v": "2026-08-21T09:15:44.000Z"
+    },
+    {
+      "id": 31104,
+      "document_number__v": "DOC-031104",
+      "name__v": "Investigational Medicinal Product Dossier (Attachment ID 31201)",
+      "type__v": "central_trial_documents__c",
+      "subtype__v": "product_and_trial_documentation__c",
+      "classification__v": "investigational_brochure__c",
+      "major_version_number__v": 0,
+      "minor_version_number__v": 1,
+      "status__v": "Approved",
+      "lifecycle__v": "Clinical Document Lifecycle",
+      "attachment_id__v": 31201,
+      "attachment_version__v": 1,
+      "owner__v": "u29516498 (connectorsuserqa@dexxxxte.com)",
+      "version_modified_date__v": "2026-08-25T11:40:02.000Z"
+    },
+    {
+      "id": 31402,
+      "document_number__v": "DOC-031402",
+      "name__v": "Clinical Study Report Annotated Rendition (Annotation ID 483)",
+      "type__v": "central_trial_documents__c",
+      "subtype__v": "product_and_trial_documentation__c",
+      "classification__v": "clinical_study_report__c",
       "major_version_number__v": 2,
-      "minor_version_number__v": 0,
-      "version_label": "v2.0",
-      "study__v": "ONCO-304",
-      "product__v": "ZVP-401 (Anti-TIGIT mAb)",
-      "ectd_module__c": "Module 5.3.5.1 — Study Reports of Controlled Clinical Studies",
-      "cfr_part_11_compliant__v": true,
-      "sha256_checksum__v": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "file_name__v": "ONCO-304_Final_CSR_v2.0_Signed.pdf",
-      "file_size_bytes__v": 18429104,
-      "created_date__v": "2026-08-14T14:22:10Z",
-      "version_modified_date__v": "2026-09-12T19:05:44Z",
-      "electronic_signatures": [
-        {
-          "signer_role": "VP Clinical Development",
-          "verdict": "Approved — Regulatory Ready",
-          "signed_timestamp": "2026-09-12T18:40:12Z",
-          "meaning": "Author Approval (21 CFR 11.50)"
-        },
-        {
-          "signer_role": "Head of Global Regulatory Affairs",
-          "verdict": "Approved for FDA/EMA eCTD Publishing",
-          "signed_timestamp": "2026-09-12T19:05:44Z",
-          "meaning": "Regulatory Quality Approval (21 CFR 11.50)"
-        }
-      ],
-      "versions": [
-        {
-          "version": "v2.0",
-          "major_version_number__v": 2,
-          "minor_version_number__v": 0,
-          "status__v": "Approved for Submission",
-          "modified_date__v": "2026-09-12T19:05:44Z",
-          "change_summary": "Incorporated final OS hazard ratio lock and DSMB safety addendum."
-        },
-        {
-          "version": "v1.1",
-          "major_version_number__v": 1,
-          "minor_version_number__v": 1,
-          "status__v": "In Review",
-          "modified_date__v": "2026-09-03T11:18:05Z",
-          "change_summary": "Updated pharmacokinetic exposure-response tables in Section 11.4."
-        },
-        {
-          "version": "v1.0",
-          "major_version_number__v": 1,
-          "minor_version_number__v": 0,
-          "status__v": "Superseded",
-          "modified_date__v": "2026-08-20T16:30:00Z",
-          "change_summary": "Initial primary endpoint CSR lock."
-        }
-      ],
-      "renditions": [
-        {
-          "rendition_type__v": "viewable_rendition__v",
-          "format": "application/pdf",
-          "page_count": 342,
-          "watermarked": false,
-          "download_uri": "https://phxxxx04.veevavault.com/api/v24.2/objects/documents/4819/versions/2/0/renditions/viewable_rendition__v"
-        },
-        {
-          "rendition_type__v": "ectd_submission_rendition__v",
-          "format": "application/pdf (PDF/A-1b FDA Compliant)",
-          "page_count": 342,
-          "watermarked": false,
-          "download_uri": "https://phxxxx04.veevavault.com/api/v24.2/objects/documents/4819/versions/2/0/renditions/ectd_submission_rendition__v"
-        }
-      ]
-    },
-    {
-      "id": 4892,
-      "document_number__v": "VV-DOC-004892",
-      "name__v": "Global Clinical Trial Protocol Amendment 03 — Study ONCO-304",
-      "type__v": "Clinical (clinical__v)",
-      "subtype__v": "Protocol (protocol__v)",
-      "classification__v": "Protocol Amendment (protocol_amendment__v)",
-      "status__v": "Effective (effective__v)",
+      "minor_version_number__v": 1,
+      "status__v": "Steady State",
       "lifecycle__v": "Clinical Document Lifecycle",
-      "major_version_number__v": 3,
-      "minor_version_number__v": 0,
-      "version_label": "v3.0",
-      "study__v": "ONCO-304",
-      "product__v": "ZVP-401 (Anti-TIGIT mAb)",
-      "ectd_module__c": "Module 5.3.5.1 — Protocol and Amendments",
-      "cfr_part_11_compliant__v": true,
-      "sha256_checksum__v": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-      "file_name__v": "ONCO-304_Protocol_Amendment_03_v3.0.pdf",
-      "file_size_bytes__v": 6412890,
-      "created_date__v": "2026-07-02T09:15:00Z",
-      "version_modified_date__v": "2026-09-08T15:10:22Z",
-      "versions": [
-        {
-          "version": "v3.0",
-          "major_version_number__v": 3,
-          "minor_version_number__v": 0,
-          "status__v": "Effective",
-          "modified_date__v": "2026-09-08T15:10:22Z",
-          "change_summary": "Added biomarker ctDNA longitudinal sampling schedule at Cycle 3 Day 1."
-        }
-      ],
-      "renditions": [
-        {
-          "rendition_type__v": "viewable_rendition__v",
-          "format": "application/pdf",
-          "page_count": 128,
-          "watermarked": false,
-          "download_uri": "https://phxxxx04.veevavault.com/api/v24.2/objects/documents/4892/versions/3/0/renditions/viewable_rendition__v"
-        }
-      ]
-    },
-    {
-      "id": 5104,
-      "document_number__v": "SOP-QA-0412",
-      "name__v": "Standard Operating Procedure: GxP Computerized System Validation & AI Agent Audit Controls",
-      "type__v": "Quality (quality__v)",
-      "subtype__v": "SOP (sop__v)",
-      "classification__v": "Global Quality SOP (global_sop__v)",
-      "status__v": "Effective (effective__v)",
-      "lifecycle__v": "Quality SOP Lifecycle",
-      "major_version_number__v": 4,
-      "minor_version_number__v": 0,
-      "version_label": "v4.0",
-      "study__v": "GLOBAL-GXP",
-      "product__v": "Enterprise Quality Management",
-      "ectd_module__c": "N/A — Quality Management System",
-      "cfr_part_11_compliant__v": true,
-      "sha256_checksum__v": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5",
-      "file_name__v": "SOP-QA-0412_GxP_CSV_AI_Controls_v4.0.pdf",
-      "file_size_bytes__v": 2194012,
-      "created_date__v": "2026-06-11T10:00:00Z",
-      "version_modified_date__v": "2026-09-01T08:00:00Z",
-      "versions": [
-        {
-          "version": "v4.0",
-          "major_version_number__v": 4,
-          "minor_version_number__v": 0,
-          "status__v": "Effective",
-          "modified_date__v": "2026-09-01T08:00:00Z",
-          "change_summary": "Added Annex 11 & FDA CSA controls for MCP connectors."
-        }
-      ],
-      "renditions": [
-        {
-          "rendition_type__v": "viewable_rendition__v",
-          "format": "application/pdf",
-          "page_count": 34,
-          "watermarked": true,
-          "download_uri": "https://phxxxx04.veevavault.com/api/v24.2/objects/documents/5104/versions/4/0/renditions/viewable_rendition__v"
-        }
-      ]
+      "annotation_id__v": 483,
+      "annotation_type__v": "line__sys",
+      "owner__v": "u29516498 (connectorsuserqa@dexxxxte.com)",
+      "version_modified_date__v": "2026-08-29T16:05:19.000Z"
     }
   ],
-  "document_types": [
+  "binders": [
     {
-      "name": "clinical__v",
-      "label": "Clinical",
-      "subtypes": ["clinical_study_report__v", "protocol__v", "investigator_brochure__v"],
-      "description": "eTMF & Clinical Development controlled documents (ICH E6 R3 / eCTD Module 5)."
+      "id": 30303,
+      "binder_number__v": "BND-030303",
+      "name__v": "eTMF Master Regulatory Submission Binder (Export Path /u29516498/461404/30303/0_7)",
+      "major_version_number__v": 0,
+      "minor_version_number__v": 1,
+      "status__v": "Approved",
+      "export_job_id__v": 473507
     },
     {
-      "name": "regulatory__v",
-      "label": "Regulatory",
-      "subtypes": ["ectd_submission__v", "health_authority_correspondence__v", "labeling__v"],
-      "description": "RIM Submissions & Health Authority dossier artifacts (FDA/EMA/PMDA)."
-    },
-    {
-      "name": "quality__v",
-      "label": "Quality",
-      "subtypes": ["sop__v", "deviation_report__v", "capa__v"],
-      "description": "QualityDocs GxP Standard Operating Procedures, Deviations, and CAPAs."
+      "id": 31301,
+      "binder_number__v": "BND-031301",
+      "name__v": "Clinical Trial Site Regulatory Binder (Section 1782732395400:-851989057)",
+      "major_version_number__v": 0,
+      "minor_version_number__v": 2,
+      "status__v": "Approved",
+      "relationship_id__v": 410
     }
-  ]
+  ],
+  "objects": {
+    "product__v": [
+      {
+        "id": "00P00000000E001",
+        "name__v": "Deloitte Clinical QA Biologic Candidate (attachment_id: 31401)",
+        "attachment_field_name__v": "product_document_file__c",
+        "export_part_name__v": "29516498-473402-product__v.001"
+      }
+    ]
+  }
 }

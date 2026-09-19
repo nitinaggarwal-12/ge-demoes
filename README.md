@@ -260,3 +260,29 @@ Implements the production `//cloud/ml/discoveryengine/data_connector/registry/co
 
 ### Step 4.10 — Live Execution Verification Across All 8 Veeva Vault MCP Tools
 ![Step 4.10 — Live Execution Across All 8 Veeva Vault MCP Document Actions](./screenshots/screenshots_veeva_connector/10_veeva_mcp_step2_live_vql_and_8_document_tools_verified.png)
+
+---
+
+## 🔬 Ground-Truth Parity Verification: Direct UI vs. Gemini Enterprise Chat (Side-by-Side)
+
+To verify 100% ground-truth accuracy with zero hallucinations or field drift, identical queries were executed directly on the live source UIs/APIs (`sbxxxxal.veevavault.com` and `gcxxxxr2.service-now.com`) and compared side-by-side against Gemini Enterprise (`GE`) Chat responses routed through the MCP connectors.
+
+### 1. Veeva Vault MCP Connector (`veeva_vault_v1_0`) — Ground-Truth Comparison
+- **Left (Direct Veeva Vault UI & VQL Query Output)**: Live records queried directly from `https://sbxxxxal.veevavault.com` (`doc_id: 30201`, `30401`, `31104`, `31402`, `binder_id: 30303`, `31301`, `product__v / 00P00000000E001`).
+- **Right (Gemini Enterprise Chat via `veeva_vault_v1_0` MCP)**: Identical prompt executed in Gemini Enterprise Chat returning **7 / 7 exact matches**.
+
+![11 - Direct Veeva Vault UI & VQL Query Results](screenshots/screenshots_veeva_connector/11_veeva_live_ui_query_results.png)
+
+![12 - Gemini Enterprise Chat Matching Veeva Query Results](screenshots/screenshots_veeva_connector/12_ge_chat_matching_veeva_query_results.png)
+
+![13 - Side-by-Side Ground-Truth Comparison: Veeva Vault UI vs Gemini Enterprise Chat](screenshots/screenshots_veeva_connector/13_veeva_ui_vs_ge_chat_side_by_side_truth_comparison.png)
+
+### 2. ServiceNow MCP Connector (`servicenow_mcp`) — Ground-Truth Comparison
+- **Left (Direct ServiceNow Live Table Query Output)**: Live OAuth 2.0 Bearer query (`GET /api/now/table/incident?sysparm_limit=10`) executed directly against `https://gcxxxxr2.service-now.com`, returning all 10 live incidents (`INC1039`, `INC0010606`, `INC1038`, `INC0010602`, `INC1005`, `INC1011`, `INC1018`, `INC0012107`, `INC0010641`, `INC0011330`).
+- **Right (Gemini Enterprise Chat via `servicenow_mcp` MCP)**: Identical query executed in Gemini Enterprise Chat returning **10 / 10 exact matches**.
+
+![13 - Direct ServiceNow Live UI & Table Query Results](screenshots/screenshots_servicenow_connector/13_servicenow_live_ui_query_results.png)
+
+![14 - Gemini Enterprise Chat Matching ServiceNow Query Results](screenshots/screenshots_servicenow_connector/14_ge_chat_matching_servicenow_query_results.png)
+
+![15 - Side-by-Side Ground-Truth Comparison: ServiceNow UI vs Gemini Enterprise Chat](screenshots/screenshots_servicenow_connector/15_servicenow_ui_vs_ge_chat_side_by_side_truth_comparison.png)
