@@ -1,0 +1,21 @@
+{
+  "name": "demoes-ge",
+  "version": "1.0.0",
+  "description": "Gemini Enterprise (GE) & ServiceNow Connector Setup, BYOMCP Server, E2E Provisioning, and Headless Chrome Screenshot Generation Suite",
+  "type": "module",
+  "scripts": {
+    "start:mcp-server": "node src/mcp-server/server.mjs",
+    "setup:step1-inspect": "node scripts/setup/step1_inspect_ge_instance.mjs",
+    "setup:mode1-byomcp": "node scripts/setup/run_byomcp_e2e_with_screenshots.mjs",
+    "setup:mode2-1p-actions": "node scripts/setup/run_mode2_1p_mcp_actions_with_screenshots.mjs",
+    "setup:mode3-federated": "node scripts/setup/run_mode3_federated_and_ingestion_with_screenshots.mjs",
+    "capture:ge-connector-query": "node scripts/screenshots/capture_servicenow_connector_selection_and_query.mjs",
+    "capture:all-config-steps": "node scripts/screenshots/capture_all_servicenow_steps_complete.mjs",
+    "capture:argolis-login": "node scripts/screenshots/login_and_capture_argolis_console.mjs",
+    "capture:wizard-step2": "node scripts/screenshots/fill_wizard_step2_tab.mjs"
+  },
+  "dependencies": {
+    "puppeteer": "^24.0.0",
+    "puppeteer-core": "^24.0.0"
+  }
+}
