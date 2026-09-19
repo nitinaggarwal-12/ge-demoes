@@ -216,3 +216,47 @@ npm run setup:mode1-byomcp
 npm run setup:mode2-1p-actions
 npm run setup:mode3-federated
 ```
+
+---
+
+## Part 4: Veeva Vault MCP Connector (`veeva_vault_v1_0`) — Setup, Federated OIDC Session Exchange & Live Query Flow
+
+Implements the production `//cloud/ml/discoveryengine/data_connector/registry/connectors/veeva_vault/veeva_vault_v1_0.textproto` specification (`source_target: "projects/$0/locations/global/providers/veeva/connectors/veevavault/versions/2"`), including 2-step Federated OIDC → Veeva Session Exchange (`https://login.veevavault.com/auth/oauth/session/{source:oauth_profile_id}`) and all 8 Veeva Vault MCP Document Actions (`search_documents`, `get_document`, `get_document_type`, `get_document_subtype`, `get_document_versions`, `get_document_version`, `get_document_renditions`, `download_document_file`).
+
+### Step 4.1 — Selecting the Veeva Vault Connector in Google Cloud Console
+![Step 4.1 — Create Data Store Catalog Selecting Veeva Vault](./screenshots/screenshots_veeva_connector/01_veeva_console_create_datastore_catalog.png)
+
+### Step 4.2 — Populating All 8 Veeva Vault OIDC & Session Exchange Parameters (`first2+xxxx+last2`) & Clicking `Verify Auth`
+- **Vault DNS**: `phxxxx04.veevavault.com`
+- **Vault API URL**: `https://phxxxx04.veevavault.com`
+- **Okta Domain**: `dexxxx89.okta.com`
+- **Okta Authorization Server ID**: `auxxy7z1`
+- **Veeva OIDC Profile ID**: `oaxxxx9c`
+- **Client ID**: `0oxxxx7d`
+- **Federated Session Exchange Endpoint**: `https://login.veevavault.com/auth/oauth/session/oaxxxx9c`
+
+![Step 4.2 — Veeva Vault Authentication & Federated Session Exchange Configuration](./screenshots/screenshots_veeva_connector/02_veeva_wizard_step2_auth_and_federated_oidc_filled.png)
+
+### Step 4.3 — Selecting Veeva Vault Entities & All 8 MCP Document Actions
+![Step 4.3 — Veeva Vault Entities & 8 MCP Actions Enabled](./screenshots/screenshots_veeva_connector/03_veeva_wizard_step3_entities_and_actions_selected.png)
+
+### Step 4.4 — Active Veeva Vault MCP Connector Detail & Re-authentication Drawer
+![Step 4.4 — Active Veeva Vault MCP Connector Detail & Update Authentication](./screenshots/screenshots_veeva_connector/04_veeva_byomcp_connector_active_detail_and_reauth.png)
+
+### Step 4.5 — Selecting the Veeva Vault MCP Connector in Gemini Enterprise (`GE`) Chat
+![Step 4.5 — Selecting Veeva Vault MCP Connector in GE Chat Sources Menu](./screenshots/screenshots_veeva_connector/05_ge_chat_sources_menu_veeva_connector_selected.png)
+
+### Step 4.6 — Submitting a Live Veeva Vault Clinical & Regulatory Query in GE Chat
+![Step 4.6 — Veeva Vault Query Prompt Entered in Main Composer](./screenshots/screenshots_veeva_connector/06_ge_chat_veeva_connector_prompt_ready.png)
+
+### Step 4.7 — Reviewing & Confirming Live Veeva Vault MCP Action Execution
+![Step 4.7 — Veeva Vault Connector Tool Invocation Review Card](./screenshots/screenshots_veeva_connector/07_ge_chat_veeva_connector_tool_call_state.png)
+
+### Step 4.8 — Live Veeva Vault Document Retrieval Response (`VV-DOC-004819` & `VV-DOC-004892`)
+![Step 4.8 — Live Veeva Vault Controlled Document Retrieval Response](./screenshots/screenshots_veeva_connector/08_ge_chat_veeva_connector_live_document_response.png)
+
+### Step 4.9 — Live 2-Step OIDC → Veeva Session Exchange Verification (`200 OK`)
+![Step 4.9 — Live OIDC Token & Veeva Federated Session Exchange Verification](./screenshots/screenshots_veeva_connector/09_veeva_mcp_step1_registry_and_oidc_session_exchange.png)
+
+### Step 4.10 — Live Execution Verification Across All 8 Veeva Vault MCP Tools
+![Step 4.10 — Live Execution Across All 8 Veeva Vault MCP Document Actions](./screenshots/screenshots_veeva_connector/10_veeva_mcp_step2_live_vql_and_8_document_tools_verified.png)
