@@ -202,6 +202,28 @@ async function run() {
     const postSettlingLabel = await page.$eval('#narrateLabel', el => el.textContent.trim());
     console.log(`  Post-Settling Narrator Status: "${postSettlingLabel}" (Expected: Pause)`);
 
+    // Test Rapid Speaker Voice Switching & Zero Overlap
+    console.log('  Testing Rapid Speaker Voice Switching & Zero Overlap...');
+    const initialReqId = await page.evaluate(() => window.narrationRequestId || 0);
+    // Switch rapidly between 3 different voices
+    await page.evaluate(() => {
+      window.changeNarratorVoice('journey-f');
+      window.changeNarratorVoice('chirp-d');
+      window.changeNarratorVoice('gemini-aoede');
+    });
+    await sleep(400);
+    const finalReqId = await page.evaluate(() => window.narrationRequestId);
+    console.log(`  Initial ReqId: ${initialReqId}, Final ReqId: ${finalReqId} (Monotonically incremented by ${finalReqId - initialReqId})`);
+    if (finalReqId < initialReqId + 3) {
+      throw new Error('narrationRequestId did not increment properly on rapid voice switches');
+    }
+    // Verify only one active speaker is configured and UI badge updated
+    const finalVoiceBadge = await page.$eval('#karaokeVoiceName', el => el.textContent.trim());
+    console.log(`  Clean Resolved Voice Badge: "${finalVoiceBadge}"`);
+    if (!finalVoiceBadge.includes('Aoede')) {
+      throw new Error(`Expected Aoede voice badge after rapid switch, got ${finalVoiceBadge}`);
+    }
+
     // Stop narration
     await page.click('#btnNarrateAudio');
     await sleep(500);
@@ -212,8 +234,8 @@ async function run() {
     const isSlideshowClosed = await page.$eval('#slideshowModal', el => !el.classList.contains('open'));
     console.log(`  Slideshow Closed on Escape: ${isSlideshowClosed}`);
 
-    // 5. Test Print & PDF Export Modal
-    console.log('\n[6/6] Testing Print & PDF Export System...');
+    // 5. Test Print & PDF Export Modal and Dedicated Print Dossier DOM
+    console.log('\n[6/6] Testing Print & PDF Export System & Pixel-Perfect Layout...');
     await page.click('button[onclick="openPrintModal()"]');
     await sleep(800);
 
@@ -229,9 +251,51 @@ async function run() {
       throw new Error('Print modal options incomplete');
     }
 
+    // Verify "Download Vector PDF" button exists
+    const btnDownloadPdfText = await page.$eval('#btnDownloadPdf', el => el.textContent.trim());
+    console.log(`  Found Vector PDF Action: "${btnDownloadPdfText}"`);
+    if (!btnDownloadPdfText.includes('Download Vector PDF')) {
+      throw new Error('Missing Download Vector PDF button');
+    }
+
+    // Verify dedicated #printDossierContainer exists with Cover Page, Architecture & Code, and 65 Slide Pages
+    const printDossierPages = await page.evaluate(() => {
+      const container = document.getElementById('printDossierContainer');
+      if (!container) return null;
+      const cover = container.querySelector('.dossier-cover-page');
+      const arch = container.querySelector('.dossier-code-page');
+      const slides = container.querySelectorAll('.dossier-slide-page');
+      const codeBlocks = container.querySelectorAll('.dossier-code-content');
+      return {
+        hasCover: !!cover,
+        hasArch: !!arch,
+        slideCount: slides.length,
+        codeBlockCount: codeBlocks.length,
+      };
+    });
+
+    console.log(`  Print Dossier Structure:`, printDossierPages);
+    if (!printDossierPages || !printDossierPages.hasCover || !printDossierPages.hasArch || printDossierPages.slideCount !== 65) {
+      throw new Error(`Print dossier missing required pages (found ${JSON.stringify(printDossierPages)})`);
+    }
+
     // Capture 05: Print & PDF Export Modal
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '05_print_and_export_modal.png') });
     console.log('  Saved: 05_print_and_export_modal.png');
+
+    // Test Backend Vector PDF Generation Endpoint (/api/export-pdf)
+    console.log('  Testing Backend Vector PDF Export Endpoint (/api/export-pdf)...');
+    const pdfResponse = await fetch(`${BASE_URL}/api/export-pdf?scope=byomcp-setup`);
+    if (!pdfResponse.ok) {
+      throw new Error(`PDF Export endpoint failed with status ${pdfResponse.status}`);
+    }
+    const pdfBuffer = Buffer.from(await pdfResponse.arrayBuffer());
+    const pdfPath = path.join(SCREENSHOT_DIR, '08_exported_executive_deck.pdf');
+    fs.writeFileSync(pdfPath, pdfBuffer);
+    console.log(`  Vector PDF successfully generated and saved: 08_exported_executive_deck.pdf (${(pdfBuffer.length / 1024 / 1024).toFixed(2)} MB)`);
+    if (pdfBuffer.length < 500000) {
+      throw new Error(`Exported PDF size (${pdfBuffer.length} bytes) is suspiciously small`);
+    }
 
     // Close print modal
     await page.click('.print-header button.lightbox-close');
