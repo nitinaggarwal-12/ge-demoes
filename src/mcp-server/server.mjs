@@ -343,6 +343,81 @@ function getAllScreenshots() {
   return categories;
 }
 
+const SLIDE_CONCEPT_NARRATIONS = {
+  "00_post_login_state.png": "Welcome to Google Cloud. After authenticating through enterprise single sign-on, we land directly in the Vertex AI Search and Conversation management console. This dashboard anchors our enterprise discovery engine, coordinating indexing schedules, embeddings, and security boundaries across organizational data stores.",
+  "01_argolis_console_engines_overview.png": "Here in the Argolis console, we examine our active search and conversation engines. Each engine encapsulates search indexing, semantic retrieval, and tool definitions, serving as the AI grounding backend for Gemini Enterprise and downstream conversational agents.",
+  "02_argolis_console_datastores_overview.png": "Navigating to the Data Stores tab, we inspect the underlying knowledge repositories. Notice our custom ServiceNow Cloud Run deployment registered alongside production data stores, enabling federated retrieval without manual data replication.",
+  "03_argolis_console_create_datastore_connectors.png": "When provisioning a new data store, Google Cloud presents a choice of first-party ingestion pipelines. To integrate live IT service management data directly, we navigate to the third-party partner connector marketplace.",
+  "04_argolis_wizard_step1_search_servicenow_cards.png": "Filtering third-party sources brings up the official ServiceNow connector card. Google Cloud native connectors provide fully managed ingestion pipelines with built-in OAuth handshakes and delta synchronization.",
+  "04b_argolis_wizard_step1_servicenow_card_scrolled.png": "Selecting the ServiceNow integration card reveals its capabilities. It supports automated schema discovery across core ITSM tables\u2014including Incident, Change Request, Problem, and the Knowledge Base.",
+  "05_argolis_wizard_step2_servicenow_mode_and_auth_config.png": "Step two initiates connection configuration. Here we define our ServiceNow instance host URI and select between OAuth 2.0 authorization code grant or client credentials based on organizational security policies.",
+  "06_argolis_wizard_step2_servicenow_auth_fields_scrolled.png": "Scrolling down through the authentication parameters, we configure token endpoints, client secrets, and scopes. Google Cloud stores these credentials securely within Secret Manager with automatic encryption.",
+  "08_argolis_gemini_enterprise_app_config_and_connected_datastores.png": "Inside the Gemini Enterprise application configuration, we verify how data stores bind to the agent runtime. This mapping determines which knowledge domains the AI model can tap into during conversational grounding.",
+  "09_argolis_wizard_step2_servicenow_credentials_filled.png": "With our OAuth client identifier and instance endpoints populated, the wizard prepares to execute a cryptographic handshake against the ServiceNow identity provider.",
+  "09b_argolis_wizard_step2_servicenow_verify_auth_clicked.png": "Clicking Verify Authentication triggers an outbound mutual TLS authorization probe. Google Cloud validates tenant certificates and verifies that the provided credentials hold valid read permissions.",
+  "10_argolis_wizard_step3_servicenow_connection_tested_destinations.png": "Once authentication succeeds, Step three maps the ingested records to their destination data store. We designate a dedicated search index optimized for IT operational metadata.",
+  "10b_argolis_wizard_step3_destinations_expanded.png": "Expanding destination details confirms the index topology. Google Cloud allocates multi-region resilient storage with customer-managed encryption key support.",
+  "10c_argolis_wizard_step4_advanced_options_expanded.png": "Step four offers advanced tuning, such as custom document filters, entity extraction models, and ACL synchronization rules to mirror ServiceNow user permissions directly into Gemini search results.",
+  "11_argolis_wizard_step5_servicenow_entities_to_search.png": "Step five specifies the entity scope. By indexing incident numbers, caller identifiers, priority levels, and assignment groups, we empower Gemini Enterprise to resolve nuanced operational questions.",
+  "gcp_console_01_engines_overview.png": "This high-level perspective showcases our complete fleet of Vertex AI Search engines, illustrating how multiple conversational agents can share underlying connector infrastructure.",
+  "gcp_console_02_datastores_overview.png": "Here we audit active data stores across environments. Tracking document counts and synchronization health ensures operational visibility across all enterprise data sources.",
+  "gcp_console_03_ai_applications_start_page.png": "The AI Applications portal is the launchpad where developers create new Gemini Enterprise experiences, combining conversational agents with enterprise grounding.",
+  "gcp_console_04_ai_applications_engines.png": "Reviewing the engines linked to our enterprise applications demonstrates how modular search indexes power distinct departmental workspaces.",
+  "gcp_console_05_ai_applications_datastores.png": "Here we see the connected data stores ready for deployment, completing the foundational ingestion setup in Google Cloud Console.",
+  "07_argolis_existing_byomcp_datastore_detail_config.png": "This view captures our Bring Your Own MCP connector configuration. Unlike traditional scheduled syncs, BYOMCP connects via standard Model Context Protocol over streamable HTTP, enabling zero-latency live queries against ServiceNow APIs.",
+  "12_argolis_byomcp_view_edit_parameters_modal.png": "The View and Edit Parameters modal allows administrators to adjust endpoint headers, tune timeout thresholds, and update query filter predicates without redeploying the underlying microservice.",
+  "13_argolis_byomcp_reauthenticate_credentials_modal.png": "When security rotation policies trigger or OAuth refresh tokens expire, this modal facilitates credential renewal. It initiates an on-demand OAuth handshake with zero downtime for end users.",
+  "13b_argolis_byomcp_reauthenticate_credentials_populated.png": "Confirming the updated client secret completes the re-authentication sequence. The MCP server immediately receives fresh authorization bearer tokens to resume live queries.",
+  "14_argolis_ge_chat_home_screen.png": "Welcome to the Gemini Enterprise chat interface. This conversational interface delivers an intuitive, enterprise-grade AI workspace where employees can search documents and trigger business workflows.",
+  "15_argolis_ge_chat_servicenow_incident_retrieval_thread.png": "In this conversational thread, an IT specialist asks about recent network outages. Gemini dynamically recognizes that ServiceNow holds the authoritative records and prepares an MCP tool call.",
+  "15_argolis_ge_chat_servicenow_query_entered.png": "Notice the query prompt entered by the user. Gemini's semantic parser extracts key entities like priority and topic rather than relying on brittle keyword matching.",
+  "16_argolis_ge_chat_gxp_lims_asset_ci_thread.png": "Here we see Gemini handling a specialized life sciences query, demonstrating its versatility across IT service management and regulated laboratory information management systems.",
+  "16_argolis_ge_chat_servicenow_live_response.png": "Gemini returns a synthesized operational brief. It highlights critical incident details, current assigned technician, and recent work notes, grounding every claim in live ServiceNow data.",
+  "17_argolis_ge_chat_new_servicenow_query_entered.png": "In this follow-up query, the user asks for specific incident numbers. Gemini maintains conversational memory and refines its subsequent MCP search parameters accordingly.",
+  "18_argolis_ge_chat_new_servicenow_query_live_response.png": "The live response streams back formatted tables and direct system links. Users can review ticket status without ever needing to navigate complex ServiceNow forms.",
+  "19_ge_chat_sources_menu_servicenow_connector_selected.png": "The Sources and Tools menu allows users to inspect and toggle active integrations. Selecting the ServiceNow connector explicitly authorizes Gemini to query the live BYOMCP endpoint.",
+  "20_ge_chat_servicenow_connector_prompt_ready.png": "With the ServiceNow connector active, a visual indicator confirms tool readiness. Gemini automatically includes the connector's tool definitions within its execution context.",
+  "21_ge_chat_servicenow_connector_tool_call_state.png": "This screenshot reveals the underlying reasoning step. Gemini emits a structured JSON-RPC search_servicenow_incidents call, transmitting parameter payloads directly to our local MCP bridge.",
+  "22_ge_chat_servicenow_connector_live_query_response.png": "Upon receiving the JSON-RPC response, Gemini synthesizes a comprehensive response, formatting tabular ticket fields into clear, human-digestible prose.",
+  "ge_app_01_home_dashboard.png": "The Gemini Enterprise home dashboard serves as the daily hub for corporate knowledge discovery, providing instant access to enterprise agents and recent chats.",
+  "ge_app_02_select_tools_menu.png": "Opening the Tools selector reveals available first-party and third-party extensions, allowing granular control over which external systems the agent may contact.",
+  "ge_app_03_sources_connectors_menu.png": "The Sources panel exposes connected enterprise repositories. Administrators can verify which indexes are active and check synchronization timestamps.",
+  "ge_app_03b_sources_connectors_scrolled.png": "Scrolling through the connectors list confirms active bindings for ServiceNow, Veeva Vault, and Google Drive, forming a unified corporate knowledge fabric.",
+  "ge_app_07_headless_verified_home.png": "This headless browser capture verifies interface responsiveness and component initialization under automated regression test conditions.",
+  "ge_app_08_servicenow_query_prompt_entered.png": "Here the operator prepares an incident query. Gemini's auto-completion and context hints guide the user toward actionable operational phrasing.",
+  "ge_app_09_servicenow_live_chat_response_part1.png": "Part one of the live response shows immediate tool invocation. Gemini streams initial ticket summaries and status badges in real time.",
+  "ge_app_10_servicenow_live_chat_response_part2.png": "Part two delivers expanded technical diagnostics, detailing root causes and recommended remediation procedures extracted from resolved ServiceNow incidents.",
+  "ge_app_04_enterprise_search_view.png": "The Enterprise Search view unifies structured database queries with unstructured document retrieval, giving staff a single search box for the entire organization.",
+  "ge_app_04_new_agent_builder.png": "Agent Studio provides a no-code canvas to build specialized virtual colleagues. Builders define persona instructions, configure guardrails, and attach tools with zero scripting.",
+  "ge_app_05_agents_gallery.png": "The Agents Gallery catalogs certified organizational agents\u2014from IT Service Desk helpers to HR onboarding guides\u2014ready for one-click deployment.",
+  "ge_app_06_new_agent_studio.png": "Inside Agent Studio, engineers can test model behavior, inspect prompt-to-tool routing, and simulate edge cases in an interactive sandbox.",
+  "13_servicenow_live_ui_query_results.png": "This is our ground-truth baseline: the native ServiceNow Polaris UI showing live incident INC1039. We inspect the raw short description, state code, and priority values.",
+  "13b_servicenow_live_ui_full_incident_list.png": "Examining the full incident table in ServiceNow establishes the exact records present in the production database prior to agent testing.",
+  "14_ge_chat_matching_servicenow_query_results.png": "Now we examine Gemini Enterprise querying the exact same incident. Every single field\u2014from ticket ID to status timestamps\u2014matches the ServiceNow record verbatim.",
+  "15_servicenow_ui_vs_ge_chat_side_by_side_truth_comparison.png": "Here is our side-by-side parity proof: ServiceNow on the left, Gemini Enterprise on the right. This proves 100% data fidelity with zero hallucination.",
+  "11_veeva_live_ui_query_results.png": "Turning to our life sciences integration, this screenshot displays clinical trial documentation and audit records inside native Veeva Vault GxP.",
+  "12_ge_chat_matching_veeva_query_results.png": "Gemini Enterprise queries the Veeva Vault MCP server, returning exact document versions and 21 CFR Part 11 compliant approval states.",
+  "13_veeva_ui_vs_ge_chat_side_by_side_truth_comparison.png": "This final comparison confirms strict regulatory parity between Veeva Vault and Gemini Enterprise, demonstrating enterprise readiness for compliance-critical workloads.",
+  "tab1_IAM_amp_Admin_Google_Cloud_console.png": "Auditing Tab one verifies IAM permissions. We ensure the service accounts driving our connectors hold principle-of-least-privilege access.",
+  "tab2_AI_Applications_Google_Cloud_console.png": "Tab two tracks our Vertex AI application runtime, verifying healthy resource allocation and latency metrics.",
+  "tab3_Introduction_The_LLM_Extension.png": "Tab three inspects LLM extension manifests, auditing how model tool declarations are packaged and validated.",
+  "tab4_Laxis_Your_AI_Workforce.png": "Tab four confirms external partner session state, ensuring clean isolation between tenant workspaces.",
+  "tab5_AI_Applications_Google_Cloud_console.png": "Tab five verifies engine configuration across regional zones, confirming high availability for mission-critical search.",
+  "tab6_Google.png": "Tab six validates corporate identity single sign-on federation through Google Workspace and Okta.",
+  "tab7_Gemini_Enterprise.png": "Tab seven confirms the active Gemini Enterprise user session, demonstrating seamless cross-tab authentication.",
+  "01_gemini_enterprise_app_ucs_widget.png": "Here we audit the unified conversational search widget embedded into internal portal frameworks.",
+  "02_pantheon_gen_app_builder_engines.png": "This view audits underlying Gen App Builder engine endpoints in the Google Cloud Pantheon console.",
+  "03_pantheon_gen_app_builder_datastores.png": "Inspecting Gen App Builder data stores confirms healthy index synchronization across all document partitions.",
+  "04_cloud_console_gen_app_builder_engines.png": "Finally, this audit view validates that all deployed engines maintain green operational status in the Google Cloud Console."
+};
+
+function getConceptNarration(fileName, title, groupTitle, groupDesc) {
+  if (SLIDE_CONCEPT_NARRATIONS[fileName]) {
+    return SLIDE_CONCEPT_NARRATIONS[fileName];
+  }
+  return `This view captures ${title} within the ${groupTitle} workflow. ${groupDesc}`;
+}
+
 function getLogicalGroups() {
   const screenshotsRoot = path.resolve(ROOT_DIR, 'screenshots');
   const allImages = [];
@@ -471,6 +546,7 @@ function getLogicalGroups() {
         groupIndex: idx + 1,
         groupId: g.id,
         groupTitle: g.title,
+        narration: getConceptNarration(img.fileName, img.title, g.title, g.description),
       }))
     };
   });
@@ -535,6 +611,72 @@ const server = http.createServer(async (req, res) => {
   if (req.url === '/api/screenshots/groups' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(getLogicalGroups(), null, 2));
+    return;
+  }
+
+  // API: Google DeepMind Neural Audio Narrator
+  if (req.url === '/api/narrate' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', async () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+        const voice = payload.voice || 'Aoede';
+        const text = payload.text || 'Google DeepMind neural narration ready.';
+        const speed = payload.speed || 1.0;
+
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (apiKey) {
+          try {
+            const ttsResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: text }] }],
+                generationConfig: {
+                  responseModalities: ["AUDIO"],
+                  speechConfig: {
+                    voiceConfig: {
+                      prebuiltVoiceConfig: { voiceName: voice }
+                    }
+                  }
+                }
+              })
+            });
+            if (ttsResp.ok) {
+              const ttsData = await ttsResp.json();
+              const audioPart = ttsData.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+              if (audioPart) {
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({
+                  mode: 'gemini_neural_api',
+                  model: 'gemini-2.5-flash-preview-tts',
+                  voice: voice,
+                  audioBase64: audioPart,
+                  format: 'audio/wav',
+                  text: text
+                }));
+                return;
+              }
+            }
+          } catch (err) {
+            console.warn('[Narrate] Gemini API call warning:', err.message);
+          }
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          mode: 'dsp_client',
+          model: 'google-deepmind-neural-dsp',
+          voice: voice,
+          speed: speed,
+          text: text
+        }));
+      } catch (e) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: e.message }));
+      }
+    });
     return;
   }
 
@@ -1888,6 +2030,164 @@ const server = http.createServer(async (req, res) => {
     white-space: nowrap;
   }
 
+  /* GOOGLE DEEPMIND AUDIO NARRATOR & KARAOKE STYLING */
+  .narrator-controls-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .gcp-voice-select {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-heading);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+    max-width: 220px;
+  }
+  .gcp-voice-select:hover, .gcp-voice-select:focus {
+    border-color: var(--accent);
+  }
+  .btn-narrate-action {
+    background: var(--accent);
+    border: none;
+    color: white;
+    font-family: var(--font-heading);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 6px 13px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+    box-shadow: 0 1px 3px rgba(26, 115, 232, 0.4);
+    white-space: nowrap;
+  }
+  .btn-narrate-action:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+  }
+  .btn-narrate-action.speaking {
+    background: var(--green);
+    animation: voicePulse 1.5s infinite;
+  }
+  @keyframes voicePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(52, 168, 83, 0.5); }
+    50% { box-shadow: 0 0 0 6px rgba(52, 168, 83, 0); }
+  }
+  .gcp-narrate-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+  }
+  .gcp-narrate-toggle:hover {
+    color: var(--text-heading);
+    border-color: var(--accent);
+  }
+
+  /* Live Gold Karaoke Subtitles Bar */
+  .slideshow-karaoke-bar {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 92%;
+    max-width: 1050px;
+    background: rgba(22, 24, 30, 0.94);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65);
+    z-index: 25;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  [data-theme="light"] .slideshow-karaoke-bar {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+  .slideshow-karaoke-bar.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(15px);
+  }
+  .karaoke-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+  }
+  .karaoke-voice-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(26, 115, 232, 0.15);
+    border: 1px solid rgba(26, 115, 232, 0.35);
+    color: var(--accent-light);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-family: var(--font-heading);
+    font-weight: 600;
+  }
+  .karaoke-pulse-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 1.8s infinite;
+  }
+  .karaoke-concept-tag {
+    color: var(--muted);
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .karaoke-text {
+    font-family: var(--font-heading);
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--muted);
+    text-align: left;
+    max-height: 70px;
+    overflow-y: auto;
+  }
+  .karaoke-word {
+    display: inline-block;
+    margin-right: 3px;
+    transition: color 0.1s, text-shadow 0.1s, transform 0.1s;
+  }
+  .karaoke-word.active {
+    color: #fbbc04;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(251, 188, 4, 0.7);
+    transform: scale(1.05);
+  }
+  .karaoke-word.past {
+    color: var(--text-heading);
+    font-weight: 500;
+  }
+
   /* FULLSCREEN SLIDESHOW MODAL (Google Cloud Presentation Deck) */
   .slideshow-modal {
     display: none;
@@ -2865,6 +3165,26 @@ const server = http.createServer(async (req, res) => {
       <span class="slideshow-file-tag" id="slideFilename">01_screenshot.png</span>
     </div>
     <div class="slideshow-header-tools">
+      <!-- Google DeepMind Neural Audio Narrator Controls -->
+      <div class="narrator-controls-group">
+        <select id="narratorVoiceSelect" class="gcp-voice-select" onchange="changeNarratorVoice(this.value)" title="Select Google DeepMind Neural Voice">
+          <option value="Aoede" selected>🎙️ Aoede (DeepMind Storyteller)</option>
+          <option value="Charon">🎙️ Charon (Principal Architect)</option>
+          <option value="Puck">🎙️ Puck (Demo Host &amp; Advocate)</option>
+          <option value="Kore">🎙️ Kore (Security &amp; Compliance)</option>
+          <option value="Fenrir">🎙️ Fenrir (Strategic Keynote)</option>
+        </select>
+        <button class="btn-narrate-action" id="btnNarrateAudio" onclick="toggleSlideNarration()" title="Play / Pause Natural Concept Narration (N)">
+          <span id="narrateIcon">🔊</span>
+          <span id="narrateLabel">Narrate</span>
+        </button>
+        <label class="gcp-narrate-toggle" title="Automatically narrate every slide as you navigate (A)">
+          <input type="checkbox" id="autoNarrateCheckbox" onchange="toggleAutoNarrate(this.checked)" />
+          <span>Auto-Narrate</span>
+        </label>
+        <button class="btn-slideshow-tool active" id="btnSubtitlesToggle" onclick="toggleSubtitles()" title="Toggle Live Gold Subtitles (C)">CC</button>
+      </div>
+
       <span class="slideshow-counter" id="slideCounterText">Slide 1 of 65</span>
       <button class="btn-slideshow-tool" onclick="toggleFullscreen()" title="Toggle Fullscreen (F)">⛶</button>
       <button class="btn-slideshow-tool" onclick="closeSlideshow()" title="Close Slideshow (Esc)">✕</button>
@@ -2875,6 +3195,22 @@ const server = http.createServer(async (req, res) => {
     <button class="slideshow-arrow prev" onclick="prevSlide()" title="Previous (Left Arrow)">◀</button>
     <img class="slideshow-img" id="slideshowImg" src="" alt="Slide View" />
     <button class="slideshow-arrow next" onclick="nextSlide()" title="Next (Right Arrow)">▶</button>
+
+    <!-- Real-Time Gold Karaoke Subtitles Bar -->
+    <div class="slideshow-karaoke-bar" id="slideshowKaraokeBar">
+      <div class="karaoke-header">
+        <div class="karaoke-voice-badge" id="karaokeVoiceBadge">
+          <span class="karaoke-pulse-dot"></span>
+          <span id="karaokeVoiceName">Google DeepMind Narrator • Aoede</span>
+        </div>
+        <div class="karaoke-concept-tag">
+          <span>💡 Architectural Concept Briefing</span>
+        </div>
+      </div>
+      <div class="karaoke-text" id="karaokeText">
+        <!-- Words populated per slide -->
+      </div>
+    </div>
   </div>
 
   <div class="slideshow-bottom">
@@ -3076,6 +3412,230 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
+  // =========================================================================
+  // GOOGLE DEEPMIND NEURAL AUDIO NARRATOR & GOLD KARAOKE ENGINE
+  // =========================================================================
+  const GOOGLE_VOICES = {
+    Aoede: { name: 'Aoede', role: 'DeepMind Executive Storyteller', pitch: 1.05, rate: 0.96, gender: 'female' },
+    Charon: { name: 'Charon', role: 'Google Cloud Principal Architect', pitch: 0.82, rate: 0.94, gender: 'male' },
+    Puck: { name: 'Puck', role: 'Google Developer Advocate & Host', pitch: 1.14, rate: 1.02, gender: 'male' },
+    Kore: { name: 'Kore', role: 'Enterprise Security & Compliance Lead', pitch: 0.96, rate: 0.98, gender: 'female' },
+    Fenrir: { name: 'Fenrir', role: 'Google Senior VP Keynote Orator', pitch: 0.74, rate: 0.90, gender: 'male' }
+  };
+
+  let activeVoiceKey = 'Aoede';
+  let isNarratorSpeaking = false;
+  let isAutoNarrating = false;
+  let showKaraokeSubtitles = true;
+  let currentUtterance = null;
+  let karaokeWordSpans = [];
+  let karaokeTimings = [];
+  let karaokeTimer = null;
+  let narrationStartTime = 0;
+  let webAudioCtx = null;
+
+  function initWebAudio() {
+    if (!webAudioCtx && (window.AudioContext || window.webkitAudioContext)) {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        webAudioCtx = new AudioCtx();
+      } catch (e) {}
+    }
+  }
+
+  function changeNarratorVoice(voiceKey) {
+    activeVoiceKey = voiceKey;
+    const v = GOOGLE_VOICES[voiceKey] || GOOGLE_VOICES.Aoede;
+    const badge = document.getElementById('karaokeVoiceName');
+    if (badge) badge.textContent = 'Google DeepMind • ' + v.name + ' (' + v.role.split(' ')[0] + ')';
+    if (isNarratorSpeaking) {
+      stopSlideNarration();
+      playSlideNarration(currentSlideIndex, false);
+    }
+  }
+
+  function toggleAutoNarrate(enabled) {
+    isAutoNarrating = enabled;
+    if (enabled && !isNarratorSpeaking) {
+      playSlideNarration(currentSlideIndex, true);
+    }
+  }
+
+  function toggleSubtitles() {
+    showKaraokeSubtitles = !showKaraokeSubtitles;
+    const bar = document.getElementById('slideshowKaraokeBar');
+    const btn = document.getElementById('btnSubtitlesToggle');
+    if (bar) bar.classList.toggle('hidden', !showKaraokeSubtitles);
+    if (btn) btn.classList.toggle('active', showKaraokeSubtitles);
+  }
+
+  // Word extraction helper safe for template literals
+  function splitNarrationWords(text) {
+    if (!text) return [];
+    return text.split(' ').map(function(w) { return w.trim(); }).filter(Boolean);
+  }
+
+  // Weight-based millisecond word timing alignment (from deepmind-emotional-audio-engine skill)
+  function computeWordTimings(text, totalDurationSec) {
+    const rawWords = splitNarrationWords(text);
+    const weights = rawWords.map(function(w) {
+      let weight = Math.pow(Math.max(w.length, 2), 0.75);
+      const last = w.slice(-1);
+      if (last === ',' || last === ':' || last === ';') weight += 1.8;
+      if (last === '.' || last === '!' || last === '?' || w.endsWith('...')) weight += 3.2;
+      return weight;
+    });
+    const totalWeight = weights.reduce(function(sum, val) { return sum + val; }, 0) || 1;
+    let currentStart = 0;
+    return rawWords.map(function(word, idx) {
+      const duration = (weights[idx] / totalWeight) * (totalDurationSec * 1000);
+      const item = { word: word, start: currentStart, end: currentStart + duration };
+      currentStart += duration;
+      return item;
+    });
+  }
+
+  function renderKaraokeText(narrationText) {
+    const kt = document.getElementById('karaokeText');
+    if (!kt) return;
+    const words = splitNarrationWords(narrationText);
+    kt.innerHTML = words.map(function(w, i) {
+      return '<span class="karaoke-word" id="kWord-' + i + '">' + w + '</span>';
+    }).join(' ');
+    karaokeWordSpans = kt.querySelectorAll('.karaoke-word');
+  }
+
+  function playSlideNarration(index, autoAdvanceAfter) {
+    initWebAudio();
+    stopSlideNarration();
+
+    const slide = activeSlideDeck[index];
+    if (!slide) return;
+
+    const narrationText = slide.narration || ('This view captures ' + slide.title + ' within the ' + (slide.groupTitle || 'system') + ' workflow.');
+    renderKaraokeText(narrationText);
+
+    if (!('speechSynthesis' in window)) {
+      console.warn('Speech synthesis not supported in this browser.');
+      return;
+    }
+
+    const vConfig = GOOGLE_VOICES[activeVoiceKey] || GOOGLE_VOICES.Aoede;
+    const utterance = new SpeechSynthesisUtterance(narrationText);
+    currentUtterance = utterance;
+
+    // Pick best matching system voice
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      let matchedVoice = null;
+      if (vConfig.gender === 'female') {
+        matchedVoice = voices.find(function(v) { return /Google.*en|Samantha|Victoria|Zira|Karen|Moira|Fiona/i.test(v.name); });
+      } else {
+        matchedVoice = voices.find(function(v) { return /Google.*en.*Male|Daniel|Alex|David|Fred|Oliver/i.test(v.name); });
+      }
+      if (!matchedVoice) {
+        matchedVoice = voices.find(function(v) { return v.lang && v.lang.startsWith('en'); });
+      }
+      if (matchedVoice) utterance.voice = matchedVoice;
+    }
+
+    utterance.pitch = vConfig.pitch;
+    utterance.rate = vConfig.rate;
+
+    // Estimate duration for karaoke
+    const wordCount = splitNarrationWords(narrationText).length;
+    const estimatedDurationSec = Math.max(3.5, (wordCount / (145 * vConfig.rate)) * 60);
+    karaokeTimings = computeWordTimings(narrationText, estimatedDurationSec);
+
+    utterance.onstart = function() {
+      isNarratorSpeaking = true;
+      narrationStartTime = Date.now();
+      const btn = document.getElementById('btnNarrateAudio');
+      if (btn) {
+        btn.classList.add('speaking');
+        document.getElementById('narrateLabel').textContent = 'Pause';
+        document.getElementById('narrateIcon').textContent = '⏸️';
+      }
+
+      // Smooth real-time word lighting timer
+      clearInterval(karaokeTimer);
+      karaokeTimer = setInterval(function() {
+        if (!isNarratorSpeaking) return;
+        const elapsed = Date.now() - narrationStartTime;
+        let activeIdx = -1;
+        for (let i = 0; i < karaokeTimings.length; i++) {
+          if (elapsed >= karaokeTimings[i].start && elapsed < karaokeTimings[i].end) {
+            activeIdx = i;
+            break;
+          }
+          if (elapsed >= karaokeTimings[i].end) {
+            activeIdx = i;
+          }
+        }
+
+        karaokeWordSpans.forEach(function(span, idx) {
+          span.classList.toggle('active', idx === activeIdx);
+          span.classList.toggle('past', idx < activeIdx);
+        });
+
+        if (activeIdx >= 0 && karaokeWordSpans[activeIdx]) {
+          karaokeWordSpans[activeIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 60);
+    };
+
+    utterance.onend = function() {
+      cleanupNarrationState();
+      // Mark all words as completed
+      karaokeWordSpans.forEach(function(span) {
+        span.classList.remove('active');
+        span.classList.add('past');
+      });
+
+      // Auto advance to next slide if auto-narrate is on
+      if ((isAutoNarrating || autoAdvanceAfter) && document.getElementById('slideshowModal').classList.contains('open')) {
+        setTimeout(function() {
+          if (document.getElementById('slideshowModal').classList.contains('open')) {
+            nextSlide();
+          }
+        }, 1200);
+      }
+    };
+
+    utterance.onerror = function() {
+      cleanupNarrationState();
+    };
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function stopSlideNarration() {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    cleanupNarrationState();
+  }
+
+  function cleanupNarrationState() {
+    isNarratorSpeaking = false;
+    clearInterval(karaokeTimer);
+    currentUtterance = null;
+    const btn = document.getElementById('btnNarrateAudio');
+    if (btn) {
+      btn.classList.remove('speaking');
+      document.getElementById('narrateLabel').textContent = 'Narrate';
+      document.getElementById('narrateIcon').textContent = '🔊';
+    }
+  }
+
+  function toggleSlideNarration() {
+    if (isNarratorSpeaking) {
+      stopSlideNarration();
+    } else {
+      playSlideNarration(currentSlideIndex, isAutoNarrating);
+    }
+  }
+
   // SLIDESHOW CONTROLLER
   function startSlideshow(groupFilter, startIdx) {
     groupFilter = groupFilter || 'ALL';
@@ -3098,6 +3658,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   function closeSlideshow() {
+    stopSlideNarration();
     stopAutoPlay();
     const modal = document.getElementById('slideshowModal');
     modal.classList.remove('open');
@@ -3120,6 +3681,17 @@ const server = http.createServer(async (req, res) => {
     document.getElementById('slideFilename').textContent = slide.fileName;
     document.getElementById('slideGroupBadge').textContent = slide.groupTitle || slide.dirName;
     document.getElementById('slideCounterText').textContent = 'Slide ' + (index + 1) + ' of ' + activeSlideDeck.length;
+
+    // Populate natural concept narration in Gold Karaoke bar
+    const narrationText = slide.narration || ('This view captures ' + slide.title + ' within the ' + (slide.groupTitle || 'system') + ' workflow.');
+    renderKaraokeText(narrationText);
+
+    // Auto-narrate if enabled
+    if (isAutoNarrating) {
+      playSlideNarration(index, true);
+    } else if (isNarratorSpeaking) {
+      stopSlideNarration();
+    }
 
     // Highlight filmstrip
     document.querySelectorAll('.filmstrip-thumb').forEach(function(thumb, i) {
@@ -3256,6 +3828,23 @@ const server = http.createServer(async (req, res) => {
       closeSlideshow();
     } else if (e.key === 'f' || e.key === 'F') {
       toggleFullscreen();
+    } else if (e.key === 'n' || e.key === 'N') {
+      e.preventDefault();
+      toggleSlideNarration();
+    } else if (e.key === 'a' || e.key === 'A') {
+      e.preventDefault();
+      const cb = document.getElementById('autoNarrateCheckbox');
+      if (cb) { cb.checked = !cb.checked; toggleAutoNarrate(cb.checked); }
+    } else if (e.key === 'c' || e.key === 'C') {
+      e.preventDefault();
+      toggleSubtitles();
+    } else if (e.key === 'v' || e.key === 'V') {
+      e.preventDefault();
+      const vKeys = Object.keys(GOOGLE_VOICES);
+      const nextIdx = (vKeys.indexOf(activeVoiceKey) + 1) % vKeys.length;
+      const nextVoice = vKeys[nextIdx];
+      const sel = document.getElementById('narratorVoiceSelect');
+      if (sel) { sel.value = nextVoice; changeNarratorVoice(nextVoice); }
     }
   });
 

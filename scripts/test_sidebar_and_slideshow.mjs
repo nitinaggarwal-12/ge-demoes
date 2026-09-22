@@ -36,6 +36,10 @@ async function run() {
 
   try {
     const page = await browser.newPage();
+    page.on('pageerror', err => console.error('  PAGE ERROR:', err.message));
+    page.on('console', msg => {
+      if (msg.type() === 'error') console.error('  CONSOLE ERROR:', msg.text());
+    });
 
     // 1. Navigate to Workbench UI
     console.log('\n[2/6] Navigating to Workbench UI...');
@@ -141,6 +145,43 @@ async function run() {
     // Capture 04: Interactive Slideshow View
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '04_interactive_slideshow_view.png') });
     console.log('  Saved: 04_interactive_slideshow_view.png');
+
+    // Test Google DeepMind Audio Narrator & Gold Karaoke Subtitles
+    console.log('  Testing Google DeepMind Audio Narrator Controls...');
+    const voiceOptions = await page.$$eval('#narratorVoiceSelect option', els => els.map(o => o.value));
+    console.log(`  Available Google Neural Voices: ${voiceOptions.join(', ')}`);
+    if (voiceOptions.length < 5 || !voiceOptions.includes('Aoede') || !voiceOptions.includes('Charon')) {
+      throw new Error(`Missing expected Google Neural voices (found ${voiceOptions.join(', ')})`);
+    }
+
+    // Verify Karaoke Subtitles display natural concept explanation (not raw text)
+    const karaokeText = await page.$eval('#karaokeText', el => el.textContent.trim());
+    const karaokeWordCount = await page.$$eval('.karaoke-word', els => els.length);
+    console.log(`  Karaoke Words Count: ${karaokeWordCount}`);
+    console.log(`  Sample Concept Narration: "${karaokeText.slice(0, 85)}..."`);
+    if (karaokeWordCount < 5 || karaokeText.includes('.png')) {
+      throw new Error('Karaoke text is either empty or reading file name instead of natural concept explanation');
+    }
+
+    // Trigger Audio Narration
+    await page.click('#btnNarrateAudio');
+    await sleep(800);
+    const isSpeakingClass = await page.$eval('#btnNarrateAudio', el => el.classList.contains('speaking'));
+    console.log(`  Audio Narrator Speaking Active: ${isSpeakingClass}`);
+
+    // Switch voice persona to Charon (Cloud Principal Architect)
+    await page.select('#narratorVoiceSelect', 'Charon');
+    await sleep(500);
+    const currentVoiceBadge = await page.$eval('#karaokeVoiceName', el => el.textContent.trim());
+    console.log(`  Updated Voice Badge: "${currentVoiceBadge}"`);
+
+    // Capture 07: Audio Narration with Live Gold Karaoke Subtitles
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '07_audio_narration_gold_karaoke.png') });
+    console.log('  Saved: 07_audio_narration_gold_karaoke.png');
+
+    // Stop narration
+    await page.click('#btnNarrateAudio');
+    await sleep(500);
 
     // Test closing slideshow with Escape
     await page.keyboard.press('Escape');
