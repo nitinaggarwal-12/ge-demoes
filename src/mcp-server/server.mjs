@@ -1,6 +1,8 @@
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
+import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -22,6 +24,33 @@ const SN_CONFIG = {
 const ROOT_DIR = path.resolve(__dirname, '../../');
 const SN_SAMPLE_PATH = path.resolve(ROOT_DIR, 'data/servicenow_live_sample_data.json');
 const VEEVA_SAMPLE_PATH = path.resolve(ROOT_DIR, 'data/veeva_vault_live_sample_data.json');
+
+const AUDIO_CACHE_DIR = path.resolve(ROOT_DIR, 'scratch/audio_cache');
+if (!fs.existsSync(AUDIO_CACHE_DIR)) {
+  fs.mkdirSync(AUDIO_CACHE_DIR, { recursive: true });
+}
+
+// Google Cloud Token Caching
+let cachedGcloudToken = null;
+let gcloudTokenExpiry = 0;
+
+function getGcloudAccessToken() {
+  if (cachedGcloudToken && Date.now() < gcloudTokenExpiry) {
+    return cachedGcloudToken;
+  }
+  try {
+    const token = execSync('gcloud auth print-access-token', { timeout: 8000 }).toString().trim();
+    if (token && token.startsWith('ya29.')) {
+      cachedGcloudToken = token;
+      gcloudTokenExpiry = Date.now() + 40 * 60 * 1000; // 40 minutes
+      return token;
+    }
+  } catch (err) {
+    console.warn('[Audio] gcloud token note:', err.message);
+  }
+  return null;
+}
+
 
 let snSampleData = { tables: {} };
 try {
@@ -418,6 +447,183 @@ function getConceptNarration(fileName, title, groupTitle, groupDesc) {
   return `This view captures ${title} within the ${groupTitle} workflow. ${groupDesc}`;
 }
 
+// All Supported Narrator Voice Options
+const NARRATOR_VOICES = {
+  // 🌟 Google Journey (Ultra-Human Storyteller — Most Expressive & Natural)
+  'journey-d': {
+    name: 'David',
+    engine: 'google-journey',
+    model: 'en-US-Journey-D',
+    role: 'Warm Human Architect',
+    group: 'Google Journey',
+    gender: 'male',
+    tag: '🌟 Most Human'
+  },
+  'journey-f': {
+    name: 'Fiona',
+    engine: 'google-journey',
+    model: 'en-US-Journey-F',
+    role: 'Natural Expressive Narrator',
+    group: 'Google Journey',
+    gender: 'female',
+    tag: '🌟 Natural Storyteller'
+  },
+  'journey-o': {
+    name: 'Olivia',
+    engine: 'google-journey',
+    model: 'en-US-Journey-O',
+    role: 'Executive Keynote',
+    group: 'Google Journey',
+    gender: 'female',
+    tag: '🌟 Executive Keynote'
+  },
+
+  // ⚡ Google DeepMind Chirp-HD (Foundation Speech Model)
+  'chirp-d': {
+    name: 'Daniel',
+    engine: 'google-chirp',
+    model: 'en-US-Chirp-HD-D',
+    role: 'Dynamic Tech Lead',
+    group: 'Google Chirp-HD',
+    gender: 'male',
+    tag: '⚡ Tech Specialist'
+  },
+  'chirp-f': {
+    name: 'Faith',
+    engine: 'google-chirp',
+    model: 'en-US-Chirp-HD-F',
+    role: 'Articulate Engineer',
+    group: 'Google Chirp-HD',
+    gender: 'female',
+    tag: '⚡ Articulate'
+  },
+
+  // 🎙️ Google Studio (Broadcast Keynote)
+  'studio-q': {
+    name: 'Quinn',
+    engine: 'google-studio',
+    model: 'en-US-Studio-Q',
+    role: 'Broadcast Baritone',
+    group: 'Google Studio',
+    gender: 'male',
+    tag: '🎙️ Broadcast Baritone'
+  },
+  'studio-o': {
+    name: 'Oprah',
+    engine: 'google-studio',
+    model: 'en-US-Studio-O',
+    role: 'Studio Documentary',
+    group: 'Google Studio',
+    gender: 'female',
+    tag: '🎙️ Studio Documentary'
+  },
+
+  // 🤖 Google Gemini DeepMind Multimodal Audio
+  'gemini-charon': {
+    name: 'Charon',
+    engine: 'gemini-tts',
+    model: 'gemini-2.5-flash-preview-tts',
+    voiceName: 'Charon',
+    role: 'Cloud Principal Architect',
+    group: 'Google Gemini',
+    gender: 'male',
+    tag: '🤖 DeepMind Architect'
+  },
+  'gemini-aoede': {
+    name: 'Aoede',
+    engine: 'gemini-tts',
+    model: 'gemini-2.5-flash-preview-tts',
+    voiceName: 'Aoede',
+    role: 'Executive Briefing Lead',
+    group: 'Google Gemini',
+    gender: 'female',
+    tag: '🤖 DeepMind Executive'
+  },
+  'gemini-puck': {
+    name: 'Puck',
+    engine: 'gemini-tts',
+    model: 'gemini-2.5-flash-preview-tts',
+    voiceName: 'Puck',
+    role: 'Solutions Advocate',
+    group: 'Google Gemini',
+    gender: 'male',
+    tag: '🤖 DeepMind Solutions'
+  },
+  'gemini-kore': {
+    name: 'Kore',
+    engine: 'gemini-tts',
+    model: 'gemini-2.5-flash-preview-tts',
+    voiceName: 'Kore',
+    role: 'Security & Compliance Auditor',
+    group: 'Google Gemini',
+    gender: 'female',
+    tag: '🤖 Security Auditor'
+  },
+  'gemini-fenrir': {
+    name: 'Fenrir',
+    engine: 'gemini-tts',
+    model: 'gemini-2.5-flash-preview-tts',
+    voiceName: 'Fenrir',
+    role: 'Staff Infrastructure Architect',
+    group: 'Google Gemini',
+    gender: 'male',
+    tag: '🤖 Staff Architect'
+  },
+
+  // 🌐 OpenAI GPT-4o Omni Audio
+  'openai-alloy': {
+    name: 'Alloy',
+    engine: 'openai-tts',
+    model: 'tts-1',
+    voiceName: 'alloy',
+    role: 'OpenAI Omni Balanced',
+    group: 'OpenAI Omni',
+    gender: 'neutral',
+    tag: '🌐 Omni Balanced'
+  },
+  'openai-echo': {
+    name: 'Echo',
+    engine: 'openai-tts',
+    model: 'tts-1',
+    voiceName: 'echo',
+    role: 'OpenAI Omni Resonance',
+    group: 'OpenAI Omni',
+    gender: 'male',
+    tag: '🌐 Omni Resonance'
+  },
+  'openai-nova': {
+    name: 'Nova',
+    engine: 'openai-tts',
+    model: 'tts-1',
+    voiceName: 'nova',
+    role: 'OpenAI Omni Dynamic',
+    group: 'OpenAI Omni',
+    gender: 'female',
+    tag: '🌐 Omni Dynamic'
+  },
+  'openai-onyx': {
+    name: 'Onyx',
+    engine: 'openai-tts',
+    model: 'tts-1',
+    voiceName: 'onyx',
+    role: 'OpenAI Omni Baritone',
+    group: 'OpenAI Omni',
+    gender: 'male',
+    tag: '🌐 Omni Baritone'
+  },
+
+  // 💻 Browser Device Voice (Offline Fallback)
+  'browser-default': {
+    name: 'Local Device Voice',
+    engine: 'browser-speech-synthesis',
+    role: 'Offline Device Synthesis',
+    group: 'Browser Native',
+    gender: 'neutral',
+    tag: '💻 Local Offline'
+  }
+};
+
+
 function getLogicalGroups() {
   const screenshotsRoot = path.resolve(ROOT_DIR, 'screenshots');
   const allImages = [];
@@ -614,71 +820,213 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // API: Google DeepMind Neural Audio Narrator
+  // API: Serve Cached Audio MP3/WAV files
+  if (req.url.startsWith('/api/audio/') && req.method === 'GET') {
+    const filename = req.url.replace('/api/audio/', '').split('?')[0];
+    const filepath = path.join(AUDIO_CACHE_DIR, filename);
+    if (fs.existsSync(filepath)) {
+      const stat = fs.statSync(filepath);
+      res.writeHead(200, {
+        'Content-Type': filename.endsWith('.wav') ? 'audio/wav' : 'audio/mpeg',
+        'Content-Length': stat.size,
+        'Cache-Control': 'public, max-age=31536000, immutable'
+      });
+      fs.createReadStream(filepath).pipe(res);
+      return;
+    } else {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('Audio not found');
+      return;
+    }
+  }
+
+  // API: Multi-Engine Audio Narrator (Google Journey, Chirp-HD, Studio, Gemini, OpenAI Omni)
   if (req.url === '/api/narrate' && req.method === 'POST') {
     let body = '';
     req.on('data', chunk => { body += chunk; });
     req.on('end', async () => {
       try {
         const payload = JSON.parse(body || '{}');
-        const voice = payload.voice || 'Aoede';
-        const text = payload.text || 'Google DeepMind neural narration ready.';
-        const speed = payload.speed || 1.0;
+        const voiceId = payload.voiceId || 'journey-d';
+        const text = payload.text || 'Google Cloud architectural briefing ready.';
+        const vInfo = NARRATOR_VOICES[voiceId] || NARRATOR_VOICES['journey-d'];
 
-        const apiKey = process.env.GEMINI_API_KEY;
-        if (apiKey) {
-          try {
-            const ttsResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: text }] }],
-                generationConfig: {
-                  responseModalities: ["AUDIO"],
-                  speechConfig: {
-                    voiceConfig: {
-                      prebuiltVoiceConfig: { voiceName: voice }
-                    }
-                  }
+        if (vInfo.engine === 'browser-speech-synthesis') {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ mode: 'browser_speech', voiceId, text }));
+          return;
+        }
+
+        // Cache hash based on voiceId and text
+        const hash = crypto.createHash('sha256').update(voiceId + '::' + text).digest('hex').slice(0, 24);
+        const cacheFile = path.join(AUDIO_CACHE_DIR, `${hash}.mp3`);
+
+        if (fs.existsSync(cacheFile) && fs.statSync(cacheFile).size > 1000) {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            mode: 'cached_stream',
+            audioUrl: `/api/audio/${hash}.mp3`,
+            voiceId,
+            voiceName: vInfo.name,
+            cached: true
+          }));
+          return;
+        }
+
+        let audioBuffer = null;
+
+        // Engine 1: Google Cloud Journey, Chirp-HD, and Studio voices
+        if (vInfo.engine.startsWith('google-')) {
+          const token = getGcloudAccessToken();
+          if (token) {
+            const project = process.env.GOOGLE_CLOUD_PROJECT || 'vertex-ai-493102';
+            try {
+              const ttsResp = await fetch('https://texttospeech.googleapis.com/v1/text:synthesize', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+                  'x-goog-user-project': project
+                },
+                body: JSON.stringify({
+                  input: { text: text },
+                  voice: { languageCode: 'en-US', name: vInfo.model },
+                  audioConfig: { audioEncoding: 'MP3', speakingRate: 1.0 }
+                })
+              });
+              if (ttsResp.ok) {
+                const data = await ttsResp.json();
+                if (data.audioContent) {
+                  audioBuffer = Buffer.from(data.audioContent, 'base64');
                 }
-              })
-            });
-            if (ttsResp.ok) {
-              const ttsData = await ttsResp.json();
-              const audioPart = ttsData.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-              if (audioPart) {
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({
-                  mode: 'gemini_neural_api',
-                  model: 'gemini-2.5-flash-preview-tts',
-                  voice: voice,
-                  audioBase64: audioPart,
-                  format: 'audio/wav',
-                  text: text
-                }));
-                return;
+              } else {
+                const errJson = await ttsResp.json().catch(() => ({}));
+                console.warn('[TTS] Google Cloud TTS error:', errJson);
               }
+            } catch (err) {
+              console.warn('[TTS] Fetch error:', err.message);
             }
-          } catch (err) {
-            console.warn('[Narrate] Gemini API call warning:', err.message);
           }
         }
 
+        // Engine 2: Google Gemini Multimodal Audio (gemini-2.5-flash-preview-tts)
+        if (!audioBuffer && vInfo.engine === 'gemini-tts') {
+          const apiKey = process.env.GEMINI_API_KEY;
+          if (apiKey) {
+            try {
+              const ttsResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: text }] }],
+                  generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                      voiceConfig: {
+                        prebuiltVoiceConfig: { voiceName: vInfo.voiceName || 'Aoede' }
+                      }
+                    }
+                  }
+                })
+              });
+              if (ttsResp.ok) {
+                const ttsData = await ttsResp.json();
+                const audioBase64 = ttsData.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+                if (audioBase64) {
+                  audioBuffer = Buffer.from(audioBase64, 'base64');
+                }
+              }
+            } catch (err) {
+              console.warn('[Gemini TTS] error:', err.message);
+            }
+          }
+        }
+
+        // Engine 3: OpenAI GPT-4o Omni Audio
+        if (!audioBuffer && vInfo.engine === 'openai-tts') {
+          const openAiKey = process.env.OPENAI_API_KEY;
+          if (openAiKey) {
+            try {
+              const oResp = await fetch('https://api.openai.com/v1/audio/speech', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${openAiKey}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  model: vInfo.model || 'tts-1',
+                  input: text,
+                  voice: vInfo.voiceName || 'alloy'
+                })
+              });
+              if (oResp.ok) {
+                const arrayBuf = await oResp.arrayBuffer();
+                audioBuffer = Buffer.from(arrayBuf);
+              }
+            } catch (err) {
+              console.warn('[OpenAI TTS] error:', err.message);
+            }
+          }
+        }
+
+        // Automatic High-Quality Fallback: If chosen engine had no key, fallback to Google Journey David
+        if (!audioBuffer) {
+          const token = getGcloudAccessToken();
+          if (token) {
+            try {
+              const ttsResp = await fetch('https://texttospeech.googleapis.com/v1/text:synthesize', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+                  'x-goog-user-project': 'vertex-ai-493102'
+                },
+                body: JSON.stringify({
+                  input: { text: text },
+                  voice: { languageCode: 'en-US', name: 'en-US-Journey-D' },
+                  audioConfig: { audioEncoding: 'MP3', speakingRate: 1.0 }
+                })
+              });
+              if (ttsResp.ok) {
+                const data = await ttsResp.json();
+                if (data.audioContent) {
+                  audioBuffer = Buffer.from(data.audioContent, 'base64');
+                }
+              }
+            } catch (err) {}
+          }
+        }
+
+        // If audio synthesized, save to disk cache and return audio URL
+        if (audioBuffer && audioBuffer.length > 500) {
+          fs.writeFileSync(cacheFile, audioBuffer);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            mode: 'synthesized_stream',
+            audioUrl: `/api/audio/${hash}.mp3`,
+            voiceId,
+            voiceName: vInfo.name,
+            cached: false
+          }));
+          return;
+        }
+
+        // If offline / no credentials, notify client to use browser SpeechSynthesis
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
-          mode: 'dsp_client',
-          model: 'google-deepmind-neural-dsp',
-          voice: voice,
-          speed: speed,
+          mode: 'browser_speech',
+          voiceId,
+          voiceName: vInfo.name,
           text: text
         }));
       } catch (e) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: e.message }));
       }
     });
     return;
   }
+
 
   // API: List tools
   if (req.url === '/api/tools' && req.method === 'GET') {
@@ -3167,12 +3515,36 @@ const server = http.createServer(async (req, res) => {
     <div class="slideshow-header-tools">
       <!-- Google DeepMind Neural Audio Narrator Controls -->
       <div class="narrator-controls-group">
-        <select id="narratorVoiceSelect" class="gcp-voice-select" onchange="changeNarratorVoice(this.value)" title="Select Google DeepMind Neural Voice">
-          <option value="Aoede" selected>🎙️ Aoede (DeepMind Storyteller)</option>
-          <option value="Charon">🎙️ Charon (Principal Architect)</option>
-          <option value="Puck">🎙️ Puck (Demo Host &amp; Advocate)</option>
-          <option value="Kore">🎙️ Kore (Security &amp; Compliance)</option>
-          <option value="Fenrir">🎙️ Fenrir (Strategic Keynote)</option>
+        <select id="narratorVoiceSelect" class="gcp-voice-select" onchange="changeNarratorVoice(this.value)" title="Select AI Voice Narrator">
+          <optgroup label="🌟 Google Journey (Ultra-Human Storyteller — Recommended)">
+            <option value="journey-d" selected>🌟 Google Journey — David (Warm Human Architect)</option>
+            <option value="journey-f">🌟 Google Journey — Fiona (Natural Storyteller)</option>
+            <option value="journey-o">🌟 Google Journey — Olivia (Keynote Briefing)</option>
+          </optgroup>
+          <optgroup label="⚡ Google DeepMind Chirp-HD (Foundation Model)">
+            <option value="chirp-d">⚡ Google Chirp-HD — Daniel (Tech Specialist)</option>
+            <option value="chirp-f">⚡ Google Chirp-HD — Faith (Articulate Engineer)</option>
+          </optgroup>
+          <optgroup label="🎙️ Google Studio (Broadcast)">
+            <option value="studio-q">🎙️ Google Studio — Quinn (Broadcast Baritone)</option>
+            <option value="studio-o">🎙️ Google Studio — Oprah (Studio Documentary)</option>
+          </optgroup>
+          <optgroup label="🤖 Google Gemini Multimodal Audio">
+            <option value="gemini-charon">🤖 Gemini DeepMind — Charon (Cloud Architect)</option>
+            <option value="gemini-aoede">🤖 Gemini DeepMind — Aoede (Executive Specialist)</option>
+            <option value="gemini-puck">🤖 Gemini DeepMind — Puck (Solutions Advocate)</option>
+            <option value="gemini-kore">🤖 Gemini DeepMind — Kore (Security Auditor)</option>
+            <option value="gemini-fenrir">🤖 Gemini DeepMind — Fenrir (Staff Architect)</option>
+          </optgroup>
+          <optgroup label="🌐 OpenAI GPT-4o Omni Audio">
+            <option value="openai-alloy">🌐 OpenAI Omni — Alloy</option>
+            <option value="openai-echo">🌐 OpenAI Omni — Echo</option>
+            <option value="openai-nova">🌐 OpenAI Omni — Nova</option>
+            <option value="openai-onyx">🌐 OpenAI Omni — Onyx</option>
+          </optgroup>
+          <optgroup label="💻 Browser Native">
+            <option value="browser-default">💻 Browser Device Voice (Offline Fallback)</option>
+          </optgroup>
         </select>
         <button class="btn-narrate-action" id="btnNarrateAudio" onclick="toggleSlideNarration()" title="Play / Pause Natural Concept Narration (N)">
           <span id="narrateIcon">🔊</span>
@@ -3413,20 +3785,33 @@ const server = http.createServer(async (req, res) => {
   }
 
   // =========================================================================
-  // GOOGLE DEEPMIND NEURAL AUDIO NARRATOR & GOLD KARAOKE ENGINE
+  // MULTI-ENGINE HUMAN AUDIO NARRATOR & GOLD KARAOKE ENGINE
   // =========================================================================
-  const GOOGLE_VOICES = {
-    Aoede: { name: 'Aoede', role: 'DeepMind Executive Storyteller', pitch: 1.05, rate: 0.96, gender: 'female' },
-    Charon: { name: 'Charon', role: 'Google Cloud Principal Architect', pitch: 0.82, rate: 0.94, gender: 'male' },
-    Puck: { name: 'Puck', role: 'Google Developer Advocate & Host', pitch: 1.14, rate: 1.02, gender: 'male' },
-    Kore: { name: 'Kore', role: 'Enterprise Security & Compliance Lead', pitch: 0.96, rate: 0.98, gender: 'female' },
-    Fenrir: { name: 'Fenrir', role: 'Google Senior VP Keynote Orator', pitch: 0.74, rate: 0.90, gender: 'male' }
+  const NARRATOR_VOICES = {
+    'journey-d': { name: 'David', role: 'Warm Human Architect', group: 'Google Journey', gender: 'male', rate: 1.0 },
+    'journey-f': { name: 'Fiona', role: 'Natural Storyteller', group: 'Google Journey', gender: 'female', rate: 1.0 },
+    'journey-o': { name: 'Olivia', role: 'Keynote Briefing', group: 'Google Journey', gender: 'female', rate: 1.0 },
+    'chirp-d': { name: 'Daniel', role: 'Tech Specialist', group: 'Google Chirp-HD', gender: 'male', rate: 1.0 },
+    'chirp-f': { name: 'Faith', role: 'Articulate Engineer', group: 'Google Chirp-HD', gender: 'female', rate: 1.0 },
+    'studio-q': { name: 'Quinn', role: 'Broadcast Baritone', group: 'Google Studio', gender: 'male', rate: 1.0 },
+    'studio-o': { name: 'Oprah', role: 'Studio Documentary', group: 'Google Studio', gender: 'female', rate: 1.0 },
+    'gemini-charon': { name: 'Charon', role: 'DeepMind Principal Architect', group: 'Google Gemini', gender: 'male', rate: 1.0 },
+    'gemini-aoede': { name: 'Aoede', role: 'DeepMind Executive Specialist', group: 'Google Gemini', gender: 'female', rate: 1.0 },
+    'gemini-puck': { name: 'Puck', role: 'DeepMind Solutions Advocate', group: 'Google Gemini', gender: 'male', rate: 1.0 },
+    'gemini-kore': { name: 'Kore', role: 'DeepMind Security Auditor', group: 'Google Gemini', gender: 'female', rate: 1.0 },
+    'gemini-fenrir': { name: 'Fenrir', role: 'DeepMind Strategic Keynote', group: 'Google Gemini', gender: 'male', rate: 1.0 },
+    'openai-alloy': { name: 'Alloy', role: 'OpenAI Omni Balanced', group: 'OpenAI Omni', gender: 'neutral', rate: 1.0 },
+    'openai-echo': { name: 'Echo', role: 'OpenAI Omni Resonance', group: 'OpenAI Omni', gender: 'male', rate: 1.0 },
+    'openai-nova': { name: 'Nova', role: 'OpenAI Omni Dynamic', group: 'OpenAI Omni', gender: 'female', rate: 1.0 },
+    'openai-onyx': { name: 'Onyx', role: 'OpenAI Omni Baritone', group: 'OpenAI Omni', gender: 'male', rate: 1.0 },
+    'browser-default': { name: 'Device Voice', role: 'Local Browser Synthesis', group: 'Browser Native', gender: 'neutral', rate: 1.0 }
   };
 
-  let activeVoiceKey = 'Aoede';
+  let activeVoiceKey = 'journey-d';
   let isNarratorSpeaking = false;
   let isAutoNarrating = false;
   let showKaraokeSubtitles = true;
+  let currentAudio = null;
   let currentUtterance = null;
   let karaokeWordSpans = [];
   let karaokeTimings = [];
@@ -3445,9 +3830,9 @@ const server = http.createServer(async (req, res) => {
 
   function changeNarratorVoice(voiceKey) {
     activeVoiceKey = voiceKey;
-    const v = GOOGLE_VOICES[voiceKey] || GOOGLE_VOICES.Aoede;
+    const v = NARRATOR_VOICES[voiceKey] || NARRATOR_VOICES['journey-d'];
     const badge = document.getElementById('karaokeVoiceName');
-    if (badge) badge.textContent = 'Google DeepMind • ' + v.name + ' (' + v.role.split(' ')[0] + ')';
+    if (badge) badge.textContent = (v.group || 'Google') + ' • ' + v.name + ' (' + v.role + ')';
     if (isNarratorSpeaking) {
       stopSlideNarration();
       playSlideNarration(currentSlideIndex, false);
@@ -3505,26 +3890,12 @@ const server = http.createServer(async (req, res) => {
     karaokeWordSpans = kt.querySelectorAll('.karaoke-word');
   }
 
-  function playSlideNarration(index, autoAdvanceAfter) {
-    initWebAudio();
-    stopSlideNarration();
-
-    const slide = activeSlideDeck[index];
-    if (!slide) return;
-
-    const narrationText = slide.narration || ('This view captures ' + slide.title + ' within the ' + (slide.groupTitle || 'system') + ' workflow.');
-    renderKaraokeText(narrationText);
-
-    if (!('speechSynthesis' in window)) {
-      console.warn('Speech synthesis not supported in this browser.');
-      return;
-    }
-
-    const vConfig = GOOGLE_VOICES[activeVoiceKey] || GOOGLE_VOICES.Aoede;
+  function playBrowserUtterance(narrationText, vConfig, autoAdvanceAfter) {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(narrationText);
     currentUtterance = utterance;
 
-    // Pick best matching system voice
     const voices = window.speechSynthesis.getVoices();
     if (voices.length > 0) {
       let matchedVoice = null;
@@ -3539,12 +3910,8 @@ const server = http.createServer(async (req, res) => {
       if (matchedVoice) utterance.voice = matchedVoice;
     }
 
-    utterance.pitch = vConfig.pitch;
-    utterance.rate = vConfig.rate;
-
-    // Estimate duration for karaoke
     const wordCount = splitNarrationWords(narrationText).length;
-    const estimatedDurationSec = Math.max(3.5, (wordCount / (145 * vConfig.rate)) * 60);
+    const estimatedDurationSec = Math.max(3.5, (wordCount / 145) * 60);
     karaokeTimings = computeWordTimings(narrationText, estimatedDurationSec);
 
     utterance.onstart = function() {
@@ -3557,7 +3924,6 @@ const server = http.createServer(async (req, res) => {
         document.getElementById('narrateIcon').textContent = '⏸️';
       }
 
-      // Smooth real-time word lighting timer
       clearInterval(karaokeTimer);
       karaokeTimer = setInterval(function() {
         if (!isNarratorSpeaking) return;
@@ -3572,27 +3938,22 @@ const server = http.createServer(async (req, res) => {
             activeIdx = i;
           }
         }
-
         karaokeWordSpans.forEach(function(span, idx) {
           span.classList.toggle('active', idx === activeIdx);
           span.classList.toggle('past', idx < activeIdx);
         });
-
         if (activeIdx >= 0 && karaokeWordSpans[activeIdx]) {
           karaokeWordSpans[activeIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-      }, 60);
+      }, 50);
     };
 
     utterance.onend = function() {
       cleanupNarrationState();
-      // Mark all words as completed
       karaokeWordSpans.forEach(function(span) {
         span.classList.remove('active');
         span.classList.add('past');
       });
-
-      // Auto advance to next slide if auto-narrate is on
       if ((isAutoNarrating || autoAdvanceAfter) && document.getElementById('slideshowModal').classList.contains('open')) {
         setTimeout(function() {
           if (document.getElementById('slideshowModal').classList.contains('open')) {
@@ -3609,11 +3970,162 @@ const server = http.createServer(async (req, res) => {
     window.speechSynthesis.speak(utterance);
   }
 
+  async function playSlideNarration(index, autoAdvanceAfter) {
+    initWebAudio();
+    stopSlideNarration();
+
+    const slide = activeSlideDeck[index];
+    if (!slide) return;
+
+    const narrationText = slide.narration || ('This view captures ' + slide.title + ' within the ' + (slide.groupTitle || 'system') + ' workflow.');
+    renderKaraokeText(narrationText);
+
+    const vConfig = NARRATOR_VOICES[activeVoiceKey] || NARRATOR_VOICES['journey-d'];
+    const badge = document.getElementById('karaokeVoiceName');
+    if (badge) badge.textContent = (vConfig.group || 'Google') + ' • ' + vConfig.name + ' (' + vConfig.role + ')';
+
+    const btn = document.getElementById('btnNarrateAudio');
+    if (btn) {
+      btn.classList.add('speaking');
+      document.getElementById('narrateLabel').textContent = 'Pause';
+      document.getElementById('narrateIcon').textContent = '⏸️';
+    }
+    isNarratorSpeaking = true;
+
+    // Check if user specifically requested browser local synthesis
+    if (vConfig.engine === 'browser-speech-synthesis') {
+      playBrowserUtterance(narrationText, vConfig, autoAdvanceAfter);
+      return;
+    }
+
+    // Call server API for true human neural audio stream
+    try {
+      const resp = await fetch('/api/narrate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slideIndex: index,
+          text: narrationText,
+          voiceId: activeVoiceKey
+        })
+      });
+
+      if (!resp.ok) throw new Error('API status ' + resp.status);
+      const data = await resp.json();
+
+      if (data.mode === 'browser_speech' || !data.audioUrl) {
+        playBrowserUtterance(narrationText, vConfig, autoAdvanceAfter);
+        return;
+      }
+
+      // Play High-Fidelity Audio Stream (Google Journey, Chirp-HD, Studio, Gemini, Omni)
+      const audio = new Audio(data.audioUrl);
+      currentAudio = audio;
+
+      audio.onloadedmetadata = function() {
+        const durationSec = audio.duration || 6.0;
+        karaokeTimings = computeWordTimings(narrationText, durationSec);
+      };
+
+      audio.onplay = function() {
+        isNarratorSpeaking = true;
+        narrationStartTime = Date.now();
+
+        clearInterval(karaokeTimer);
+        karaokeTimer = setInterval(function() {
+          if (!isNarratorSpeaking || !currentAudio) return;
+          const currentMs = currentAudio.currentTime * 1000;
+          let activeIdx = -1;
+          for (let i = 0; i < karaokeTimings.length; i++) {
+            if (currentMs >= karaokeTimings[i].start && currentMs < karaokeTimings[i].end) {
+              activeIdx = i;
+              break;
+            }
+            if (currentMs >= karaokeTimings[i].end) {
+              activeIdx = i;
+            }
+          }
+
+          karaokeWordSpans.forEach(function(span, idx) {
+            span.classList.toggle('active', idx === activeIdx);
+            span.classList.toggle('past', idx < activeIdx);
+          });
+
+          if (activeIdx >= 0 && karaokeWordSpans[activeIdx]) {
+            karaokeWordSpans[activeIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        }, 50);
+      };
+
+      audio.onended = function() {
+        cleanupNarrationState();
+        karaokeWordSpans.forEach(function(span) {
+          span.classList.remove('active');
+          span.classList.add('past');
+        });
+
+        if ((isAutoNarrating || autoAdvanceAfter) && document.getElementById('slideshowModal').classList.contains('open')) {
+          setTimeout(function() {
+            if (document.getElementById('slideshowModal').classList.contains('open')) {
+              nextSlide();
+            }
+          }, 1200);
+        }
+      };
+
+      audio.onerror = function() {
+        console.warn('Real audio stream error, falling back to device voice.');
+        playBrowserUtterance(narrationText, vConfig, autoAdvanceAfter);
+      };
+
+      await audio.play();
+    } catch (err) {
+      console.warn('Neural audio fetch failed, falling back to device voice:', err.message);
+      playBrowserUtterance(narrationText, vConfig, autoAdvanceAfter);
+    }
+  }
+
   function stopSlideNarration() {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
+    }
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
     cleanupNarrationState();
+  }
+
+  function toggleSlideNarration() {
+    if (isNarratorSpeaking) {
+      if (currentAudio) {
+        currentAudio.pause();
+        isNarratorSpeaking = false;
+        clearInterval(karaokeTimer);
+        const btn = document.getElementById('btnNarrateAudio');
+        if (btn) {
+          btn.classList.remove('speaking');
+          document.getElementById('narrateLabel').textContent = 'Resume';
+          document.getElementById('narrateIcon').textContent = '▶️';
+        }
+      } else {
+        stopSlideNarration();
+      }
+    } else {
+      if (currentAudio && currentAudio.paused && currentAudio.currentTime > 0) {
+        currentAudio.play();
+        isNarratorSpeaking = true;
+        const btn = document.getElementById('btnNarrateAudio');
+        if (btn) {
+          btn.classList.add('speaking');
+          document.getElementById('narrateLabel').textContent = 'Pause';
+          document.getElementById('narrateIcon').textContent = '⏸️';
+        }
+      } else {
+        playSlideNarration(currentSlideIndex, false);
+      }
+    }
   }
 
   function cleanupNarrationState() {
@@ -3840,7 +4352,7 @@ const server = http.createServer(async (req, res) => {
       toggleSubtitles();
     } else if (e.key === 'v' || e.key === 'V') {
       e.preventDefault();
-      const vKeys = Object.keys(GOOGLE_VOICES);
+      const vKeys = Object.keys(NARRATOR_VOICES);
       const nextIdx = (vKeys.indexOf(activeVoiceKey) + 1) % vKeys.length;
       const nextVoice = vKeys[nextIdx];
       const sel = document.getElementById('narratorVoiceSelect');

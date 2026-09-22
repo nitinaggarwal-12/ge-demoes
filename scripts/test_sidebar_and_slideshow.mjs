@@ -146,12 +146,12 @@ async function run() {
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '04_interactive_slideshow_view.png') });
     console.log('  Saved: 04_interactive_slideshow_view.png');
 
-    // Test Google DeepMind Audio Narrator & Gold Karaoke Subtitles
-    console.log('  Testing Google DeepMind Audio Narrator Controls...');
+    // Test Multi-Engine Human Audio Narrator & Gold Karaoke Subtitles
+    console.log('  Testing Multi-Engine Human Audio Narrator Controls...');
     const voiceOptions = await page.$$eval('#narratorVoiceSelect option', els => els.map(o => o.value));
-    console.log(`  Available Google Neural Voices: ${voiceOptions.join(', ')}`);
-    if (voiceOptions.length < 5 || !voiceOptions.includes('Aoede') || !voiceOptions.includes('Charon')) {
-      throw new Error(`Missing expected Google Neural voices (found ${voiceOptions.join(', ')})`);
+    console.log(`  Available Narrator Voice Engines (${voiceOptions.length} total): ${voiceOptions.join(', ')}`);
+    if (voiceOptions.length < 10 || !voiceOptions.includes('journey-d') || !voiceOptions.includes('chirp-d')) {
+      throw new Error(`Missing expected narrator voice options (found ${voiceOptions.join(', ')})`);
     }
 
     // Verify Karaoke Subtitles display natural concept explanation (not raw text)
@@ -163,19 +163,18 @@ async function run() {
       throw new Error('Karaoke text is either empty or reading file name instead of natural concept explanation');
     }
 
-    // Trigger Audio Narration
+    // Trigger Audio Narration with Google Journey David
+    await page.select('#narratorVoiceSelect', 'journey-d');
+    await sleep(500);
+    const journeyVoiceBadge = await page.$eval('#karaokeVoiceName', el => el.textContent.trim());
+    console.log(`  Selected Voice Badge: "${journeyVoiceBadge}"`);
+
     await page.click('#btnNarrateAudio');
-    await sleep(800);
+    await sleep(1000);
     const isSpeakingClass = await page.$eval('#btnNarrateAudio', el => el.classList.contains('speaking'));
     console.log(`  Audio Narrator Speaking Active: ${isSpeakingClass}`);
 
-    // Switch voice persona to Charon (Cloud Principal Architect)
-    await page.select('#narratorVoiceSelect', 'Charon');
-    await sleep(500);
-    const currentVoiceBadge = await page.$eval('#karaokeVoiceName', el => el.textContent.trim());
-    console.log(`  Updated Voice Badge: "${currentVoiceBadge}"`);
-
-    // Capture 07: Audio Narration with Live Gold Karaoke Subtitles
+    // Capture 07: Audio Narration with Live Gold Karaoke Subtitles & Google Journey Human Voice
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '07_audio_narration_gold_karaoke.png') });
     console.log('  Saved: 07_audio_narration_gold_karaoke.png');
 
