@@ -1,10 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { createRequire } from 'node:module';
-const require = createRequire(import.meta.url);
-const puppeteer = require('/Users/nitinagga/Documents/PromptCanvas/node_modules/puppeteer-core');
+import puppeteer from 'puppeteer';
 
-const ROOT = '/Users/nitinagga/Documents/Demoes-GE';
+const ROOT = process.cwd();
 const VEEVA_OUT = path.join(ROOT, 'screenshots', 'screenshots_veeva_connector');
 const SN_OUT = path.join(ROOT, 'screenshots', 'screenshots_servicenow_connector');
 
@@ -30,25 +28,30 @@ async function fetchLiveServiceNowIncidents() {
       }),
     });
     const tok = await tokRes.json();
-    const res = await fetch(
-      'https://gcpconnector2.service-now.com/api/now/table/incident?sysparm_limit=10&sysparm_fields=number,short_description,priority,state,sys_created_by,sys_updated_on',
-      {
-        headers: {
-          Authorization: `Bearer ${tok.access_token}`,
-          Accept: 'application/json',
-        },
+    if (tok && tok.access_token) {
+      const res = await fetch(
+        'https://gcpconnector2.service-now.com/api/now/table/incident?sysparm_limit=10&sysparm_fields=number,short_description,priority,state,sys_created_by,sys_updated_on',
+        {
+          headers: {
+            Authorization: `Bearer ${tok.access_token}`,
+            Accept: 'application/json',
+          },
+        }
+      );
+      const json = await res.json();
+      if (json && Array.isArray(json.result) && json.result.length > 0) {
+        console.log(`[LIVE ServiceNow] Retrieved ${json.result.length} live incident records from gcxxxxr2.service-now.com`);
+        return json.result.map((r) => ({
+          number: r.number,
+          short_description: r.short_description,
+          priority: r.priority,
+          state: r.state,
+          sys_created_by: maskEmail(r.sys_created_by),
+          sys_updated_on: r.sys_updated_on,
+        }));
       }
-    );
-    const json = await res.json();
-    console.log(`[LIVE ServiceNow] Retrieved ${json.result.length} live incident records from gcxxxxr2.service-now.com`);
-    return json.result.map((r) => ({
-      number: r.number,
-      short_description: r.short_description,
-      priority: r.priority,
-      state: r.state,
-      sys_created_by: maskEmail(r.sys_created_by),
-      sys_updated_on: r.sys_updated_on,
-    }));
+    }
+    throw new Error('Live instance returned no records or offline');
   } catch (err) {
     console.warn('[Fallback] Using cached live sample data:', err.message);
     const cached = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/servicenow_live_sample_data.json'), 'utf8'));
@@ -648,7 +651,19 @@ function renderTrueSideBySideImageComposite(leftImgPath, rightImgPath, leftLabel
 }
 
 async function run() {
-  const incidents = await fetchLiveServiceNowIncidents();
+  const scopeArg = (process.argv.find(a => a.startsWith('--scope='))?.split('=')[1] || 'all').toLowerCase();
+  const slideArg = (process.argv.find(a => a.startsWith('--slide='))?.split('=')[1] || '').toLowerCase();
+
+  console.log(`[Generator] Running ground-truth parity generator. Scope: ${scopeArg}, Slide: ${slideArg || 'all'}`);
+
+  const doVeeva = scopeArg === 'all' || scopeArg === 'veeva' || slideArg.includes('veeva') || slideArg.includes('11_') || slideArg.includes('12_') || slideArg.includes('13_veeva');
+  const doSN = scopeArg === 'all' || scopeArg === 'servicenow' || slideArg.includes('servicenow') || slideArg.includes('13_servicenow') || slideArg.includes('14_') || slideArg.includes('15_');
+
+  let incidents = [];
+  if (doSN) {
+    incidents = await fetchLiveServiceNowIncidents();
+  }
+
   const browser = await puppeteer.launch({
     executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
     headless: 'new',
@@ -664,43 +679,60 @@ async function run() {
     console.log('Saved 2x Retina screenshot:', outPath);
   }
 
-  const veevaUIPath = path.join(VEEVA_OUT, '11_veeva_live_ui_query_results.png');
-  const veevaGEPath = path.join(VEEVA_OUT, '12_ge_chat_matching_veeva_query_results.png');
-  const veevaSbsPath = path.join(VEEVA_OUT, '13_veeva_ui_vs_ge_chat_side_by_side_truth_comparison.png');
+  if (doVeeva) {
+    const veevaUIPath = path.join(VEEVA_OUT, '11_veeva_live_ui_query_results.png');
+    const veevaGEPath = path.join(VEEVA_OUT, '12_ge_chat_matching_veeva_query_results.png');
+    const veevaSbsPath = path.join(VEEVA_OUT, '13_veeva_ui_vs_ge_chat_side_by_side_truth_comparison.png');
 
-  await saveHtmlShot(renderAuthenticVeevaVaultUI(), veevaUIPath, 1600, 1050);
-  await saveHtmlShot(renderAuthenticGEChatForVeeva(), veevaGEPath, 1600, 1050);
-  await saveHtmlShot(
-    renderTrueSideBySideImageComposite(
-      veevaUIPath,
-      veevaGEPath,
-      'Veeva Vault UI (https://sbxxxxal.veevavault.com)',
-      'Gemini Enterprise Chat UI (Veeva MCP Connector)'
-    ),
-    veevaSbsPath,
-    2400,
-    860
-  );
+    if (!slideArg || slideArg.includes('11_veeva')) {
+      await saveHtmlShot(renderAuthenticVeevaVaultUI(), veevaUIPath, 1600, 1050);
+    }
+    if (!slideArg || slideArg.includes('12_ge_chat')) {
+      await saveHtmlShot(renderAuthenticGEChatForVeeva(), veevaGEPath, 1600, 1050);
+    }
+    if (!slideArg || slideArg.includes('13_veeva')) {
+      await saveHtmlShot(
+        renderTrueSideBySideImageComposite(
+          veevaUIPath,
+          veevaGEPath,
+          'Veeva Vault UI (https://sbxxxxal.veevavault.com)',
+          'Gemini Enterprise Chat UI (Veeva MCP Connector)'
+        ),
+        veevaSbsPath,
+        2400,
+        860
+      );
+    }
+  }
 
-  const snUIPath = path.join(SN_OUT, '13_servicenow_live_ui_query_results.png');
-  const snGEPath = path.join(SN_OUT, '14_ge_chat_matching_servicenow_query_results.png');
-  const snSbsPath = path.join(SN_OUT, '15_servicenow_ui_vs_ge_chat_side_by_side_truth_comparison.png');
+  if (doSN) {
+    const snUIPath = path.join(SN_OUT, '13_servicenow_live_ui_query_results.png');
+    const snGEPath = path.join(SN_OUT, '14_ge_chat_matching_servicenow_query_results.png');
+    const snSbsPath = path.join(SN_OUT, '15_servicenow_ui_vs_ge_chat_side_by_side_truth_comparison.png');
 
-  await saveHtmlShot(renderAuthenticServiceNowUI(incidents), snUIPath, 1600, 1050);
-  await saveHtmlShot(renderAuthenticGEChatForServiceNow(incidents), snGEPath, 1600, 1050);
-  await saveHtmlShot(
-    renderTrueSideBySideImageComposite(
-      snUIPath,
-      snGEPath,
-      'ServiceNow UI (https://gcxxxxr2.service-now.com)',
-      'Gemini Enterprise Chat UI (ServiceNow MCP Connector)'
-    ),
-    snSbsPath,
-    2400,
-    860
-  );
+    if (!slideArg || slideArg.includes('13_servicenow')) {
+      await saveHtmlShot(renderAuthenticServiceNowUI(incidents), snUIPath, 1600, 1050);
+    }
+    if (!slideArg || slideArg.includes('14_ge_chat')) {
+      await saveHtmlShot(renderAuthenticGEChatForServiceNow(incidents), snGEPath, 1600, 1050);
+    }
+    if (!slideArg || slideArg.includes('15_servicenow')) {
+      await saveHtmlShot(
+        renderTrueSideBySideImageComposite(
+          snUIPath,
+          snGEPath,
+          'ServiceNow UI (https://gcxxxxr2.service-now.com)',
+          'Gemini Enterprise Chat UI (ServiceNow MCP Connector)'
+        ),
+        snSbsPath,
+        2400,
+        860
+      );
+    }
+  }
 
   await browser.close();
+  console.log('[Generator] Generation complete.');
 }
 
 run();
