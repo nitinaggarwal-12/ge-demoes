@@ -40,9 +40,8 @@ Complete end-to-end reference implementation, setup automation, BYOMCP server, a
     ├── screenshots_argolis_console/              # Step-by-step Google Cloud Console & GE Chat configuration screenshots
     ├── screenshots_ge_app_and_console/           # Gemini Enterprise App & Cloud Console overview screenshots
     ├── screenshots_live_browser_auth/            # OAuth2 / SSO live authentication flow screenshots
-    ├── screenshots_byomcp_step1/                 # Mode 1: BYOMCP Cloud Run ServiceNow connector verification
-    ├── screenshots_mode2_1p_mcp_actions/         # Mode 2: 1P ServiceNow MCP Actions connector verification
-    └── screenshots_mode3_federated_and_ingestion/# Mode 3: Federated Search & Data Ingestion verification
+    ├── screenshots_servicenow_connector/         # Real ServiceNow Web UI vs GE Chat side-by-side ground truth screenshots
+    └── screenshots_veeva_connector/              # Real Veeva Vault Web UI vs GE Chat side-by-side ground truth screenshots
 ```
 
 ---
@@ -143,43 +142,23 @@ Querying ServiceNow CMDB configuration items and linked change/incident records 
 
 ---
 
-## Part 3: End-to-End Verification Screenshots Across All 3 Connector Modes
+## Part 3: Architecture & Verification Across All 3 Connector Modes
 
-### Mode 1 — BYOMCP Cloud Run ServiceNow Connector (`screenshots_byomcp_step1`)
+### Mode 1 — BYOMCP Cloud Run ServiceNow Connector
+- **Connector Mode**: `custom_mcp` (BYOMCP)
+- **Protocol**: Model Context Protocol (MCP) JSON-RPC 2.0 Streamable HTTP POST `/mcp`
+- **Authentication**: OAuth 2.0 Authorization Code flow with live token exchange (`/oauth_token.do`)
+- **Console Configuration**: Verified in [Step 1.8a Active BYOMCP ServiceNow Connector Detail](file:///Users/nitinagga/documents/demoes-ge/screenshots/screenshots_argolis_console/07_argolis_existing_byomcp_datastore_detail_config.png) and [Step 1.8e Gemini Enterprise App Configuration](file:///Users/nitinagga/documents/demoes-ge/screenshots/screenshots_argolis_console/08_argolis_gemini_enterprise_app_config_and_connected_datastores.png).
 
-![Mode 1 Step 1 — Target GE Instance & UCS Widget](./screenshots/screenshots_byomcp_step1/01_step1_target_ge_instance_ucs_widget.png)
+### Mode 2 — 1P ServiceNow MCP Actions Connector
+- **Connector Mode**: `ACTIONS` (`bap_tool_spec_version_id: "usf-v1"`)
+- **Action Catalog**: Discovers 1P ServiceNow Actions (`list_incidents`, `get_incident`, `list_problems`, `search_knowledge_articles`, `list_change_requests`)
+- **Console Configuration**: Verified in [Step 1.4a ServiceNow Connector Mode Selection](file:///Users/nitinagga/documents/demoes-ge/screenshots/screenshots_argolis_console/05_argolis_wizard_step2_servicenow_mode_and_auth_config.png) and [Step 1.7 Step 5 Entities to Search](file:///Users/nitinagga/documents/demoes-ge/screenshots/screenshots_argolis_console/11_argolis_wizard_step5_servicenow_entities_to_search.png).
 
-![Mode 1 Step 2 — BYOMCP OAuth & Configuration Verified](./screenshots/screenshots_byomcp_step1/02_step2_byomcp_oauth_and_config_verified.png)
-
-![Mode 1 Step 3 — MCP Initialize & Tools List](./screenshots/screenshots_byomcp_step1/03_step3_byomcp_initialize_and_tools_list.png)
-
-![Mode 1 Step 4 — Live Incident Query Results](./screenshots/screenshots_byomcp_step1/04_step4_byomcp_live_incident_query_results.png)
-
-![Mode 1 Step 5 — Live KB & Catalog Query Results](./screenshots/screenshots_byomcp_step1/05_step5_byomcp_live_kb_and_catalog_query_results.png)
-
-### Mode 2 — 1P ServiceNow MCP Actions Connector (`screenshots_mode2_1p_mcp_actions`)
-
-![Mode 2 Step 1 — MCP CLI & ACL Verification](./screenshots/screenshots_mode2_1p_mcp_actions/01_step1_blaze_run_mcp_cli_ota_acl_gate.png)
-
-![Mode 2 Step 2 — 1P ServiceNow v3 Registry Spec](./screenshots/screenshots_mode2_1p_mcp_actions/02_step2_1p_servicenow_v3_registry_spec.png)
-
-![Mode 2 Step 3 — 1P USF v1 Action Catalog Discovery](./screenshots/screenshots_mode2_1p_mcp_actions/03_step3_1p_usf_v1_action_catalog_discovery.png)
-
-![Mode 2 Step 4 — Action Execute: List Incidents & Problems](./screenshots/screenshots_mode2_1p_mcp_actions/04_step4_1p_action_execute_list_incidents_and_problems.png)
-
-![Mode 2 Step 5 — Action Execute: Search KB & Change Requests](./screenshots/screenshots_mode2_1p_mcp_actions/05_step5_1p_action_execute_search_kb_and_change_requests.png)
-
-### Mode 3 — Federated Search & Batch Data Ingestion (`screenshots_mode3_federated_and_ingestion`)
-
-![Mode 3 Step 1 — Federated vs Ingestion Registry Specs](./screenshots/screenshots_mode3_federated_and_ingestion/01_step1_mode3_federated_vs_ingestion_registry_specs.png)
-
-![Mode 3 Step 2 — Federated Realtime Search Execution](./screenshots/screenshots_mode3_federated_and_ingestion/02_step2_federated_realtime_search_execution.png)
-
-![Mode 3 Step 3 — Ingestion ACL Identity & User Sync](./screenshots/screenshots_mode3_federated_and_ingestion/03_step3_ingestion_acl_identity_and_user_sync.png)
-
-![Mode 3 Step 4 — Ingestion Structured Entities Batch Sync](./screenshots/screenshots_mode3_federated_and_ingestion/04_step4_ingestion_structured_entities_batch_sync.png)
-
-![Mode 3 Step 5 — Master 3-Mode Comparison & Summary](./screenshots/screenshots_mode3_federated_and_ingestion/05_step5_master_3_mode_comparison_and_summary.png)
+### Mode 3 — Federated Search & Batch Data Ingestion
+- **Connector Mode**: `FEDERATED` (zero-copy runtime fan-out) and `DATA_INGESTION` (indexed Vertex AI Search DataStore)
+- **Identity & ACLs**: Synchronizes user ACL identity mappings with ServiceNow user records (`sys_user`)
+- **Console Configuration**: Verified in [Step 1.6a Step 3 Destinations After Connection Test](file:///Users/nitinagga/documents/demoes-ge/screenshots/screenshots_argolis_console/10_argolis_wizard_step3_servicenow_connection_tested_destinations.png) and [Step 1.6b Destinations Configuration Expanded](file:///Users/nitinagga/documents/demoes-ge/screenshots/screenshots_argolis_console/10b_argolis_wizard_step3_destinations_expanded.png).
 
 ---
 
@@ -223,10 +202,7 @@ npm run setup:mode3-federated
 
 Implements the production `//cloud/ml/discoveryengine/data_connector/registry/connectors/veeva_vault/veeva_vault_v1_0.textproto` specification (`source_target: "projects/$0/locations/global/providers/veeva/connectors/veevavault/versions/2"`), including 2-step Federated OIDC → Veeva Session Exchange (`https://login.veevavault.com/auth/oauth/session/{source:oauth_profile_id}`) and all 8 Veeva Vault MCP Document Actions (`search_documents`, `get_document`, `get_document_type`, `get_document_subtype`, `get_document_versions`, `get_document_version`, `get_document_renditions`, `download_document_file`).
 
-### Step 4.1 — Selecting the Veeva Vault Connector in Google Cloud Console
-![Step 4.1 — Create Data Store Catalog Selecting Veeva Vault](./screenshots/screenshots_veeva_connector/01_veeva_console_create_datastore_catalog.png)
-
-### Step 4.2 — Populating All 8 Veeva Vault OIDC & Session Exchange Parameters (`first2+xxxx+last2`) & Clicking `Verify Auth`
+### Configuration Parameters (`first2+xxxx+last2` masked)
 - **Vault DNS**: `phxxxx04.veevavault.com`
 - **Vault API URL**: `https://phxxxx04.veevavault.com`
 - **Okta Domain**: `dexxxx89.okta.com`
@@ -234,32 +210,17 @@ Implements the production `//cloud/ml/discoveryengine/data_connector/registry/co
 - **Veeva OIDC Profile ID**: `oaxxxx9c`
 - **Client ID**: `0oxxxx7d`
 - **Federated Session Exchange Endpoint**: `https://login.veevavault.com/auth/oauth/session/oaxxxx9c`
+- **Supported MCP Actions**:
+  1. `search_documents`: Executes live VQL queries (`SELECT id, name, type__v... FROM documents WHERE ...`)
+  2. `get_document`: Retrieves metadata and lifecycle state for specific controlled documents
+  3. `get_document_type`: Inspects document type definitions
+  4. `get_document_subtype`: Inspects document subtype metadata
+  5. `get_document_versions`: Lists major and minor versions of regulated content
+  6. `get_document_version`: Retrieves specific version metadata
+  7. `get_document_renditions`: Lists rendition formats (viewable PDF, etc.)
+  8. `download_document_file`: Fetches document artifact content
 
-![Step 4.2 — Veeva Vault Authentication & Federated Session Exchange Configuration](./screenshots/screenshots_veeva_connector/02_veeva_wizard_step2_auth_and_federated_oidc_filled.png)
-
-### Step 4.3 — Selecting Veeva Vault Entities & All 8 MCP Document Actions
-![Step 4.3 — Veeva Vault Entities & 8 MCP Actions Enabled](./screenshots/screenshots_veeva_connector/03_veeva_wizard_step3_entities_and_actions_selected.png)
-
-### Step 4.4 — Active Veeva Vault MCP Connector Detail & Re-authentication Drawer
-![Step 4.4 — Active Veeva Vault MCP Connector Detail & Update Authentication](./screenshots/screenshots_veeva_connector/04_veeva_byomcp_connector_active_detail_and_reauth.png)
-
-### Step 4.5 — Selecting the Veeva Vault MCP Connector in Gemini Enterprise (`GE`) Chat
-![Step 4.5 — Selecting Veeva Vault MCP Connector in GE Chat Sources Menu](./screenshots/screenshots_veeva_connector/05_ge_chat_sources_menu_veeva_connector_selected.png)
-
-### Step 4.6 — Submitting a Live Veeva Vault Clinical & Regulatory Query in GE Chat
-![Step 4.6 — Veeva Vault Query Prompt Entered in Main Composer](./screenshots/screenshots_veeva_connector/06_ge_chat_veeva_connector_prompt_ready.png)
-
-### Step 4.7 — Reviewing & Confirming Live Veeva Vault MCP Action Execution
-![Step 4.7 — Veeva Vault Connector Tool Invocation Review Card](./screenshots/screenshots_veeva_connector/07_ge_chat_veeva_connector_tool_call_state.png)
-
-### Step 4.8 — Live Veeva Vault Document Retrieval Response (`VV-DOC-004819` & `VV-DOC-004892`)
-![Step 4.8 — Live Veeva Vault Controlled Document Retrieval Response](./screenshots/screenshots_veeva_connector/08_ge_chat_veeva_connector_live_document_response.png)
-
-### Step 4.9 — Live 2-Step OIDC → Veeva Session Exchange Verification (`200 OK`)
-![Step 4.9 — Live OIDC Token & Veeva Federated Session Exchange Verification](./screenshots/screenshots_veeva_connector/09_veeva_mcp_step1_registry_and_oidc_session_exchange.png)
-
-### Step 4.10 — Live Execution Verification Across All 8 Veeva Vault MCP Tools
-![Step 4.10 — Live Execution Across All 8 Veeva Vault MCP Document Actions](./screenshots/screenshots_veeva_connector/10_veeva_mcp_step2_live_vql_and_8_document_tools_verified.png)
+Live ground-truth verification screenshots for Veeva Vault are documented below in [Section 2: Veeva Vault MCP Connector Ground Truth](#2-veeva-vault-mcp-connector--side-by-side-ground-truth-screenshots).
 
 ---
 

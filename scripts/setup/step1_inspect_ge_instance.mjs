@@ -2,12 +2,15 @@ import puppeteer from 'puppeteer';
 import fs from 'fs';
 import path from 'path';
 
-const OUT_DIR = path.resolve('scratch/screenshots_byomcp_step1');
+const OUT_DIR = path.resolve('scratch');
 fs.mkdirSync(OUT_DIR, { recursive: true });
+
+const CHROME_PATH = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
 async function main() {
   const userDataDir = '/tmp/chrome_profile_ge_test';
   const browser = await puppeteer.launch({
+    executablePath: CHROME_PATH,
     headless: 'new',
     userDataDir,
     args: [
