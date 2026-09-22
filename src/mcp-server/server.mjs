@@ -2459,41 +2459,206 @@ function compileSSML(rawText) {
     margin: 6px 0;
   }
 
-  /* Left Sidebar: Logical Organization by Projects */
-  .sidebar-project-group {
-    margin-bottom: 18px;
+  /* Left Sidebar: Collapsible Projects & Hierarchical Tree Navigation */
+  .sidebar-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
   }
-  .sidebar-project-header {
+  .app-sidebar.collapsed .sidebar-section-header {
+    display: none;
+  }
+  .sidebar-project-node {
+    margin-bottom: 6px;
+    border-radius: 8px;
+    transition: background 0.15s ease;
+  }
+  .project-node-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 4px 12px 6px;
-  }
-  .app-sidebar.collapsed .sidebar-project-header {
-    display: none;
-  }
-  .project-pill {
-    font-size: 9px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    background: rgba(26, 115, 232, 0.15);
-    color: var(--accent-light);
-    padding: 2px 6px;
-    border-radius: 4px;
-  }
-  [data-theme="light"] .project-pill {
-    background: #e8f0fe;
-    color: #1a73e8;
-  }
-  .project-name {
-    font-family: var(--font-mono);
-    font-size: 11px;
+    padding: 7px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s ease;
+    color: var(--text);
     font-weight: 600;
+    font-size: 12.5px;
+  }
+  .project-node-header:hover {
+    background: rgba(138, 180, 248, 0.08);
+    color: var(--accent-light);
+  }
+  .project-node-header.active {
+    color: var(--accent-light);
+  }
+  .project-chevron-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    font-size: 10px;
     color: var(--muted);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+  }
+  .project-chevron-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  .sidebar-project-node.collapsed .project-chevron-btn {
+    transform: rotate(-90deg);
+  }
+  .project-node-icon {
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .project-node-title {
+    flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-size: 12.5px;
+  }
+  .app-sidebar.collapsed .project-chevron-btn,
+  .app-sidebar.collapsed .project-node-title,
+  .app-sidebar.collapsed .project-pill,
+  .app-sidebar.collapsed .sidebar-submenu {
+    display: none !important;
+  }
+
+  /* Submenu Tree Container */
+  .sidebar-submenu {
+    overflow: hidden;
+    transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+    max-height: 480px;
+    opacity: 1;
+    margin-left: 12px;
+    padding-left: 8px;
+    border-left: 1.5px solid rgba(255, 255, 255, 0.08);
+  }
+  [data-theme="light"] .sidebar-submenu {
+    border-left: 1.5px solid rgba(0, 0, 0, 0.1);
+  }
+  .sidebar-project-node.collapsed .sidebar-submenu {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  /* Submenu Items (Level 1) */
+  .sub-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    margin-bottom: 2px;
+  }
+  .sub-nav-item:hover {
+    background: rgba(138, 180, 248, 0.08);
+    color: var(--accent-light);
+  }
+  .sub-nav-item.active {
+    background: rgba(26, 115, 232, 0.15);
+    color: var(--accent-light);
+    font-weight: 600;
+  }
+  [data-theme="light"] .sub-nav-item.active {
+    background: #e8f0fe;
+    color: #1a73e8;
+  }
+  .sub-nav-icon {
+    font-size: 14px;
+    width: 18px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .sub-nav-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sub-nav-count {
+    font-size: 10.5px;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 1px 6px;
+    border-radius: 10px;
+    color: var(--muted);
+  }
+  [data-theme="light"] .sub-nav-count {
+    background: #f1f3f4;
+    color: #5f6368;
+  }
+
+  /* Nested Asset Sub-Items (Level 2) */
+  .asset-sub-menu {
+    overflow: hidden;
+    transition: max-height 0.22s ease, opacity 0.2s ease;
+    max-height: 260px;
+    opacity: 1;
+    margin-left: 14px;
+    padding-left: 6px;
+    border-left: 1px dashed rgba(255, 255, 255, 0.1);
+  }
+  [data-theme="light"] .asset-sub-menu {
+    border-left: 1px dashed rgba(0, 0, 0, 0.12);
+  }
+  .asset-sub-menu.collapsed {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .asset-sub-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-size: 11.5px;
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    margin-bottom: 2px;
+  }
+  .asset-sub-item:hover {
+    background: rgba(138, 180, 248, 0.06);
+    color: var(--text);
+  }
+  .asset-sub-item.active {
+    color: var(--accent-light);
+    font-weight: 600;
+  }
+  .asset-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex-shrink: 0;
+  }
+  .asset-sub-item:hover .asset-dot,
+  .asset-sub-item.active .asset-dot {
+    background: var(--accent-light);
   }
   .sidebar-nav-tag {
     font-size: 9.5px;
@@ -3551,7 +3716,7 @@ function compileSSML(rawText) {
     border-radius: 12px;
     white-space: nowrap;
     flex-shrink: 0;
-    max-width: 240px;
+    max-width: 170px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -3563,18 +3728,12 @@ function compileSSML(rawText) {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    min-width: 0;
-    flex: 0 1 auto;
+    min-width: 180px;
+    max-width: 500px;
+    flex: 1 1 auto;
   }
   .slideshow-file-tag {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex-shrink: 1;
-    max-width: 180px;
+    display: none;
   }
   .slideshow-asset-badge {
     background: rgba(255, 255, 255, 0.08);
@@ -3587,7 +3746,7 @@ function compileSSML(rawText) {
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
-    max-width: 180px;
+    max-width: 160px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -4297,149 +4456,154 @@ function compileSSML(rawText) {
 
     <div class="sidebar-content">
       <!-- ======================================================== -->
+      <!-- TOP-LEVEL SECTION: PROJECTS                              -->
+      <!-- ======================================================== -->
+      <div class="sidebar-section-header">
+        <span>PROJECTS</span>
+        <span style="font-size:10px; font-weight:600; color:var(--muted);">3 CONNECTORS</span>
+      </div>
+
+      <!-- ======================================================== -->
       <!-- PROJECT 1: ServiceNow MCP Connector                      -->
       <!-- ======================================================== -->
-      <div class="sidebar-project-group" id="projGroup-servicenow">
-        <div class="sidebar-project-header" onclick="selectProjectView('servicenow', 'tab-servicenow')" style="cursor:pointer;" title="Switch to ServiceNow MCP Connector project">
-          <span class="project-pill">PROJECT</span>
-          <span class="project-name">ServiceNow MCP Connector</span>
+      <div class="sidebar-project-node" id="projNode-servicenow">
+        <div class="project-node-header" onclick="toggleProjectNode('servicenow')">
+          <span class="project-chevron-btn" id="chev-servicenow">▼</span>
+          <span class="project-node-icon">⚡</span>
+          <span class="project-node-title">ServiceNow MCP</span>
+          <span class="sidebar-nav-tag" style="margin-left:auto;">Live MCP</span>
         </div>
-        <ul class="sidebar-nav-list">
-          <li>
-            <a class="sidebar-nav-item active" id="sideLink-servicenow" onclick="selectProjectView('servicenow', 'tab-servicenow')">
-              <span class="sidebar-nav-icon">⚡</span>
-              <span class="sidebar-nav-label">Live MCP Workbench</span>
-              <span class="sidebar-nav-tag">Live MCP</span>
+        <div class="sidebar-submenu" id="submenu-servicenow">
+          <a class="sub-nav-item active" id="sideLink-servicenow" onclick="selectProjectView('servicenow', 'tab-servicenow')">
+            <span class="sub-nav-icon">⚡</span>
+            <span class="sub-nav-label">Live Workbench</span>
+            <span class="sub-nav-count">5 tools</span>
+          </a>
+          <div class="sub-nav-item" id="sideLink-servicenow-assets" onclick="toggleAssetSubmenu('servicenow', event)">
+            <span class="sub-nav-icon">🖼️</span>
+            <span class="sub-nav-label" onclick="filterGalleryByProject('servicenow'); event.stopPropagation();">All Assets</span>
+            <span class="sub-nav-count" onclick="filterGalleryByProject('servicenow'); event.stopPropagation();">50</span>
+            <span class="project-chevron-btn" id="chev-assets-servicenow" style="font-size:8px; margin-left:2px;">▼</span>
+          </div>
+          <div class="asset-sub-menu" id="assetMenu-servicenow">
+            <a class="asset-sub-item" id="sideLink-ge-chat" onclick="selectProjectView('servicenow', 'tab-gallery', 'ge-chat')">
+              <span class="asset-dot"></span>
+              <span class="sub-nav-label">Gemini Enterprise Chat</span>
+              <span class="sub-nav-count">19</span>
             </a>
-          </li>
-          <li>
-            <a class="sidebar-nav-item" id="sideLink-ge-chat" onclick="selectProjectView('servicenow', 'tab-gallery', 'ge-chat')">
-              <span class="sidebar-nav-icon">💬</span>
-              <span class="sidebar-nav-label">Gemini Enterprise Chat</span>
-              <span class="sidebar-nav-badge">19</span>
+            <a class="asset-sub-item" id="sideLink-ground-truth" onclick="selectProjectView('servicenow', 'tab-gallery', 'ground-truth')">
+              <span class="asset-dot"></span>
+              <span class="sub-nav-label">Ground-Truth Parity</span>
+              <span class="sub-nav-count">7</span>
             </a>
-          </li>
-          <li>
-            <a class="sidebar-nav-item" id="sideLink-ground-truth" onclick="selectProjectView('servicenow', 'tab-gallery', 'ground-truth')">
-              <span class="sidebar-nav-icon">⚖️</span>
-              <span class="sidebar-nav-label">Ground-Truth Parity</span>
-              <span class="sidebar-nav-badge">7</span>
+            <a class="asset-sub-item" id="sideLink-gcp-wizard" onclick="selectProjectView('servicenow', 'tab-gallery', 'gcp-wizard')">
+              <span class="asset-dot"></span>
+              <span class="sub-nav-label">GCP Console Wizard</span>
+              <span class="sub-nav-count">20</span>
             </a>
-          </li>
-          <li>
-            <a class="sidebar-nav-item" id="sideLink-gcp-wizard" onclick="selectProjectView('servicenow', 'tab-gallery', 'gcp-wizard')">
-              <span class="sidebar-nav-icon">🛠️</span>
-              <span class="sidebar-nav-label">GCP Console Wizard</span>
-              <span class="sidebar-nav-badge">20</span>
+            <a class="asset-sub-item" id="sideLink-byomcp-setup" onclick="selectProjectView('servicenow', 'tab-gallery', 'byomcp-setup')">
+              <span class="asset-dot"></span>
+              <span class="sub-nav-label">BYOMCP Setup &amp; Auth</span>
+              <span class="sub-nav-count">4</span>
             </a>
-          </li>
-          <li>
-            <a class="sidebar-nav-item" id="sideLink-byomcp-setup" onclick="selectProjectView('servicenow', 'tab-gallery', 'byomcp-setup')">
-              <span class="sidebar-nav-icon">🔌</span>
-              <span class="sidebar-nav-label">BYOMCP Setup &amp; Auth</span>
-              <span class="sidebar-nav-badge">4</span>
-            </a>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
 
       <!-- ======================================================== -->
       <!-- PROJECT 2: Veeva MCP Connector                           -->
       <!-- ======================================================== -->
-      <div class="sidebar-project-group" id="projGroup-veeva">
-        <div class="sidebar-project-header" onclick="selectProjectView('veeva', 'tab-veeva')" style="cursor:pointer;" title="Switch to Veeva MCP Connector project">
-          <span class="project-pill">PROJECT</span>
-          <span class="project-name">Veeva MCP Connector</span>
+      <div class="sidebar-project-node" id="projNode-veeva">
+        <div class="project-node-header" onclick="toggleProjectNode('veeva')">
+          <span class="project-chevron-btn" id="chev-veeva">▼</span>
+          <span class="project-node-icon">🧪</span>
+          <span class="project-node-title">Veeva MCP</span>
+          <span class="sidebar-nav-tag" style="margin-left:auto;">21 CFR Part 11</span>
         </div>
-        <ul class="sidebar-nav-list">
-          <li>
-            <a class="sidebar-nav-item" id="sideLink-veeva" onclick="selectProjectView('veeva', 'tab-veeva')">
-              <span class="sidebar-nav-icon">🧪</span>
-              <span class="sidebar-nav-label">Live Veeva Workbench</span>
-              <span class="sidebar-nav-tag">21 CFR Part 11</span>
+        <div class="sidebar-submenu" id="submenu-veeva">
+          <a class="sub-nav-item" id="sideLink-veeva" onclick="selectProjectView('veeva', 'tab-veeva')">
+            <span class="sub-nav-icon">🧪</span>
+            <span class="sub-nav-label">Live Workbench</span>
+            <span class="sub-nav-count">3 tools</span>
+          </a>
+          <div class="sub-nav-item" id="sideLink-veeva-assets" onclick="toggleAssetSubmenu('veeva', event)">
+            <span class="sub-nav-icon">🖼️</span>
+            <span class="sub-nav-label" onclick="filterGalleryByProject('veeva'); event.stopPropagation();">All Assets</span>
+            <span class="sub-nav-count" onclick="filterGalleryByProject('veeva'); event.stopPropagation();">10</span>
+            <span class="project-chevron-btn" id="chev-assets-veeva" style="font-size:8px; margin-left:2px;">▼</span>
+          </div>
+          <div class="asset-sub-menu" id="assetMenu-veeva">
+            <a class="asset-sub-item" id="sideLink-veeva-parity" onclick="selectProjectView('veeva', 'tab-gallery', 'ground-truth')">
+              <span class="asset-dot"></span>
+              <span class="sub-nav-label">Clinical &amp; Reg Parity</span>
+              <span class="sub-nav-count">3</span>
             </a>
-          </li>
-          <li>
-            <a class="sidebar-nav-item" id="sideLink-veeva-parity" onclick="selectProjectView('veeva', 'tab-gallery', 'ground-truth')">
-              <span class="sidebar-nav-icon">⚖️</span>
-              <span class="sidebar-nav-label">Clinical &amp; Reg Parity</span>
-              <span class="sidebar-nav-badge">3</span>
+            <a class="asset-sub-item" id="sideLink-veeva-gxp" onclick="selectProjectView('veeva', 'tab-veeva', 'gxp')">
+              <span class="asset-dot"></span>
+              <span class="sub-nav-label">GxP Vault Governance</span>
+              <span class="sub-nav-count">Audit</span>
             </a>
-          </li>
-          <li>
-            <a class="sidebar-nav-item" id="sideLink-veeva-gxp" onclick="selectProjectView('veeva', 'tab-veeva', 'gxp')">
-              <span class="sidebar-nav-icon">📜</span>
-              <span class="sidebar-nav-label">GxP Vault Governance</span>
-              <span class="sidebar-nav-badge">Audit</span>
-            </a>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
 
       <!-- ======================================================== -->
       <!-- PROJECT 3: Microsoft Unified Connector                   -->
       <!-- ======================================================== -->
-      <div class="sidebar-project-group" id="projGroup-microsoft">
-        <div class="sidebar-project-header" onclick="selectProjectView('microsoft', 'tab-microsoft')" style="cursor:pointer;" title="Switch to Microsoft Unified Connector project">
-          <span class="project-pill">PROJECT</span>
-          <span class="project-name">Microsoft Unified Connector</span>
+      <div class="sidebar-project-node" id="projNode-microsoft">
+        <div class="project-node-header" onclick="toggleProjectNode('microsoft')">
+          <span class="project-chevron-btn" id="chev-microsoft">▼</span>
+          <span class="project-node-icon">🏢</span>
+          <span class="project-node-title">Microsoft Unified</span>
+          <span class="sidebar-nav-tag" style="margin-left:auto;">Graph v1.0</span>
         </div>
-        <ul class="sidebar-nav-list">
-          <li>
-            <a class="sidebar-nav-item" id="sideLink-microsoft" onclick="selectProjectView('microsoft', 'tab-microsoft')">
-              <span class="sidebar-nav-icon">🏢</span>
-              <span class="sidebar-nav-label">Live M365 Workbench</span>
-              <span class="sidebar-nav-tag">Graph v1.0</span>
+        <div class="sidebar-submenu" id="submenu-microsoft">
+          <a class="sub-nav-item" id="sideLink-microsoft" onclick="selectProjectView('microsoft', 'tab-microsoft')">
+            <span class="sub-nav-icon">🏢</span>
+            <span class="sub-nav-label">Live M365 Workbench</span>
+            <span class="sub-nav-count">4 tools</span>
+          </a>
+          <div class="sub-nav-item" id="sideLink-microsoft-assets" onclick="toggleAssetSubmenu('microsoft', event)">
+            <span class="sub-nav-icon">🖼️</span>
+            <span class="sub-nav-label" onclick="filterGalleryByProject('microsoft'); event.stopPropagation();">All Assets</span>
+            <span class="sub-nav-count" onclick="filterGalleryByProject('microsoft'); event.stopPropagation();">5</span>
+            <span class="project-chevron-btn" id="chev-assets-microsoft" style="font-size:8px; margin-left:2px;">▼</span>
+          </div>
+          <div class="asset-sub-menu" id="assetMenu-microsoft">
+            <a class="asset-sub-item" id="sideLink-ms-sharepoint" onclick="selectProjectView('microsoft', 'tab-microsoft', 'sharepoint')">
+              <span class="asset-dot"></span>
+              <span class="sub-nav-label">SharePoint &amp; OneDrive</span>
+              <span class="sub-nav-count">Docs</span>
             </a>
-          </li>
-          <li>
-            <a class="sidebar-nav-item" id="sideLink-ms-sharepoint" onclick="selectProjectView('microsoft', 'tab-microsoft', 'sharepoint')">
-              <span class="sidebar-nav-icon">📂</span>
-              <span class="sidebar-nav-label">SharePoint &amp; OneDrive</span>
-              <span class="sidebar-nav-badge">Docs</span>
+            <a class="asset-sub-item" id="sideLink-ms-teams" onclick="selectProjectView('microsoft', 'tab-microsoft', 'teams')">
+              <span class="asset-dot"></span>
+              <span class="sub-nav-label">Teams &amp; Outlook</span>
+              <span class="sub-nav-count">Chat</span>
             </a>
-          </li>
-          <li>
-            <a class="sidebar-nav-item" id="sideLink-ms-teams" onclick="selectProjectView('microsoft', 'tab-microsoft', 'teams')">
-              <span class="sidebar-nav-icon">💬</span>
-              <span class="sidebar-nav-label">Teams &amp; Outlook</span>
-              <span class="sidebar-nav-badge">Chat</span>
+            <a class="asset-sub-item" id="sideLink-ms-entra" onclick="selectProjectView('microsoft', 'tab-oauth')">
+              <span class="asset-dot"></span>
+              <span class="sub-nav-label">Entra ID SSO &amp; Auth</span>
+              <span class="sub-nav-count">OAuth</span>
             </a>
-          </li>
-          <li>
-            <a class="sidebar-nav-item" id="sideLink-ms-entra" onclick="selectProjectView('microsoft', 'tab-oauth')">
-              <span class="sidebar-nav-icon">🛡️</span>
-              <span class="sidebar-nav-label">Entra ID SSO &amp; Auth</span>
-              <span class="sidebar-nav-badge">OAuth</span>
-            </a>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
 
       <!-- ======================================================== -->
-      <!-- CROSS-PROJECT SUITE (HUB)                                -->
+      <!-- TOP-LEVEL SECTION: ENTERPRISE HUB                        -->
       <!-- ======================================================== -->
-      <div class="sidebar-project-group" id="projGroup-hub">
-        <div class="sidebar-project-header" onclick="selectProjectView('all', 'tab-gallery')" style="cursor:pointer;" title="Switch to Unified Hub view">
-          <span class="project-pill" style="background:rgba(66,133,244,0.15); color:var(--accent-light);">HUB</span>
-          <span class="project-name">Enterprise Suite</span>
-        </div>
-        <ul class="sidebar-nav-list">
-          <li>
-            <a class="sidebar-nav-item" id="sideLink-gallery" onclick="selectProjectView('all', 'tab-gallery')">
-              <span class="sidebar-nav-icon">🖼️</span>
-              <span class="sidebar-nav-label">Visual Proof Gallery</span>
-              <span class="sidebar-nav-badge">${totalScreenshots}</span>
-            </a>
-          </li>
-          <li>
-            <a class="sidebar-nav-item" id="sideLink-oauth" onclick="switchTab('tab-oauth')">
-              <span class="sidebar-nav-icon">📜</span>
-              <span class="sidebar-nav-label">OAuth &amp; Protocol Specs</span>
-            </a>
-          </li>
-        </ul>
+      <div class="sidebar-section-header" style="margin-top: 14px;">
+        <span>ENTERPRISE HUB</span>
       </div>
+      <a class="sidebar-nav-item" id="sideLink-gallery" onclick="selectProjectView('all', 'tab-gallery')" style="margin-left:6px; margin-bottom:4px;">
+        <span class="sidebar-nav-icon">🖼️</span>
+        <span class="sidebar-nav-label">Visual Proof Gallery</span>
+        <span class="sidebar-nav-badge">${totalScreenshots}</span>
+      </a>
+      <a class="sidebar-nav-item" id="sideLink-oauth" onclick="switchTab('tab-oauth')" style="margin-left:6px;">
+        <span class="sidebar-nav-icon">📜</span>
+        <span class="sidebar-nav-label">OAuth &amp; Protocol Specs</span>
+      </a>
     </div>
     <!-- Sidebar Action Deck Buttons -->
     <div class="sidebar-actions">
@@ -5492,7 +5656,7 @@ function compileSSML(rawText) {
     if (updateUrl === undefined) updateUrl = true;
     document.querySelectorAll('.view-tab').forEach(function(el) { el.classList.remove('active'); });
     document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
-    document.querySelectorAll('.sidebar-nav-item').forEach(function(el) { el.classList.remove('active'); });
+    document.querySelectorAll('.sidebar-nav-item, .sub-nav-item, .asset-sub-item').forEach(function(el) { el.classList.remove('active'); });
 
     const tabEl = document.getElementById(tabId);
     if (tabEl) tabEl.classList.add('active');
@@ -5517,6 +5681,9 @@ function compileSSML(rawText) {
         const b = document.getElementById('badge-' + pid);
         if (b) b.style.display = pid === inferredProject ? 'inline-block' : 'none';
       });
+      // Expand active project node
+      const projNode = document.getElementById('projNode-' + inferredProject);
+      if (projNode) projNode.classList.remove('collapsed');
     }
 
     if (updateUrl) {
@@ -6620,6 +6787,79 @@ function compileSSML(rawText) {
     }
   });
 
+  function toggleProjectNode(projectId, e) {
+    if (e) e.stopPropagation();
+    const node = document.getElementById('projNode-' + projectId);
+    if (!node) return;
+    node.classList.toggle('collapsed');
+  }
+
+  function toggleAssetSubmenu(projectId, e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('assetMenu-' + projectId);
+    const chev = document.getElementById('chev-assets-' + projectId);
+    if (!menu) return;
+    const isCollapsed = menu.classList.toggle('collapsed');
+    if (chev) {
+      chev.style.transform = isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)';
+    }
+  }
+
+  function filterGalleryByProject(projectId) {
+    currentProject = projectId;
+    const nameEl = document.getElementById('currentProjectName');
+    if (nameEl) {
+      nameEl.textContent = projectLabels[projectId] || projectId;
+    }
+
+    // Switch to gallery tab
+    switchTab('tab-gallery', false);
+
+    // Expand this project node
+    const node = document.getElementById('projNode-' + projectId);
+    if (node) node.classList.remove('collapsed');
+    const assetMenu = document.getElementById('assetMenu-' + projectId);
+    if (assetMenu) assetMenu.classList.remove('collapsed');
+    const chev = document.getElementById('chev-assets-' + projectId);
+    if (chev) chev.style.transform = 'rotate(0deg)';
+
+    // Remove active from all sidebar items and set active on the project's All Assets link
+    document.querySelectorAll('.sidebar-nav-item, .sub-nav-item, .asset-sub-item').forEach(function(el) {
+      el.classList.remove('active');
+    });
+    const assetLink = document.getElementById('sideLink-' + projectId + '-assets');
+    if (assetLink) assetLink.classList.add('active');
+
+    // Filter cards in gallery by project
+    if (projectId === 'servicenow') {
+      document.querySelectorAll('.workflow-group-card').forEach(function(card) {
+        const gid = card.getAttribute('data-group-id');
+        card.style.display = (gid !== 'veeva-gxp') ? 'block' : 'none';
+      });
+      const firstSec = document.getElementById('workflow-ge-chat') || document.querySelector('.workflow-group-card');
+      if (firstSec) firstSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (projectId === 'veeva') {
+      document.querySelectorAll('.workflow-group-card').forEach(function(card) {
+        const gid = card.getAttribute('data-group-id');
+        card.style.display = (gid === 'ground-truth' || gid === 'live-auth') ? 'block' : 'none';
+      });
+      const gtSec = document.getElementById('workflow-ground-truth');
+      if (gtSec) gtSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (projectId === 'microsoft') {
+      document.querySelectorAll('.workflow-group-card').forEach(function(card) {
+        const gid = card.getAttribute('data-group-id');
+        card.style.display = (gid === 'ge-chat' || gid === 'agent-studio' || gid === 'live-auth') ? 'block' : 'none';
+      });
+      const msSec = document.getElementById('workflow-ge-chat');
+      if (msSec) msSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      filterGroupView('ALL', false);
+    }
+
+    updateUrlState({ project: projectId, tab: 'gallery', group: null });
+    showGcpToast('Viewing all assets for: ' + (projectLabels[projectId] || projectId));
+  }
+
   function selectProjectView(projectId, tabId, subView) {
     currentProject = projectId;
     const nameEl = document.getElementById('currentProjectName');
@@ -6647,26 +6887,75 @@ function compileSSML(rawText) {
       switchTab(tabId, false);
     }
 
-    // Sub-view actions
+    // Auto expand the active project node in sidebar
+    if (projectId && projectId !== 'all') {
+      const node = document.getElementById('projNode-' + projectId);
+      if (node) node.classList.remove('collapsed');
+    }
+
+    // Remove active from all sidebar links
+    document.querySelectorAll('.sidebar-nav-item, .sub-nav-item, .asset-sub-item').forEach(function(el) {
+      el.classList.remove('active');
+    });
+
+    // Sub-view actions & active highlights
     if (projectId === 'servicenow') {
       if (subView === 'ge-chat') {
         filterGroupView('ge-chat', false);
+        const sl = document.getElementById('sideLink-ge-chat');
+        if (sl) sl.classList.add('active');
       } else if (subView === 'ground-truth') {
         filterGroupView('ground-truth', false);
+        const sl = document.getElementById('sideLink-ground-truth');
+        if (sl) sl.classList.add('active');
       } else if (subView === 'gcp-wizard') {
         filterGroupView('gcp-wizard', false);
+        const sl = document.getElementById('sideLink-gcp-wizard');
+        if (sl) sl.classList.add('active');
       } else if (subView === 'byomcp-setup') {
         filterGroupView('byomcp-setup', false);
+        const sl = document.getElementById('sideLink-byomcp-setup');
+        if (sl) sl.classList.add('active');
+      } else if (tabId === 'tab-servicenow') {
+        const sl = document.getElementById('sideLink-servicenow');
+        if (sl) sl.classList.add('active');
       }
     } else if (projectId === 'veeva') {
-      if (subView === 'parity') {
+      if (subView === 'parity' || subView === 'ground-truth') {
         filterGroupView('ground-truth', false);
+        const sl = document.getElementById('sideLink-veeva-parity');
+        if (sl) sl.classList.add('active');
+      } else if (subView === 'gxp') {
+        const sl = document.getElementById('sideLink-veeva-gxp');
+        if (sl) sl.classList.add('active');
+      } else if (tabId === 'tab-veeva') {
+        const sl = document.getElementById('sideLink-veeva');
+        if (sl) sl.classList.add('active');
       }
     } else if (projectId === 'microsoft') {
       if (subView === 'sharepoint') {
         selectMicrosoftTool('search_sharepoint_documents');
+        const sl = document.getElementById('sideLink-ms-sharepoint');
+        if (sl) sl.classList.add('active');
       } else if (subView === 'teams') {
         selectMicrosoftTool('get_teams_messages');
+        const sl = document.getElementById('sideLink-ms-teams');
+        if (sl) sl.classList.add('active');
+      } else if (tabId === 'tab-microsoft') {
+        const sl = document.getElementById('sideLink-microsoft');
+        if (sl) sl.classList.add('active');
+      } else if (tabId === 'tab-oauth') {
+        const sl = document.getElementById('sideLink-ms-entra');
+        if (sl) sl.classList.add('active');
+      }
+    } else if (projectId === 'all') {
+      if (tabId === 'tab-gallery') {
+        const sl = document.getElementById('sideLink-gallery');
+        if (sl) sl.classList.add('active');
+        filterGroupView('ALL', false);
+      } else if (tabId === 'tab-oauth') {
+        const sl = document.getElementById('sideLink-oauth');
+        if (sl) sl.classList.add('active');
       }
     }
 
@@ -6682,6 +6971,9 @@ function compileSSML(rawText) {
 
   window.selectProjectView = selectProjectView;
   window.toggleProjectMenu = toggleProjectMenu;
+  window.toggleProjectNode = toggleProjectNode;
+  window.toggleAssetSubmenu = toggleAssetSubmenu;
+  window.filterGalleryByProject = filterGalleryByProject;
 
   // =========================================================================
   // MICROSOFT UNIFIED CONNECTOR CLIENT HANDLERS
