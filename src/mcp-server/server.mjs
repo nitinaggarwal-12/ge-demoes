@@ -407,8 +407,17 @@ async function executeMcpTool(name, args = {}) {
   }
   if (name === 'search_servicenow_problems_and_changes') {
     const table = args.table || 'problem';
+    let query = '';
+    if (args.query) {
+      if (args.query.startsWith('PRB') || args.query.startsWith('CHG')) {
+        query = `number=${args.query}`;
+      } else {
+        query = `short_descriptionLIKE${args.query}`;
+      }
+    }
     const rows = await queryServiceNowTable(table, {
       sysparm_limit: limit,
+      sysparm_query: query,
       sysparm_fields: 'number,short_description,state,priority,opened_at,sys_id',
     });
     return rows;
@@ -2722,9 +2731,8 @@ function compileSSML(rawText) {
     font-family: var(--font-mono);
     font-size: 12px;
     color: var(--text);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    word-break: break-word;
+    line-height: 1.4;
   }
   .config-cell-value.link-val {
     color: var(--accent);
@@ -3022,6 +3030,102 @@ function compileSSML(rawText) {
   .form-input:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 1px var(--accent);
+  }
+
+  /* Sample Scenario & Preset Options Dropdowns */
+  .sample-scenario-box {
+    background: rgba(26, 115, 232, 0.06);
+    border: 1px solid rgba(26, 115, 232, 0.25);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    transition: all 0.15s ease;
+  }
+  [data-theme="light"] .sample-scenario-box {
+    background: #f1f6fd;
+    border: 1px solid #c2dbfe;
+  }
+  .sample-scenario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .sample-scenario-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--accent-light);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  [data-theme="light"] .sample-scenario-label {
+    color: #1a73e8;
+  }
+  .sample-scenario-select {
+    width: 100%;
+    background: var(--card);
+    border: 1.5px solid var(--accent);
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text);
+    font-family: var(--font-heading);
+    cursor: pointer;
+    outline: none;
+    transition: all 0.15s ease;
+  }
+  [data-theme="light"] .sample-scenario-select {
+    background: #ffffff;
+    border-color: #1a73e8;
+    color: #202124;
+  }
+  .sample-scenario-select:focus {
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.35);
+  }
+  .sample-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .sample-chips-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-right: 2px;
+  }
+  .sample-chip-btn {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 3px 9px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+  .sample-chip-btn:hover {
+    background: rgba(26, 115, 232, 0.2);
+    border-color: var(--accent);
+    color: var(--accent-light);
+    transform: translateY(-1px);
+  }
+  [data-theme="light"] .sample-chip-btn {
+    background: #ffffff;
+    border-color: #dadce0;
+    color: #3c4043;
+  }
+  [data-theme="light"] .sample-chip-btn:hover {
+    background: #e8f0fe;
+    border-color: #1a73e8;
+    color: #1a73e8;
   }
   .btn-run {
     background: var(--accent);
@@ -4927,8 +5031,8 @@ function compileSSML(rawText) {
               <span style="font-weight:600; font-size:13px; color:var(--text-primary); text-transform:uppercase; letter-spacing:0.5px;">Veeva Vault GxP Cloud Instance</span>
             </div>
             <div style="display:flex; gap:8px; align-items:center;">
-              <span class="badge" style="background:rgba(30, 142, 62, 0.15); color:var(--google-green); border:1px solid rgba(30, 142, 62, 0.3);">FDA 21 CFR Part 11 Validated</span>
-              <span class="badge" style="background:rgba(26, 115, 232, 0.15); color:var(--google-blue); border:1px solid rgba(26, 115, 232, 0.3);">argolis-life-sciences</span>
+              <span class="badge" style="background:rgba(30, 142, 62, 0.15); color:var(--green); border:1px solid rgba(30, 142, 62, 0.3);">FDA 21 CFR Part 11 Validated</span>
+              <span class="badge" style="background:rgba(26, 115, 232, 0.15); color:var(--accent); border:1px solid rgba(26, 115, 232, 0.3);">argolis-life-sciences</span>
             </div>
           </div>
           <div class="config-grid">
@@ -4961,21 +5065,21 @@ function compileSSML(rawText) {
                 <span class="badge" style="font-size:11px;">3 MCP Tools Available</span>
               </div>
               <div class="tool-list tool-list-scrollable" style="flex:1; max-height:480px; overflow-y:auto; padding-right:4px;">
-                <div class="tool-item compact selected" onclick="selectVeevaTool('search_vault_documents')">
+                <div class="tool-item compact selected" id="veevaTool-search_vault_documents" data-veeva-tool="search_vault_documents" onclick="selectVeevaTool('search_vault_documents')">
                   <div class="tool-header">
                     <span class="tool-name">search_vault_documents</span>
                     <span class="tool-tag">readOnly</span>
                   </div>
                   <div class="tool-desc">VQL query across clinical trial documents, protocols, and regulatory filings.</div>
                 </div>
-                <div class="tool-item compact" onclick="selectVeevaTool('get_audit_trail')">
+                <div class="tool-item compact" id="veevaTool-get_audit_trail" data-veeva-tool="get_audit_trail" onclick="selectVeevaTool('get_audit_trail')">
                   <div class="tool-header">
                     <span class="tool-name">get_audit_trail</span>
                     <span class="tool-tag">readOnly</span>
                   </div>
                   <div class="tool-desc">Extract 21 CFR Part 11 compliant audit trails with electronic signatures.</div>
                 </div>
-                <div class="tool-item compact" onclick="selectVeevaTool('get_binder_structure')">
+                <div class="tool-item compact" id="veevaTool-get_binder_structure" data-veeva-tool="get_binder_structure" onclick="selectVeevaTool('get_binder_structure')">
                   <div class="tool-header">
                     <span class="tool-name">get_binder_structure</span>
                     <span class="tool-tag">readOnly</span>
@@ -4993,10 +5097,12 @@ function compileSSML(rawText) {
                 <span id="activeVeevaTitle">Active Tool: search_vault_documents</span>
                 <span style="font-size:12px; color:var(--muted); font-family:var(--font-mono);">POST :8792/mcp</span>
               </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label">VQL Query Filter</label>
-                  <input type="text" id="veevaQuery" class="form-input" value="status__v = 'Approved for Submission'" />
+              <div id="veevaInputs">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">VQL Query Filter</label>
+                    <input type="text" id="veevaQuery" class="form-input" value="status__v = 'Approved for Submission'" />
+                  </div>
                 </div>
               </div>
               <div style="display:flex; gap:10px; margin-top:14px;">
@@ -5046,26 +5152,26 @@ function compileSSML(rawText) {
               <span style="font-weight:600; font-size:13px; color:var(--text-primary); text-transform:uppercase; letter-spacing:0.5px;">Microsoft Unified Connector Instance</span>
             </div>
             <div style="display:flex; gap:8px; align-items:center;">
-              <span class="badge" style="background:rgba(30, 142, 62, 0.15); color:var(--google-green); border:1px solid rgba(30, 142, 62, 0.3);">Microsoft Entra ID Validated</span>
-              <span class="badge" style="background:rgba(26, 115, 232, 0.15); color:var(--google-blue); border:1px solid rgba(26, 115, 232, 0.3);">argolis-enterprise</span>
+              <span class="badge" style="background:rgba(30, 142, 62, 0.15); color:var(--green); border:1px solid rgba(30, 142, 62, 0.3);">Microsoft Entra ID Validated</span>
+              <span class="badge" style="background:rgba(26, 115, 232, 0.15); color:var(--accent); border:1px solid rgba(26, 115, 232, 0.3);">argolis-enterprise</span>
             </div>
           </div>
           <div class="config-grid">
             <div class="config-cell">
               <span class="config-cell-label">Entra Tenant ID</span>
-              <span class="config-cell-value link-val" onclick="copySysId(this)" data-sysid="${msSampleData.tenant_id}">${msSampleData.tenant_id}</span>
+              <span class="config-cell-value link-val" onclick="copySysId(this)" data-sysid="${msSampleData.tenant_id}" title="${msSampleData.tenant_id}">${msSampleData.tenant_id}</span>
             </div>
             <div class="config-cell">
               <span class="config-cell-label">Entra Domain</span>
-              <span class="config-cell-value">${msSampleData.entra_domain}</span>
+              <span class="config-cell-value" title="${msSampleData.entra_domain}">${msSampleData.entra_domain}</span>
             </div>
             <div class="config-cell">
               <span class="config-cell-label">Graph Endpoint</span>
-              <span class="config-cell-value link-val" onclick="window.open('${msSampleData.graph_endpoint}')">${msSampleData.graph_endpoint}</span>
+              <span class="config-cell-value link-val" onclick="window.open('${msSampleData.graph_endpoint}')" title="${msSampleData.graph_endpoint}">${msSampleData.graph_endpoint}</span>
             </div>
             <div class="config-cell">
               <span class="config-cell-label">Auth Protocol</span>
-              <span class="config-cell-value">${msSampleData.auth_mode}</span>
+              <span class="config-cell-value" title="${msSampleData.auth_mode}">${msSampleData.auth_mode}</span>
             </div>
           </div>
         </div>
@@ -5690,6 +5796,16 @@ function compileSSML(rawText) {
       const cleanTab = tabId.replace('tab-', '');
       updateUrlState({ tab: cleanTab, slide: null });
     }
+
+    // Auto-populate active workbench data if switching to a live connector tab
+    if (tabId === 'tab-servicenow') {
+      if (typeof executeCurrentTool === 'function') executeCurrentTool();
+    } else if (tabId === 'tab-veeva') {
+      if (typeof executeVeevaTool === 'function') executeVeevaTool();
+    } else if (tabId === 'tab-microsoft') {
+      if (typeof executeMicrosoftTool === 'function') executeMicrosoftTool();
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -6503,7 +6619,122 @@ function compileSSML(rawText) {
     }
   }
 
-  // TOOL INTERACTION & RUNNER
+  // =========================================================================
+  // SERVICENOW TEST SCENARIOS & INTERACTIVE RUNNER
+  // =========================================================================
+  const SN_SCENARIOS = {
+    search_servicenow_incidents: [
+      { id: 'p1_outage', label: '🚨 P1 Critical Incidents (SAP & Network Outages)', query: 'outage', limit: 5 },
+      { id: 'vpn_gateway', label: '🌐 VPN Gateway & Cisco Router Issues', query: 'VPN', limit: 5 },
+      { id: 'email_exchange', label: '📧 Corporate Email & Exchange Server Issues', query: 'email', limit: 5 },
+      { id: 'all_recent', label: '📋 All Active Incidents (Default Order)', query: '', limit: 10 }
+    ],
+    get_servicenow_incident: [
+      { id: 'inc1039', label: '🔥 INC1039: VPN Gateway Latency & Packet Loss (P1 Critical)', number: 'INC1039' },
+      { id: 'inc0000060', label: '📧 INC0000060: Unable to Connect to Corporate Email Server', number: 'INC0000060' },
+      { id: 'inc0000001', label: '📁 INC0000001: Corporate Network Drive Mapping Failure', number: 'INC0000001' }
+    ],
+    search_servicenow_knowledge_articles: [
+      { id: 'kb_vpn', label: '🔐 VPN Remote Access & Multi-Factor Auth Setup (KB0000001)', query: 'VPN', limit: 5 },
+      { id: 'kb_email', label: '✉️ Outlook & Mobile Exchange Sync Troubleshooting (KB0000004)', query: 'email', limit: 5 },
+      { id: 'kb_password', label: '🔑 Self-Service Password Reset & Okta Portal Guide (KB0000012)', query: 'password', limit: 5 },
+      { id: 'kb_all', label: '📚 Complete IT Knowledge Base Articles Catalog', query: '', limit: 10 }
+    ],
+    list_servicenow_catalog_items: [
+      { id: 'cat_hardware', label: '💻 Standard Hardware & Laptop Procurement (Top 5)', limit: 5 },
+      { id: 'cat_software', label: '☁️ Cloud Developer & SaaS License Requests (Top 10)', limit: 10 },
+      { id: 'cat_all', label: '🛒 Complete IT Service Catalog Hierarchy (All Items)', limit: 25 }
+    ],
+    search_servicenow_problems_and_changes: [
+      { id: 'prb_switch', label: '⚠️ Problem PRB0000050: Switch Occasionally Drops Connections', table: 'problem', query: 'switch' },
+      { id: 'chg_cisco', label: '🔧 Change Request CHG0000024: Clear BGP Sessions on Cisco Router', table: 'change_request', query: 'Cisco' },
+      { id: 'prb_all', label: '📋 All Active Problem Investigations (Root Cause Analysis)', table: 'problem', query: '' },
+      { id: 'chg_all', label: '🚀 All Scheduled Infrastructure RFCs & Change Requests', table: 'change_request', query: '' }
+    ]
+  };
+
+  function renderSampleScenarioDropdown(toolName) {
+    const list = SN_SCENARIOS[toolName] || [];
+    if (!list.length) return '';
+    const opts = list.map(function(s) {
+      return '<option value="' + s.id + '">' + s.label + '</option>';
+    }).join('');
+    const chips = list.map(function(s) {
+      return '<button type="button" class="sample-chip-btn" data-tool="' + toolName + '" data-id="' + s.id + '" onclick="applySampleChip(this)">' + s.label.split(':')[0] + '</button>';
+    }).join('');
+    return '<div class="sample-scenario-box">' +
+      '<div class="sample-scenario-header">' +
+        '<div class="sample-scenario-label">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>' +
+          'Sample Test Scenarios (Select to Auto-Fill &amp; Test)' +
+        '</div>' +
+        '<span style="font-size:11px;color:var(--muted);font-family:var(--font-mono)">Instant Auto-Run</span>' +
+      '</div>' +
+      '<select class="sample-scenario-select" id="snScenarioSelect" onchange="applySampleScenario(currentTool, this.value)">' +
+        opts +
+      '</select>' +
+      '<div class="sample-chips-row">' +
+        '<span class="sample-chips-title">Quick Presets:</span>' +
+        chips +
+      '</div>' +
+    '</div>';
+  }
+
+  function applySampleChip(btn) {
+    const tool = btn.getAttribute('data-tool');
+    const id = btn.getAttribute('data-id');
+    if (tool && id) {
+      applySampleScenario(tool, id);
+    }
+  }
+  window.applySampleChip = applySampleChip;
+
+  function applySampleScenario(toolName, scenarioId) {
+    const list = SN_SCENARIOS[toolName] || [];
+    const sc = list.find(s => s.id === scenarioId) || list[0];
+    if (!sc) return;
+
+    const sel = document.getElementById('snScenarioSelect');
+    if (sel && sel.value !== sc.id) sel.value = sc.id;
+
+    if (toolName === 'search_servicenow_incidents') {
+      const qEl = document.getElementById('inputQuery');
+      const lEl = document.getElementById('inputLimit');
+      if (qEl) qEl.value = sc.query ?? '';
+      if (lEl) lEl.value = sc.limit ?? 5;
+    } else if (toolName === 'get_servicenow_incident') {
+      const nEl = document.getElementById('inputNumber');
+      if (nEl) nEl.value = sc.number ?? 'INC1039';
+    } else if (toolName === 'search_servicenow_knowledge_articles') {
+      const qEl = document.getElementById('inputQuery');
+      const lEl = document.getElementById('inputLimit');
+      if (qEl) qEl.value = sc.query ?? 'VPN';
+      if (lEl) lEl.value = sc.limit ?? 5;
+    } else if (toolName === 'list_servicenow_catalog_items') {
+      const lEl = document.getElementById('inputLimit');
+      if (lEl) lEl.value = sc.limit ?? 5;
+    } else if (toolName === 'search_servicenow_problems_and_changes') {
+      const tEl = document.getElementById('inputTable');
+      const qEl = document.getElementById('inputQuery');
+      if (tEl) tEl.value = sc.table ?? 'problem';
+      if (qEl) qEl.value = sc.query ?? '';
+    }
+
+    executeCurrentTool();
+  }
+  window.applySampleScenario = applySampleScenario;
+
+  function applyProblemChangeTable(table) {
+    const qEl = document.getElementById('inputQuery');
+    if (table === 'change_request') {
+      if (qEl && qEl.value === 'switch') qEl.value = 'Cisco';
+    } else {
+      if (qEl && qEl.value === 'Cisco') qEl.value = 'switch';
+    }
+    executeCurrentTool();
+  }
+  window.applyProblemChangeTable = applyProblemChangeTable;
+
   function selectTool(name, updateUrl) {
     if (updateUrl === undefined) updateUrl = true;
     currentTool = name;
@@ -6519,17 +6750,21 @@ function compileSSML(rawText) {
     }
 
     const inputsDiv = document.getElementById('toolInputs');
+    const sampleDropdownHtml = renderSampleScenarioDropdown(name);
+
     if (name === 'search_servicenow_incidents') {
-      inputsDiv.innerHTML = '<div class="form-row"><div class="form-group"><label class="form-label">Search Query (optional)</label><input type="text" id="inputQuery" class="form-input" placeholder="e.g. email, network, server..." value="" /></div><div class="form-group" style="max-width: 140px;"><label class="form-label">Limit</label><input type="number" id="inputLimit" class="form-input" value="5" min="1" max="50" /></div></div>';
+      inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group"><label class="form-label">Search Query (optional)</label><input type="text" id="inputQuery" class="form-input" placeholder="e.g. email, network, server..." value="outage" /></div><div class="form-group" style="max-width: 140px;"><label class="form-label">Limit</label><input type="number" id="inputLimit" class="form-input" value="5" min="1" max="50" /></div></div>';
     } else if (name === 'get_servicenow_incident') {
-      inputsDiv.innerHTML = '<div class="form-row"><div class="form-group"><label class="form-label">Incident Number (e.g. INC1039)</label><input type="text" id="inputNumber" class="form-input" value="INC1039" /></div></div>';
+      inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group"><label class="form-label">Incident Number (e.g. INC1039)</label><input type="text" id="inputNumber" class="form-input" value="INC1039" /></div></div>';
     } else if (name === 'search_servicenow_knowledge_articles') {
-      inputsDiv.innerHTML = '<div class="form-row"><div class="form-group"><label class="form-label">Search Query</label><input type="text" id="inputQuery" class="form-input" value="VPN" /></div><div class="form-group" style="max-width: 140px;"><label class="form-label">Limit</label><input type="number" id="inputLimit" class="form-input" value="5" min="1" max="50" /></div></div>';
+      inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group"><label class="form-label">Search Query</label><input type="text" id="inputQuery" class="form-input" value="VPN" /></div><div class="form-group" style="max-width: 140px;"><label class="form-label">Limit</label><input type="number" id="inputLimit" class="form-input" value="5" min="1" max="50" /></div></div>';
     } else if (name === 'list_servicenow_catalog_items') {
-      inputsDiv.innerHTML = '<div class="form-row"><div class="form-group" style="max-width: 140px;"><label class="form-label">Limit</label><input type="number" id="inputLimit" class="form-input" value="5" min="1" max="50" /></div></div>';
+      inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group" style="max-width: 140px;"><label class="form-label">Limit</label><input type="number" id="inputLimit" class="form-input" value="5" min="1" max="50" /></div></div>';
     } else if (name === 'search_servicenow_problems_and_changes') {
-      inputsDiv.innerHTML = '<div class="form-row"><div class="form-group"><label class="form-label">Table</label><select id="inputTable" class="form-input"><option value="problem">Problems (problem)</option><option value="change_request">Change Requests (change_request)</option></select></div><div class="form-group"><label class="form-label">Query</label><input type="text" id="inputQuery" class="form-input" value="" /></div></div>';
+      inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group"><label class="form-label">Table</label><select id="inputTable" class="form-input" onchange="applyProblemChangeTable(this.value)"><option value="problem">Problems (problem)</option><option value="change_request">Change Requests (change_request)</option></select></div><div class="form-group"><label class="form-label">Query</label><input type="text" id="inputQuery" class="form-input" value="switch" /></div></div>';
     }
+
+    executeCurrentTool();
   }
 
   async function executeCurrentTool() {
@@ -6586,8 +6821,78 @@ function compileSSML(rawText) {
     }
   }
 
-  // Veeva Tool Runner
+  // =========================================================================
+  // VEEVA VAULT TEST SCENARIOS & INTERACTIVE RUNNER
+  // =========================================================================
   let currentVeevaTool = 'search_vault_documents';
+
+  const VEEVA_SCENARIOS = {
+    search_vault_documents: [
+      { id: 'v_approved', label: '✅ Approved for Regulatory Submission (NDA / IND)', query: "status__v = 'Approved for Submission'" },
+      { id: 'v_oncology', label: '🧬 Phase III Oncology Study Protocols & Bioequivalence', query: "study_name__v CONTAINS ('Oncology')" },
+      { id: 'v_clinical', label: '📋 Clinical Study Reports (CSR) & CMC Module 3 Specs', query: "type__v = 'Clinical Study Report'" }
+    ],
+    get_audit_trail: [
+      { id: 'v_audit_030201', label: '🔒 DOC-030201: Oncology Protocol Signature Audit (21 CFR Part 11)', query: 'DOC-030201' },
+      { id: 'v_audit_029481', label: '🧪 DOC-029481: CMC Stability Validation & Batch Release Trail', query: 'DOC-029481' },
+      { id: 'v_audit_019823', label: '📑 DOC-019823: Investigator Brochure Safety Addendum Audit', query: 'DOC-019823' }
+    ],
+    get_binder_structure: [
+      { id: 'v_ectd', label: '📁 eCTD Master Regulatory Dossier (Modules 1 to 5 Hierarchy)', query: 'eCTD Master' },
+      { id: 'v_etmf', label: '📂 eTMF Electronic Trial Master File Folder Tree', query: 'eTMF' },
+      { id: 'v_qa', label: '🛡️ Quality Assurance & GMP Batch Release Binder', query: 'Quality' }
+    ]
+  };
+
+  function renderVeevaSampleDropdown(toolName) {
+    const list = VEEVA_SCENARIOS[toolName] || [];
+    if (!list.length) return '';
+    const opts = list.map(function(s) {
+      return '<option value="' + s.id + '">' + s.label + '</option>';
+    }).join('');
+    const chips = list.map(function(s) {
+      return '<button type="button" class="sample-chip-btn" data-id="' + s.id + '" onclick="applyVeevaChip(this)">' + s.label.split('(')[0].trim() + '</button>';
+    }).join('');
+    return '<div class="sample-scenario-box">' +
+      '<div class="sample-scenario-header">' +
+        '<div class="sample-scenario-label">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>' +
+          'Sample Test Scenarios (Select to Auto-Fill &amp; Test)' +
+        '</div>' +
+        '<span style="font-size:11px;color:var(--muted);font-family:var(--font-mono)">Instant Auto-Run</span>' +
+      '</div>' +
+      '<select class="sample-scenario-select" id="veevaScenarioSelect" onchange="applyVeevaSample(this.value)">' +
+        opts +
+      '</select>' +
+      '<div class="sample-chips-row">' +
+        '<span class="sample-chips-title">Quick Presets:</span>' +
+        chips +
+      '</div>' +
+    '</div>';
+  }
+
+  function applyVeevaChip(btn) {
+    const id = btn.getAttribute('data-id');
+    if (id) {
+      applyVeevaSample(id);
+    }
+  }
+  window.applyVeevaChip = applyVeevaChip;
+
+  function applyVeevaSample(scenarioId) {
+    const list = VEEVA_SCENARIOS[currentVeevaTool] || [];
+    const sc = list.find(s => s.id === scenarioId) || list[0];
+    if (!sc) return;
+    const sel = document.getElementById('veevaScenarioSelect');
+    if (sel && sel.value !== sc.id) sel.value = sc.id;
+
+    const qEl = document.getElementById('veevaQuery');
+    if (qEl) qEl.value = sc.query;
+
+    executeVeevaTool();
+  }
+  window.applyVeevaSample = applyVeevaSample;
+
   function selectVeevaTool(tool, updateUrl) {
     if (updateUrl === undefined) updateUrl = true;
     currentVeevaTool = tool;
@@ -6598,27 +6903,23 @@ function compileSSML(rawText) {
     const titleEl = document.getElementById('activeVeevaTitle');
     if (titleEl) titleEl.textContent = 'Active Tool: ' + tool;
 
-    const labelEl = document.querySelector('#veevaInputs .form-label');
-    const inputEl = document.getElementById('veevaQuery');
-    if (labelEl && inputEl) {
+    const inputsDiv = document.getElementById('veevaInputs');
+    if (inputsDiv) {
+      const sampleDropdownHtml = renderVeevaSampleDropdown(tool);
       if (tool === 'get_audit_trail') {
-        labelEl.textContent = 'Document Number / ID (21 CFR Part 11 Audit Trail)';
-        inputEl.placeholder = 'e.g. DOC-030201';
-        inputEl.value = 'DOC-030201';
+        inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group"><label class="form-label">Document Number / ID (21 CFR Part 11 Audit Trail)</label><input type="text" id="veevaQuery" class="form-input" value="DOC-030201" placeholder="e.g. DOC-030201" /></div></div>';
       } else if (tool === 'get_binder_structure') {
-        labelEl.textContent = 'Binder Filter (eCTD Regulatory Submission)';
-        inputEl.placeholder = 'e.g. eTMF or Master';
-        inputEl.value = '';
+        inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group"><label class="form-label">Binder Filter (eCTD Regulatory Submission)</label><input type="text" id="veevaQuery" class="form-input" value="eCTD Master" placeholder="e.g. eTMF or Master" /></div></div>';
       } else {
-        labelEl.textContent = 'VQL Query Filter';
-        inputEl.placeholder = "e.g. status__v = 'Approved for Submission'";
-        inputEl.value = "status__v = 'Approved for Submission'";
+        inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group"><label class="form-label">VQL Query Filter</label><input type="text" id="veevaQuery" class="form-input" value="status__v = &apos;Approved for Submission&apos;" placeholder="e.g. status__v = &apos;Approved for Submission&apos;" /></div></div>';
       }
     }
 
     if (updateUrl) {
       updateUrlState({ tab: 'veeva', tool: tool });
     }
+
+    executeVeevaTool();
   }
 
   async function executeVeevaTool() {
@@ -6976,9 +7277,86 @@ function compileSSML(rawText) {
   window.filterGalleryByProject = filterGalleryByProject;
 
   // =========================================================================
-  // MICROSOFT UNIFIED CONNECTOR CLIENT HANDLERS
+  // MICROSOFT UNIFIED CONNECTOR TEST SCENARIOS & INTERACTIVE RUNNER
   // =========================================================================
   let currentMsTool = 'search_sharepoint_documents';
+
+  const MS_SCENARIOS = {
+    search_sharepoint_documents: [
+      { id: 'sp_strategy', label: '📄 FY27 Global Cloud Infrastructure Strategy.docx (Global IT Intranet)', query: 'Cloud Infrastructure Strategy', limit: 5 },
+      { id: 'sp_grounding', label: '📊 AI Grounding Architecture & Graph API Guide.pptx (AI CoE)', query: 'AI Grounding Architecture', limit: 5 },
+      { id: 'sp_pipeline', label: '📑 ServiceNow to Vertex AI Search Data Pipeline Specs.docx', query: 'ServiceNow Vertex AI', limit: 5 },
+      { id: 'sp_gxp', label: '📈 Life Sciences GxP Compliance & 21 CFR Part 11 Audit.xlsx', query: 'Life Sciences GxP', limit: 5 }
+    ],
+    get_teams_messages: [
+      { id: 'tm_war_room', label: '🚨 #cloud-ops-incident-war-room (P1 VPN Latency & Failover Incident)', query: '19:cloud-ops-incident-war-room@thread.tacv2', limit: 10 },
+      { id: 'tm_arch_review', label: '🏛️ #arch-review (Vertex AI + M365 Unified Connector ADR Discussion)', query: 'arch-review', limit: 10 },
+      { id: 'tm_ai_steering', label: '🤖 #ai-steering (Gemini Enterprise BYOMCP Tenant Deployment)', query: 'ai-steering', limit: 10 }
+    ],
+    search_outlook_emails: [
+      { id: 'ex_adr', label: '📧 Architecture Decision Record: Vertex AI + Microsoft Unified Sign-Off', query: 'subject:Architecture Decision Record', folder: 'Inbox' },
+      { id: 'ex_briefing', label: '📬 Executive Briefing: Gemini Enterprise Q3 BYOMCP Rollout', query: 'subject:Executive Briefing', folder: 'Executive Briefs' },
+      { id: 'ex_secops', label: '🛡️ M365 Graph API Security Scopes & Entra ID Admin Approval', query: 'M365 Graph API Security', folder: 'Security Reviews' }
+    ],
+    get_onedrive_files: [
+      { id: 'od_benchmarks', label: '📊 /Shared/Enterprise Architecture/MCP Benchmarks (Latency Matrix.xlsx)', query: '/Shared/Enterprise Architecture/MCP Benchmarks', limit: 5 },
+      { id: 'od_blueprints', label: '📐 /Shared/Enterprise Architecture/Blueprints (Cloud Run BYOMCP.pdf)', query: '/Shared/Enterprise Architecture/Blueprints', limit: 5 },
+      { id: 'od_tokens', label: '🔑 /Shared/Security Architecture/Tokens (Entra ID 3LO Sequence.drawio)', query: '/Shared/Security Architecture/Tokens', limit: 5 }
+    ]
+  };
+
+  function renderMsSampleDropdown(toolName) {
+    const list = MS_SCENARIOS[toolName] || [];
+    if (!list.length) return '';
+    const opts = list.map(function(s) {
+      return '<option value="' + s.id + '">' + s.label + '</option>';
+    }).join('');
+    const chips = list.map(function(s) {
+      return '<button type="button" class="sample-chip-btn" data-id="' + s.id + '" onclick="applyMsChip(this)">' + s.label.split('(')[0].trim() + '</button>';
+    }).join('');
+    return '<div class="sample-scenario-box">' +
+      '<div class="sample-scenario-header">' +
+        '<div class="sample-scenario-label">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>' +
+          'Sample Test Scenarios (Select to Auto-Fill &amp; Test)' +
+        '</div>' +
+        '<span style="font-size:11px;color:var(--muted);font-family:var(--font-mono)">Instant Auto-Run</span>' +
+      '</div>' +
+      '<select class="sample-scenario-select" id="msScenarioSelect" onchange="applyMsSample(this.value)">' +
+        opts +
+      '</select>' +
+      '<div class="sample-chips-row">' +
+        '<span class="sample-chips-title">Quick Presets:</span>' +
+        chips +
+      '</div>' +
+    '</div>';
+  }
+
+  function applyMsChip(btn) {
+    const id = btn.getAttribute('data-id');
+    if (id) {
+      applyMsSample(id);
+    }
+  }
+  window.applyMsChip = applyMsChip;
+
+  function applyMsSample(scenarioId) {
+    const list = MS_SCENARIOS[currentMsTool] || [];
+    const sc = list.find(s => s.id === scenarioId) || list[0];
+    if (!sc) return;
+    const sel = document.getElementById('msScenarioSelect');
+    if (sel && sel.value !== sc.id) sel.value = sc.id;
+
+    const qEl = document.getElementById('msInputQuery');
+    const lEl = document.getElementById('msInputLimit');
+    const fEl = document.getElementById('msInputFolder');
+    if (qEl) qEl.value = sc.query ?? '';
+    if (lEl) lEl.value = sc.limit ?? 5;
+    if (fEl) fEl.value = sc.folder ?? 'Inbox';
+
+    executeMicrosoftTool();
+  }
+  window.applyMsSample = applyMsSample;
 
   function selectMicrosoftTool(name) {
     currentMsTool = name;
@@ -6991,54 +7369,89 @@ function compileSSML(rawText) {
 
     const inputsDiv = document.getElementById('msToolInputs');
     if (!inputsDiv) return;
+
+    const sampleDropdownHtml = renderMsSampleDropdown(name);
     if (name === 'search_sharepoint_documents') {
-      inputsDiv.innerHTML = '<div class="form-row"><div class="form-group"><label class="form-label">Search Query (KQL / Keyword)</label><input type="text" id="msInputQuery" class="form-input" value="Cloud Infrastructure Strategy" /></div><div class="form-group" style="max-width:140px;"><label class="form-label">Limit</label><input type="number" id="msInputLimit" class="form-input" value="5" min="1" max="50" /></div></div>';
+      inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group"><label class="form-label">Search Query (KQL / Keyword)</label><input type="text" id="msInputQuery" class="form-input" value="Cloud Infrastructure Strategy" /></div><div class="form-group" style="max-width:140px;"><label class="form-label">Limit</label><input type="number" id="msInputLimit" class="form-input" value="5" min="1" max="50" /></div></div>';
     } else if (name === 'get_teams_messages') {
-      inputsDiv.innerHTML = '<div class="form-row"><div class="form-group"><label class="form-label">Teams Channel ID / Name</label><input type="text" id="msInputQuery" class="form-input" value="19:cloud-ops-incident-war-room@thread.tacv2" /></div><div class="form-group" style="max-width:140px;"><label class="form-label">Limit</label><input type="number" id="msInputLimit" class="form-input" value="10" min="1" max="50" /></div></div>';
+      inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group"><label class="form-label">Teams Channel ID / Name</label><input type="text" id="msInputQuery" class="form-input" value="19:cloud-ops-incident-war-room@thread.tacv2" /></div><div class="form-group" style="max-width:140px;"><label class="form-label">Limit</label><input type="number" id="msInputLimit" class="form-input" value="10" min="1" max="50" /></div></div>';
     } else if (name === 'search_outlook_emails') {
-      inputsDiv.innerHTML = '<div class="form-row"><div class="form-group"><label class="form-label">Email Search Query</label><input type="text" id="msInputQuery" class="form-input" value="subject:Architecture Decision Record" /></div><div class="form-group" style="max-width:140px;"><label class="form-label">Folder</label><input type="text" id="msInputFolder" class="form-input" value="Inbox" /></div></div>';
+      inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group"><label class="form-label">Email Search Query</label><input type="text" id="msInputQuery" class="form-input" value="subject:Architecture Decision Record" /></div><div class="form-group" style="max-width:140px;"><label class="form-label">Folder</label><input type="text" id="msInputFolder" class="form-input" value="Inbox" /></div></div>';
     } else if (name === 'get_onedrive_files') {
-      inputsDiv.innerHTML = '<div class="form-row"><div class="form-group"><label class="form-label">OneDrive Path</label><input type="text" id="msInputQuery" class="form-input" value="/Shared/Enterprise Architecture/MCP Benchmarks" /></div><div class="form-group" style="max-width:140px;"><label class="form-label">Limit</label><input type="number" id="msInputLimit" class="form-input" value="5" min="1" max="50" /></div></div>';
+      inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group"><label class="form-label">OneDrive Path</label><input type="text" id="msInputQuery" class="form-input" value="/Shared/Enterprise Architecture/MCP Benchmarks" /></div><div class="form-group" style="max-width:140px;"><label class="form-label">Limit</label><input type="number" id="msInputLimit" class="form-input" value="5" min="1" max="50" /></div></div>';
     }
+    executeMicrosoftTool();
   }
   window.selectMicrosoftTool = selectMicrosoftTool;
 
   function executeMicrosoftTool() {
-    const q = document.getElementById('msInputQuery')?.value || '';
-    const docs = [
-      { doc_id: 'SP-DOC-8921', title: 'FY27 Global Cloud Infrastructure Strategy.docx', source: 'SharePoint Online (Global IT)', author: 'Satya N. / Cloud Arch', modified: '2026-09-18 14:22:00', permissions: 'Confidential' },
-      { doc_id: 'SP-DOC-8922', title: 'AI Grounding Architecture & Graph API Guide.pptx', source: 'SharePoint Online (AI CoE)', author: 'Enterprise Arch Lead', modified: '2026-09-20 09:15:30', permissions: 'Enterprise-Wide' },
-      { doc_id: 'OD-FILE-4410', title: 'Q3 Enterprise MCP Benchmarks & Latency Matrix.xlsx', source: 'OneDrive for Business', author: 'Cloud Performance Team', modified: '2026-09-21 16:40:12', permissions: 'Restricted' },
-      { doc_id: 'TM-MSG-1092', title: 'Incident Response War Room: P1 Cloud Egress Latency', source: 'Microsoft Teams (#cloud-ops)', author: 'SecOps Director', modified: '2026-09-22 08:30:00', permissions: 'Operations Team' },
-      { doc_id: 'EX-MAIL-3301', title: 'Approved Architecture Decision Record: Vertex AI + Microsoft Unified', source: 'Exchange Online', author: 'VP Enterprise Engineering', modified: '2026-09-22 11:05:44', permissions: 'Executive Dist' }
-    ];
+    const q = (document.getElementById('msInputQuery')?.value || '').toLowerCase();
+    let rows = [];
+    let cols = [];
 
-    let filtered = docs;
-    if (q) {
-      filtered = docs.filter(function(d) {
-        return d.title.toLowerCase().includes(q.toLowerCase()) || d.source.toLowerCase().includes(q.toLowerCase());
-      });
-      if (filtered.length === 0) filtered = docs;
+    if (currentMsTool === 'get_teams_messages') {
+      cols = ['msg_id', 'channel', 'sender', 'timestamp', 'content', 'importance'];
+      const allMsgs = [
+        { msg_id: 'TM-MSG-1092', channel: '#cloud-ops-incident-war-room', sender: 'SecOps Director', timestamp: '2026-09-22 08:30:15', content: 'P1 Incident declared: Global VPN gateway latency exceeding 450ms. Investigating us-east4 router.', importance: 'High' },
+        { msg_id: 'TM-MSG-1093', channel: '#cloud-ops-incident-war-room', sender: 'Network Lead', timestamp: '2026-09-22 08:35:20', content: 'BGP failover route established to us-central1. Packet loss stabilized to 0.02%.', importance: 'High' },
+        { msg_id: 'TM-MSG-1094', channel: '#cloud-ops-incident-war-room', sender: 'VP Infrastructure', timestamp: '2026-09-22 08:42:00', content: 'Root cause confirmed as edge firewall micro-burst. MCP connector telemetry reporting normal.', importance: 'Normal' },
+        { msg_id: 'TM-MSG-1095', channel: '#cloud-ops-incident-war-room', sender: 'SRE On-Call', timestamp: '2026-09-22 08:50:11', content: 'Post-incident review scheduled for 14:00 UTC. Incident INC1039 marked resolved in ServiceNow.', importance: 'Normal' }
+      ];
+      rows = q ? allMsgs.filter(m => m.content.toLowerCase().includes(q) || m.channel.toLowerCase().includes(q)) : allMsgs;
+      if (rows.length === 0) rows = allMsgs;
+    } else if (currentMsTool === 'search_outlook_emails') {
+      cols = ['mail_id', 'subject', 'from', 'date', 'folder', 'importance'];
+      const allMails = [
+        { mail_id: 'EX-MAIL-3301', subject: 'Approved Architecture Decision Record: Vertex AI + Microsoft Unified', from: 'VP Enterprise Engineering', date: '2026-09-22 11:05:44', folder: 'Inbox', importance: 'High' },
+        { mail_id: 'EX-MAIL-3302', subject: 'Executive Briefing: Gemini Enterprise Q3 BYOMCP Rollout', from: 'Director of AI Strategy', date: '2026-09-21 17:30:10', folder: 'Executive Briefs', importance: 'High' },
+        { mail_id: 'EX-MAIL-3303', subject: 'M365 Graph API Security Scopes & Entra ID Admin Approval', from: 'SecOps Identity Lead', date: '2026-09-20 14:15:00', folder: 'Security Reviews', importance: 'Normal' },
+        { mail_id: 'EX-MAIL-3304', subject: 'Quarterly ServiceNow & Veeva Ground-Truth Audit Sign-Off', from: 'Quality Assurance Director', date: '2026-09-19 09:00:22', folder: 'Audit Archive', importance: 'Normal' }
+      ];
+      rows = q ? allMails.filter(m => m.subject.toLowerCase().includes(q) || m.from.toLowerCase().includes(q)) : allMails;
+      if (rows.length === 0) rows = allMails;
+    } else if (currentMsTool === 'get_onedrive_files') {
+      cols = ['file_id', 'name', 'path', 'modified', 'size', 'sharing'];
+      const allFiles = [
+        { file_id: 'OD-FILE-4410', name: 'Q3 Enterprise MCP Benchmarks & Latency Matrix.xlsx', path: '/Shared/Enterprise Architecture/MCP Benchmarks', modified: '2026-09-21 16:40:12', size: '2.4 MB', sharing: 'Restricted' },
+        { file_id: 'OD-FILE-4411', name: 'Gemini Enterprise Multi-Source Knowledge Strategy.docx', path: '/Shared/Enterprise Architecture/Whitepapers', modified: '2026-09-19 11:20:00', size: '1.8 MB', sharing: 'Internal' },
+        { file_id: 'OD-FILE-4412', name: 'Cloud Run BYOMCP Microservice Architecture.pdf', path: '/Shared/Enterprise Architecture/Blueprints', modified: '2026-09-17 09:45:30', size: '4.1 MB', sharing: 'Confidential' },
+        { file_id: 'OD-FILE-4413', name: 'Entra ID 3LO Token Exchange Sequence Diagrams.drawio', path: '/Shared/Security Architecture/Tokens', modified: '2026-09-16 15:10:00', size: '850 KB', sharing: 'Internal' }
+      ];
+      rows = q ? allFiles.filter(f => f.name.toLowerCase().includes(q) || f.path.toLowerCase().includes(q)) : allFiles;
+      if (rows.length === 0) rows = allFiles;
+    } else {
+      cols = ['doc_id', 'title', 'source', 'author', 'modified', 'permissions'];
+      const allDocs = [
+        { doc_id: 'SP-DOC-8921', title: 'FY27 Global Cloud Infrastructure Strategy.docx', source: 'SharePoint Online (Global IT Intranet)', author: 'Satya N. / Cloud Architecture', modified: '2026-09-18 14:22:00', permissions: 'Confidential' },
+        { doc_id: 'SP-DOC-8922', title: 'AI Grounding Architecture & Graph API Guide.pptx', source: 'SharePoint Online (AI Center of Excellence)', author: 'Enterprise Arch Lead', modified: '2026-09-20 09:15:30', permissions: 'Enterprise-Wide' },
+        { doc_id: 'SP-DOC-8923', title: 'ServiceNow to Vertex AI Search Data Pipeline Specs.docx', source: 'SharePoint Online (Cloud Platforms)', author: 'Cloud Platform Director', modified: '2026-09-15 13:00:00', permissions: 'Confidential' },
+        { doc_id: 'SP-DOC-8924', title: 'Life Sciences GxP Compliance & 21 CFR Part 11 Audit.xlsx', source: 'SharePoint Online (Regulatory Portal)', author: 'Compliance Lead', modified: '2026-09-12 10:45:00', permissions: 'GxP Validated' }
+      ];
+      rows = q ? allDocs.filter(d => d.title.toLowerCase().includes(q) || d.source.toLowerCase().includes(q)) : allDocs;
+      if (rows.length === 0) rows = allDocs;
     }
 
-    renderMsResult(filtered);
-    showGcpToast('Executed Microsoft Tool: ' + currentMsTool + ' (' + filtered.length + ' results)');
+    renderMsResult(rows, cols);
+    showGcpToast('Executed Microsoft Tool: ' + currentMsTool + ' (' + rows.length + ' results)');
   }
   window.executeMicrosoftTool = executeMicrosoftTool;
 
-  function renderMsResult(rows) {
+  function renderMsResult(rows, cols) {
     const tc = document.getElementById('msTableContainer');
     if (!tc) return;
-    const cols = ['doc_id', 'title', 'source', 'author', 'modified', 'permissions'];
-    let html = '<table class="data-table"><thead><tr>' + cols.map(function(c) { return '<th>' + c.toUpperCase() + '</th>'; }).join('') + '</tr></thead><tbody>';
+    if (!cols) {
+      cols = Object.keys(rows[0] || {});
+    }
+    let html = '<table class="data-table"><thead><tr>' + cols.map(function(c) { return '<th>' + c.toUpperCase().replace('_', ' ') + '</th>'; }).join('') + '</tr></thead><tbody>';
     for (const r of rows) {
       html += '<tr>' + cols.map(function(c) {
         const val = r[c] || '';
-        if (c === 'doc_id') {
+        if (c.endsWith('_id')) {
           return '<td><span class="table-mono-id" data-sysid="' + val + '" title="' + val + '" onclick="copySysId(this)">' + val + '</span></td>';
         }
-        if (c === 'permissions') {
-          return '<td><span class="badge-status-pill ' + (val.includes('Confidential') || val.includes('Restricted') ? 'priority-p1' : 'state-closed') + '">' + val + '</span></td>';
+        if (c === 'permissions' || c === 'importance' || c === 'sharing') {
+          const isHigh = val.includes('Confidential') || val.includes('Restricted') || val === 'High';
+          return '<td><span class="badge-status-pill ' + (isHigh ? 'priority-p1' : 'state-closed') + '">' + val + '</span></td>';
         }
         return '<td>' + String(val).replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</td>';
       }).join('') + '</tr>';
@@ -7114,6 +7527,14 @@ function compileSSML(rawText) {
       } else {
         selectTool(tool, false);
       }
+    } else {
+      if (tab === 'tab-veeva') {
+        selectVeevaTool('search_vault_documents', false);
+      } else if (tab === 'tab-microsoft') {
+        selectMicrosoftTool('search_sharepoint_documents');
+      } else if (!tab || tab === 'tab-servicenow') {
+        selectTool('search_servicenow_incidents', false);
+      }
     }
 
     // 3. Workflow Group in Gallery
@@ -7159,6 +7580,10 @@ function compileSSML(rawText) {
     const activeTab = document.querySelector('.view-tab.active');
     if (!activeTab || activeTab.id === 'tab-servicenow') {
       executeCurrentTool();
+    } else if (activeTab.id === 'tab-veeva') {
+      executeVeevaTool();
+    } else if (activeTab.id === 'tab-microsoft') {
+      executeMicrosoftTool();
     }
   });
 
