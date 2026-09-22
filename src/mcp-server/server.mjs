@@ -2124,8 +2124,9 @@ function compileSSML(rawText) {
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 6px 12px;
-    min-width: 240px;
-    max-width: 320px;
+    min-width: 280px;
+    max-width: 480px;
+    flex: 1;
     cursor: pointer;
     transition: all 0.15s;
   }
@@ -2343,6 +2344,339 @@ function compileSSML(rawText) {
   }
   .btn-link.accent:hover {
     background: var(--accent-hover);
+  }
+
+  /* Google Cloud Project Selector Dropdown */
+  .gcp-project-dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+  .gcp-project-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 340px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--gcp-shadow);
+    z-index: 500;
+    padding: 8px;
+    animation: fadeInMenu 0.15s ease-out;
+  }
+  @keyframes fadeInMenu {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .gcp-project-menu-header {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    padding: 6px 10px 8px;
+    letter-spacing: 0.6px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 6px;
+  }
+  .gcp-project-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .gcp-project-menu-item:hover {
+    background: var(--card-hover);
+    color: var(--accent-light);
+  }
+  .gcp-project-menu-item.active {
+    background: rgba(26, 115, 232, 0.12);
+    border-left: 3px solid var(--accent);
+  }
+  [data-theme="light"] .gcp-project-menu-item.active {
+    background: #e8f0fe;
+    border-left: 3px solid #1a73e8;
+  }
+  .project-menu-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .project-menu-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .project-menu-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-heading);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .project-menu-desc {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .project-menu-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: var(--green-bg);
+    color: var(--green);
+  }
+  .gcp-project-menu-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 6px 0;
+  }
+
+  /* Left Sidebar: Logical Organization by Projects */
+  .sidebar-project-group {
+    margin-bottom: 18px;
+  }
+  .sidebar-project-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px 6px;
+  }
+  .app-sidebar.collapsed .sidebar-project-header {
+    display: none;
+  }
+  .project-pill {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    background: rgba(26, 115, 232, 0.15);
+    color: var(--accent-light);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  [data-theme="light"] .project-pill {
+    background: #e8f0fe;
+    color: #1a73e8;
+  }
+  .project-name {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sidebar-nav-tag {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--green);
+    background: var(--green-bg);
+    padding: 1px 6px;
+    border-radius: 10px;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  .app-sidebar.collapsed .sidebar-nav-tag {
+    display: none;
+  }
+
+  /* Full-Width Configuration Strip */
+  .config-strip-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--gcp-card-shadow);
+  }
+  .config-strip-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .config-strip-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-heading);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px 20px;
+  }
+  .config-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .config-cell-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .config-cell-value {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .config-cell-value.link-val {
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .config-cell-value.link-val:hover {
+    text-decoration: underline;
+  }
+
+  /* 2-Column Balanced Workbench Layout */
+  .workbench-grid {
+    display: grid;
+    grid-template-columns: 380px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 1100px) {
+    .workbench-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Tool List Scrollable Container */
+  .tool-list-scrollable {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 480px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .tool-list-scrollable::-webkit-scrollbar {
+    width: 4px;
+  }
+  .tool-list-scrollable::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+  }
+  .tool-card-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .tool-card-item:hover {
+    border-color: var(--accent);
+    background: var(--card-hover);
+  }
+  .tool-card-item.selected {
+    border-color: var(--accent);
+    background: rgba(26, 115, 232, 0.12);
+    border-left: 4px solid var(--accent);
+  }
+  [data-theme="light"] .tool-card-item.selected {
+    background: #e8f0fe;
+    border-color: #1a73e8;
+    border-left: 4px solid #1a73e8;
+  }
+  .tool-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .tool-card-name {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-light);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .tool-card-desc {
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.35;
+    margin-bottom: 6px;
+  }
+  .tool-card-asset-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10.5px;
+    font-family: var(--font-mono);
+    color: var(--accent-light);
+    background: rgba(26, 115, 232, 0.08);
+    border: 1px solid rgba(26, 115, 232, 0.2);
+    padding: 2px 7px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tool-card-asset-chip:hover {
+    background: var(--accent);
+    color: #ffffff;
+  }
+
+  /* Table Status Badges and Mono Hashes */
+  .table-mono-id {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent-light);
+    cursor: pointer;
+    display: inline-block;
+  }
+  .table-mono-id:hover {
+    text-decoration: underline;
+  }
+  .badge-status-pill {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .state-closed {
+    background: rgba(52, 168, 83, 0.15);
+    color: var(--green);
+    border: 1px solid rgba(52, 168, 83, 0.3);
+  }
+  .state-online {
+    background: rgba(52, 168, 83, 0.15);
+    color: var(--green);
+    border: 1px solid rgba(52, 168, 83, 0.3);
+  }
+  .priority-p5 {
+    background: rgba(66, 133, 244, 0.12);
+    color: var(--accent-light);
+    border: 1px solid rgba(66, 133, 244, 0.3);
+  }
+  .priority-p1 {
+    background: rgba(234, 67, 53, 0.15);
+    color: #ea4335;
+    border: 1px solid rgba(234, 67, 53, 0.3);
   }
 
   /* Two Column Layout */
@@ -3942,51 +4276,112 @@ function compileSSML(rawText) {
     </div>
 
     <div class="sidebar-content">
-      <!-- GCP Console Navigation Views -->
-      <div>
-        <div class="sidebar-section-title">Console Navigation</div>
+      <!-- Project 1: argolis-ge-enterprise -->
+      <div class="sidebar-project-group" id="projGroup-servicenow">
+        <div class="sidebar-project-header">
+          <span class="project-pill">PROJECT</span>
+          <span class="project-name">argolis-ge-enterprise</span>
+        </div>
         <ul class="sidebar-nav-list">
           <li>
-            <a class="sidebar-nav-item active" id="sideLink-servicenow" onclick="switchTab('tab-servicenow')">
+            <a class="sidebar-nav-item active" id="sideLink-servicenow" onclick="selectProjectView('argolis-ge-enterprise', 'tab-servicenow')">
               <span class="sidebar-nav-icon">⚡</span>
               <span class="sidebar-nav-label">ServiceNow BYOMCP</span>
+              <span class="sidebar-nav-tag">Live MCP</span>
             </a>
           </li>
           <li>
-            <a class="sidebar-nav-item" id="sideLink-veeva" onclick="switchTab('tab-veeva')">
+            <a class="sidebar-nav-item" id="sideLink-ge-chat" onclick="selectProjectView('argolis-ge-enterprise', 'tab-gallery', 'ge-chat')">
+              <span class="sidebar-nav-icon">💬</span>
+              <span class="sidebar-nav-label">Gemini Enterprise Chat</span>
+              <span class="sidebar-nav-badge">19</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar-nav-item" id="sideLink-ground-truth" onclick="selectProjectView('argolis-ge-enterprise', 'tab-gallery', 'ground-truth')">
+              <span class="sidebar-nav-icon">⚖️</span>
+              <span class="sidebar-nav-label">Ground-Truth Parity</span>
+              <span class="sidebar-nav-badge">7</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar-nav-item" id="sideLink-byomcp-setup" onclick="selectProjectView('argolis-ge-enterprise', 'tab-gallery', 'byomcp-setup')">
+              <span class="sidebar-nav-icon">🔌</span>
+              <span class="sidebar-nav-label">BYOMCP Setup &amp; Auth</span>
+              <span class="sidebar-nav-badge">4</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Project 2: argolis-life-sciences -->
+      <div class="sidebar-project-group" id="projGroup-veeva">
+        <div class="sidebar-project-header">
+          <span class="project-pill">PROJECT</span>
+          <span class="project-name">argolis-life-sciences</span>
+        </div>
+        <ul class="sidebar-nav-list">
+          <li>
+            <a class="sidebar-nav-item" id="sideLink-veeva" onclick="selectProjectView('argolis-life-sciences', 'tab-veeva')">
               <span class="sidebar-nav-icon">🧪</span>
               <span class="sidebar-nav-label">Veeva Vault GxP</span>
+              <span class="sidebar-nav-tag">21 CFR Part 11</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Project 3: argolis-gcp-console -->
+      <div class="sidebar-project-group" id="projGroup-gcp">
+        <div class="sidebar-project-header">
+          <span class="project-pill">PROJECT</span>
+          <span class="project-name">argolis-gcp-console</span>
+        </div>
+        <ul class="sidebar-nav-list">
+          <li>
+            <a class="sidebar-nav-item" id="sideLink-gcp-wizard" onclick="selectProjectView('argolis-gcp-console', 'tab-gallery', 'gcp-wizard')">
+              <span class="sidebar-nav-icon">🛠️</span>
+              <span class="sidebar-nav-label">GCP Console Wizard</span>
+              <span class="sidebar-nav-badge">20</span>
             </a>
           </li>
           <li>
-            <a class="sidebar-nav-item" id="sideLink-gallery" onclick="switchTab('tab-gallery')">
+            <a class="sidebar-nav-item" id="sideLink-agent-studio" onclick="selectProjectView('argolis-gcp-console', 'tab-gallery', 'agent-studio')">
+              <span class="sidebar-nav-icon">🎨</span>
+              <span class="sidebar-nav-label">Agent Studio &amp; Search</span>
+              <span class="sidebar-nav-badge">4</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar-nav-item" id="sideLink-live-auth" onclick="selectProjectView('argolis-gcp-console', 'tab-gallery', 'live-auth')">
+              <span class="sidebar-nav-icon">🔐</span>
+              <span class="sidebar-nav-label">Identity SSO &amp; Audit</span>
+              <span class="sidebar-nav-badge">11</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Enterprise Suite Hub -->
+      <div class="sidebar-project-group" id="projGroup-hub">
+        <div class="sidebar-project-header">
+          <span class="project-pill" style="background:rgba(66,133,244,0.15); color:var(--accent-light);">HUB</span>
+          <span class="project-name">Enterprise Suite</span>
+        </div>
+        <ul class="sidebar-nav-list">
+          <li>
+            <a class="sidebar-nav-item" id="sideLink-gallery" onclick="selectProjectView('all', 'tab-gallery')">
               <span class="sidebar-nav-icon">🖼️</span>
-              <span class="sidebar-nav-label">Visual Gallery</span>
+              <span class="sidebar-nav-label">Visual Proof Gallery</span>
               <span class="sidebar-nav-badge">${totalScreenshots}</span>
             </a>
           </li>
           <li>
             <a class="sidebar-nav-item" id="sideLink-oauth" onclick="switchTab('tab-oauth')">
               <span class="sidebar-nav-icon">📜</span>
-              <span class="sidebar-nav-label">OAuth &amp; Specs</span>
+              <span class="sidebar-nav-label">OAuth &amp; Protocol Specs</span>
             </a>
           </li>
-        </ul>
-      </div>
-
-      <!-- Logical Workflows -->
-      <div>
-        <div class="sidebar-section-title">Verified Workflows</div>
-        <ul class="sidebar-nav-list">
-          ${logicalGroups.map(g => `
-            <li>
-              <a class="sidebar-nav-item" onclick="jumpToWorkflow('${g.id}')" title="${g.title}">
-                <span class="sidebar-nav-icon">${g.icon}</span>
-                <span class="sidebar-nav-label">${g.title.split(':')[0]}</span>
-                <span class="sidebar-nav-badge">${g.count}</span>
-              </a>
-            </li>
-          `).join('')}
         </ul>
       </div>
     </div>
@@ -4020,12 +4415,50 @@ function compileSSML(rawText) {
             ☰
           </button>
           
-          <!-- GCP Project Selector Chip -->
-          <div class="gcp-project-chip" title="Active Google Cloud Project">
-            <span class="gcp-project-icon">⬡</span>
-            <span class="gcp-project-label">Project:</span>
-            <span class="gcp-project-name">argolis-ge-enterprise</span>
-            <span class="gcp-project-arrow">▾</span>
+          <!-- Interactive GCP Project Selector Dropdown -->
+          <div class="gcp-project-dropdown-wrapper">
+            <div class="gcp-project-chip" id="gcpProjectChip" onclick="toggleProjectMenu(event)" title="Switch Google Cloud Project Context">
+              <span class="gcp-project-icon">⬡</span>
+              <span class="gcp-project-label">Project:</span>
+              <span class="gcp-project-name" id="currentProjectName">argolis-ge-enterprise</span>
+              <span class="gcp-project-arrow">▾</span>
+            </div>
+            <div class="gcp-project-menu" id="gcpProjectMenu" style="display:none;">
+              <div class="gcp-project-menu-header">Select Project Context</div>
+              <div class="gcp-project-menu-item active" id="pItem-argolis-ge-enterprise" onclick="selectProjectView('argolis-ge-enterprise', 'tab-servicenow')">
+                <span class="project-menu-icon">⚡</span>
+                <div class="project-menu-info">
+                  <div class="project-menu-title">argolis-ge-enterprise</div>
+                  <div class="project-menu-desc">ServiceNow BYOMCP &amp; Gemini Enterprise</div>
+                </div>
+                <span class="project-menu-badge" id="badge-argolis-ge-enterprise">Active</span>
+              </div>
+              <div class="gcp-project-menu-item" id="pItem-argolis-life-sciences" onclick="selectProjectView('argolis-life-sciences', 'tab-veeva')">
+                <span class="project-menu-icon">🧪</span>
+                <div class="project-menu-info">
+                  <div class="project-menu-title">argolis-life-sciences</div>
+                  <div class="project-menu-desc">Veeva Vault GxP Clinical &amp; Regulatory</div>
+                </div>
+                <span class="project-menu-badge" id="badge-argolis-life-sciences" style="display:none;">Active</span>
+              </div>
+              <div class="gcp-project-menu-item" id="pItem-argolis-gcp-console" onclick="selectProjectView('argolis-gcp-console', 'tab-gallery', 'gcp-wizard')">
+                <span class="project-menu-icon">🛠️</span>
+                <div class="project-menu-info">
+                  <div class="project-menu-title">argolis-gcp-console</div>
+                  <div class="project-menu-desc">GCP Console Data Store Wizard &amp; Agent Studio</div>
+                </div>
+                <span class="project-menu-badge" id="badge-argolis-gcp-console" style="display:none;">Active</span>
+              </div>
+              <div class="gcp-project-menu-divider"></div>
+              <div class="gcp-project-menu-item" id="pItem-all" onclick="selectProjectView('all', 'tab-gallery')">
+                <span class="project-menu-icon">🏢</span>
+                <div class="project-menu-info">
+                  <div class="project-menu-title">All Projects (Unified Hub)</div>
+                  <div class="project-menu-desc">Complete cross-project gallery &amp; verification deck</div>
+                </div>
+                <span class="project-menu-badge" id="badge-all" style="display:none;">Active</span>
+              </div>
+            </div>
           </div>
 
           <!-- GCP Search Box Mockup -->
@@ -4036,21 +4469,7 @@ function compileSSML(rawText) {
           </div>
         </div>
 
-        <nav class="nav-tabs">
-          <button class="tab-btn active" id="topTab-servicenow" onclick="switchTab('tab-servicenow')">
-            <span>ServiceNow BYOMCP</span>
-          </button>
-          <button class="tab-btn" id="topTab-veeva" onclick="switchTab('tab-veeva')">
-            <span>Veeva Vault GxP</span>
-          </button>
-          <button class="tab-btn" id="topTab-gallery" onclick="switchTab('tab-gallery')">
-            <span>Visual Screenshots</span>
-            <span class="badge-count">${totalScreenshots}</span>
-          </button>
-          <button class="tab-btn" id="topTab-oauth" onclick="switchTab('tab-oauth')">
-            <span>OAuth &amp; Specs</span>
-          </button>
-        </nav>
+
 
         <div class="topbar-actions">
           <!-- GCP Theme Mode Switcher -->
@@ -4093,103 +4512,129 @@ function compileSSML(rawText) {
           </div>
         </div>
 
-        <div class="grid-2col">
-          <!-- Left Column: Config & Tools -->
-          <div>
-            <div class="card" style="margin-bottom: 20px;">
-              <div class="card-title">
-                <span>Connector Configuration</span>
-                <span style="font-size:11px; color:var(--green); font-weight:700;">go/ge-byomcp-playbook</span>
-              </div>
-              <div class="kv-list">
-                <div class="kv-item"><div class="kv-k">Connector Mode</div><div class="kv-v">custom_mcp (BYOMCP)</div></div>
-                <div class="kv-item"><div class="kv-k">MCP Server URL</div><div class="kv-v">http://localhost:${PORT}/mcp</div></div>
-                <div class="kv-item"><div class="kv-k">ServiceNow Tenant</div><div class="kv-v">${SN_CONFIG.instanceUri}/</div></div>
-                <div class="kv-item"><div class="kv-k">Auth Endpoint</div><div class="kv-v">${SN_CONFIG.instanceUri}/oauth_auth.do</div></div>
-                <div class="kv-item"><div class="kv-k">Token Endpoint</div><div class="kv-v">${SN_CONFIG.instanceUri}/oauth_token.do</div></div>
-                <div class="kv-item"><div class="kv-k">OAuth Client ID</div><div class="kv-v">${SN_CONFIG.clientId}</div></div>
-                <div class="kv-item"><div class="kv-k">Service Account</div><div class="kv-v">${SN_CONFIG.username}</div></div>
-                <div class="kv-item"><div class="kv-k">Scopes</div><div class="kv-v">useraccount offline_access</div></div>
-                <div class="kv-item"><div class="kv-k">Annotations</div><div class="kv-v">readOnlyHint: true</div></div>
-              </div>
+        <!-- 1. Full-Width Configuration Strip (Zero Vertical Bloat, High Contrast) -->
+        <div class="config-strip-card">
+          <div class="config-strip-header">
+            <div class="config-strip-title">
+              <span style="color:var(--gcp-blue);">⚡</span>
+              <span>ServiceNow BYOMCP Instance Configuration</span>
+              <span style="font-size:11px; color:var(--muted); font-family:var(--font-mono); margin-left:6px;">(Project: argolis-ge-enterprise)</span>
             </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="badge-status-pill state-online">● Active Live Bridge</span>
+              <a class="btn-link" style="padding:3px 10px; font-size:11.5px;" href="${SN_CONFIG.instanceUri}/" target="_blank">go/ge-byomcp-playbook ↗</a>
+            </div>
+          </div>
+          <div class="config-grid">
+            <div class="config-cell">
+              <span class="config-cell-label">Connector Mode</span>
+              <span class="config-cell-value">custom_mcp (BYOMCP)</span>
+            </div>
+            <div class="config-cell">
+              <span class="config-cell-label">MCP Server URL</span>
+              <span class="config-cell-value link-val" onclick="window.open('http://localhost:${PORT}/mcp')">http://localhost:${PORT}/mcp</span>
+            </div>
+            <div class="config-cell">
+              <span class="config-cell-label">ServiceNow Tenant</span>
+              <span class="config-cell-value link-val" onclick="window.open('${SN_CONFIG.instanceUri}/')">${SN_CONFIG.instanceUri}/</span>
+            </div>
+            <div class="config-cell">
+              <span class="config-cell-label">OAuth Endpoints</span>
+              <span class="config-cell-value">/oauth_auth.do &amp; /oauth_token.do</span>
+            </div>
+            <div class="config-cell">
+              <span class="config-cell-label">Client ID &amp; User</span>
+              <span class="config-cell-value">${SN_CONFIG.clientId} • ${SN_CONFIG.username}</span>
+            </div>
+            <div class="config-cell">
+              <span class="config-cell-label">Scopes &amp; Hints</span>
+              <span class="config-cell-value">useraccount offline_access • readOnly</span>
+            </div>
+          </div>
+        </div>
 
-            <div class="card">
-              <div class="card-title">
-                <span>Available MCP Tools</span>
-                <span style="font-size:12px; color:var(--muted)">Click to select</span>
+        <!-- 2. Balanced Two-Column Workbench Layout -->
+        <div class="workbench-grid">
+          <!-- Left Column: Available MCP Tools (Compact, Scrollable List) -->
+          <div class="card" style="height: 100%; display: flex; flex-direction: column;">
+            <div class="card-title" style="margin-bottom:12px;">
+              <span>Available MCP Tools</span>
+              <span style="font-size:11px; color:var(--muted);">5 Registered Tools</span>
+            </div>
+            <div class="tool-list-scrollable">
+              <div class="tool-item tool-card-item selected" id="tool-search_servicenow_incidents" data-tool-name="search_servicenow_incidents" onclick="selectTool('search_servicenow_incidents')">
+                <div class="tool-card-top">
+                  <span class="tool-card-name">search_servicenow_incidents</span>
+                  <div style="display:flex; align-items:center; gap:5px;">
+                    <span class="tool-tag">readOnly</span>
+                    <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'search_servicenow_incidents'})" title="Copy direct link">🔗</button>
+                  </div>
+                </div>
+                <div class="tool-card-desc">Search incident tickets by keyword, priority, or category.</div>
+                <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('14_ge_chat_matching_servicenow_query_results')" title="Jump to linked visual proof in gallery">
+                  <span>📸 Slide #14 • Query Results ↗</span>
+                </div>
               </div>
-              <div class="tool-list">
-                <div class="tool-item selected" id="tool-search_servicenow_incidents" data-tool-name="search_servicenow_incidents" onclick="selectTool('search_servicenow_incidents')">
-                  <div class="tool-header">
-                    <span class="tool-name">search_servicenow_incidents</span>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <span class="tool-tag">readOnly</span>
-                      <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'search_servicenow_incidents'})" title="Copy direct link to this tool demo">🔗</button>
-                    </div>
-                  </div>
-                  <div class="tool-desc">Search incident tickets by keyword, priority, or category.</div>
-                  <div class="linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('14_ge_chat_matching_servicenow_query_results')" title="Jump to linked visual proof in gallery">
-                    <span>📸 Linked Asset: #14_ge_chat_matching_servicenow_query_results ↗</span>
+
+              <div class="tool-item tool-card-item" id="tool-get_servicenow_incident" data-tool-name="get_servicenow_incident" onclick="selectTool('get_servicenow_incident')">
+                <div class="tool-card-top">
+                  <span class="tool-card-name">get_servicenow_incident</span>
+                  <div style="display:flex; align-items:center; gap:5px;">
+                    <span class="tool-tag">readOnly</span>
+                    <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'get_servicenow_incident'})" title="Copy direct link">🔗</button>
                   </div>
                 </div>
-                <div class="tool-item" id="tool-get_servicenow_incident" data-tool-name="get_servicenow_incident" onclick="selectTool('get_servicenow_incident')">
-                  <div class="tool-header">
-                    <span class="tool-name">get_servicenow_incident</span>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <span class="tool-tag">readOnly</span>
-                      <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'get_servicenow_incident'})" title="Copy direct link to this tool demo">🔗</button>
-                    </div>
-                  </div>
-                  <div class="tool-desc">Fetch full incident record by ticket number (e.g. INC1039).</div>
-                  <div class="linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('15_servicenow_ui_vs_ge_chat_side_by_side_truth_comparison')" title="Jump to linked visual proof in gallery">
-                    <span>📸 Linked Asset: #15_servicenow_ui_vs_ge_chat_side_by_side_truth_comparison ↗</span>
+                <div class="tool-card-desc">Fetch full incident record by ticket number (e.g. INC1039).</div>
+                <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('15_servicenow_ui_vs_ge_chat_side_by_side_truth_comparison')" title="Jump to linked visual proof in gallery">
+                  <span>📸 Slide #15 • Side-by-Side Parity ↗</span>
+                </div>
+              </div>
+
+              <div class="tool-item tool-card-item" id="tool-search_servicenow_knowledge_articles" data-tool-name="search_servicenow_knowledge_articles" onclick="selectTool('search_servicenow_knowledge_articles')">
+                <div class="tool-card-top">
+                  <span class="tool-card-name">search_servicenow_knowledge_articles</span>
+                  <div style="display:flex; align-items:center; gap:5px;">
+                    <span class="tool-tag">readOnly</span>
+                    <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'search_servicenow_knowledge_articles'})" title="Copy direct link">🔗</button>
                   </div>
                 </div>
-                <div class="tool-item" id="tool-search_servicenow_knowledge_articles" data-tool-name="search_servicenow_knowledge_articles" onclick="selectTool('search_servicenow_knowledge_articles')">
-                  <div class="tool-header">
-                    <span class="tool-name">search_servicenow_knowledge_articles</span>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <span class="tool-tag">readOnly</span>
-                      <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'search_servicenow_knowledge_articles'})" title="Copy direct link to this tool demo">🔗</button>
-                    </div>
-                  </div>
-                  <div class="tool-desc">Search published IT Knowledge Base articles (kb_knowledge).</div>
-                  <div class="linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('19_ge_chat_sources_menu_servicenow_connector_selected')" title="Jump to linked visual proof in gallery">
-                    <span>📸 Linked Asset: #19_ge_chat_sources_menu_servicenow_connector_selected ↗</span>
+                <div class="tool-card-desc">Search published IT Knowledge Base articles (kb_knowledge).</div>
+                <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('19_ge_chat_sources_menu_servicenow_connector_selected')" title="Jump to linked visual proof in gallery">
+                  <span>📸 Slide #19 • Sources Drawer ↗</span>
+                </div>
+              </div>
+
+              <div class="tool-item tool-card-item" id="tool-list_servicenow_catalog_items" data-tool-name="list_servicenow_catalog_items" onclick="selectTool('list_servicenow_catalog_items')">
+                <div class="tool-card-top">
+                  <span class="tool-card-name">list_servicenow_catalog_items</span>
+                  <div style="display:flex; align-items:center; gap:5px;">
+                    <span class="tool-tag">readOnly</span>
+                    <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'list_servicenow_catalog_items'})" title="Copy direct link">🔗</button>
                   </div>
                 </div>
-                <div class="tool-item" id="tool-list_servicenow_catalog_items" data-tool-name="list_servicenow_catalog_items" onclick="selectTool('list_servicenow_catalog_items')">
-                  <div class="tool-header">
-                    <span class="tool-name">list_servicenow_catalog_items</span>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <span class="tool-tag">readOnly</span>
-                      <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'list_servicenow_catalog_items'})" title="Copy direct link to this tool demo">🔗</button>
-                    </div>
-                  </div>
-                  <div class="tool-desc">List active Service Catalog items available for ordering.</div>
-                  <div class="linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('21_ge_chat_servicenow_connector_tool_call_state')" title="Jump to linked visual proof in gallery">
-                    <span>📸 Linked Asset: #21_ge_chat_servicenow_connector_tool_call_state ↗</span>
+                <div class="tool-card-desc">List active Service Catalog items available for ordering.</div>
+                <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('21_ge_chat_servicenow_connector_tool_call_state')" title="Jump to linked visual proof in gallery">
+                  <span>📸 Slide #21 • Tool Call State ↗</span>
+                </div>
+              </div>
+
+              <div class="tool-item tool-card-item" id="tool-search_servicenow_problems_and_changes" data-tool-name="search_servicenow_problems_and_changes" onclick="selectTool('search_servicenow_problems_and_changes')">
+                <div class="tool-card-top">
+                  <span class="tool-card-name">search_servicenow_problems_and_changes</span>
+                  <div style="display:flex; align-items:center; gap:5px;">
+                    <span class="tool-tag">readOnly</span>
+                    <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'search_servicenow_problems_and_changes'})" title="Copy direct link">🔗</button>
                   </div>
                 </div>
-                <div class="tool-item" id="tool-search_servicenow_problems_and_changes" data-tool-name="search_servicenow_problems_and_changes" onclick="selectTool('search_servicenow_problems_and_changes')">
-                  <div class="tool-header">
-                    <span class="tool-name">search_servicenow_problems_and_changes</span>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <span class="tool-tag">readOnly</span>
-                      <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'search_servicenow_problems_and_changes'})" title="Copy direct link to this tool demo">🔗</button>
-                    </div>
-                  </div>
-                  <div class="tool-desc">Query live ServiceNow Problem records and Change Requests.</div>
-                  <div class="linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('13b_servicenow_live_ui_full_incident_list')" title="Jump to linked visual proof in gallery">
-                    <span>📸 Linked Asset: #13b_servicenow_live_ui_full_incident_list ↗</span>
-                  </div>
+                <div class="tool-card-desc">Query live ServiceNow Problem records and Change Requests.</div>
+                <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('13b_servicenow_live_ui_full_incident_list')" title="Jump to linked visual proof in gallery">
+                  <span>📸 Slide #13b • Live Incident List ↗</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Right Column: Runner & Results -->
+          <!-- Right Column: Active Runner & Live Data Table -->
           <div>
             <div class="runner-box">
               <div class="runner-title">
@@ -4220,7 +4665,7 @@ function compileSSML(rawText) {
               </div>
             </div>
 
-            <div class="card">
+            <div class="card" style="min-height:360px;">
               <div class="output-header">
                 <span id="stepTitle">Execution Result</span>
                 <div class="view-toggle">
@@ -4251,36 +4696,63 @@ function compileSSML(rawText) {
           </div>
         </div>
 
-        <div class="grid-2col">
-          <div>
-            <div class="card" style="margin-bottom:20px;">
-              <div class="card-title">Veeva Vault Instance Configuration</div>
-              <div class="kv-list">
-                <div class="kv-item"><div class="kv-k">Vault Domain</div><div class="kv-v">${veevaSampleData.vault_dns || 'vv-agency-prod.veevavault.com'}</div></div>
-                <div class="kv-item"><div class="kv-k">Okta SSO Domain</div><div class="kv-v">${veevaSampleData.okta_domain || 'argolis-life-sciences.okta.com'}</div></div>
-                <div class="kv-item"><div class="kv-k">OIDC Profile ID</div><div class="kv-v">${veevaSampleData.oidc_profile_id || 'prof_gxp_clinical_01'}</div></div>
-                <div class="kv-item"><div class="kv-k">Compliance</div><div class="kv-v">FDA 21 CFR Part 11 / GxP</div></div>
-              </div>
+        <!-- Veeva Vault Instance Configuration Strip -->
+        <div class="config-strip-card" style="margin-bottom:20px;">
+          <div class="config-strip-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="status-indicator"></span>
+              <span style="font-weight:600; font-size:13px; color:var(--text-primary); text-transform:uppercase; letter-spacing:0.5px;">Veeva Vault GxP Cloud Instance</span>
             </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <span class="badge" style="background:rgba(30, 142, 62, 0.15); color:var(--google-green); border:1px solid rgba(30, 142, 62, 0.3);">FDA 21 CFR Part 11 Validated</span>
+              <span class="badge" style="background:rgba(26, 115, 232, 0.15); color:var(--google-blue); border:1px solid rgba(26, 115, 232, 0.3);">argolis-life-sciences</span>
+            </div>
+          </div>
+          <div class="config-grid">
+            <div class="config-cell">
+              <span class="config-cell-label">Vault Domain</span>
+              <span class="config-cell-value link-val" onclick="window.open('https://${veevaSampleData.vault_dns || 'vv-agency-prod.veevavault.com'}')">${veevaSampleData.vault_dns || 'vv-agency-prod.veevavault.com'}</span>
+            </div>
+            <div class="config-cell">
+              <span class="config-cell-label">Okta SSO Domain</span>
+              <span class="config-cell-value">${veevaSampleData.okta_domain || 'argolis-life-sciences.okta.com'}</span>
+            </div>
+            <div class="config-cell">
+              <span class="config-cell-label">OIDC Profile ID</span>
+              <span class="config-cell-value">${veevaSampleData.oidc_profile_id || 'prof_gxp_clinical_01'}</span>
+            </div>
+            <div class="config-cell">
+              <span class="config-cell-label">Regulatory Standard</span>
+              <span class="config-cell-value">GxP / 21 CFR Part 11 Validated</span>
+            </div>
+          </div>
+        </div>
 
-            <div class="card">
-              <div class="card-title">Veeva Vault Tools</div>
-              <div class="tool-list">
-                <div class="tool-item selected" onclick="selectVeevaTool('search_vault_documents')">
+        <!-- Balanced 2-Column Workbench Grid -->
+        <div class="workbench-grid">
+          <!-- Left Column: Tool Selector -->
+          <div class="workbench-col-tools">
+            <div class="card" style="height:100%; display:flex; flex-direction:column;">
+              <div class="card-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span>Veeva Vault Tools</span>
+                <span class="badge" style="font-size:11px;">3 MCP Tools Available</span>
+              </div>
+              <div class="tool-list tool-list-scrollable" style="flex:1; max-height:480px; overflow-y:auto; padding-right:4px;">
+                <div class="tool-item compact selected" onclick="selectVeevaTool('search_vault_documents')">
                   <div class="tool-header">
                     <span class="tool-name">search_vault_documents</span>
                     <span class="tool-tag">readOnly</span>
                   </div>
                   <div class="tool-desc">VQL query across clinical trial documents, protocols, and regulatory filings.</div>
                 </div>
-                <div class="tool-item" onclick="selectVeevaTool('get_audit_trail')">
+                <div class="tool-item compact" onclick="selectVeevaTool('get_audit_trail')">
                   <div class="tool-header">
                     <span class="tool-name">get_audit_trail</span>
                     <span class="tool-tag">readOnly</span>
                   </div>
                   <div class="tool-desc">Extract 21 CFR Part 11 compliant audit trails with electronic signatures.</div>
                 </div>
-                <div class="tool-item" onclick="selectVeevaTool('get_binder_structure')">
+                <div class="tool-item compact" onclick="selectVeevaTool('get_binder_structure')">
                   <div class="tool-header">
                     <span class="tool-name">get_binder_structure</span>
                     <span class="tool-tag">readOnly</span>
@@ -4291,8 +4763,9 @@ function compileSSML(rawText) {
             </div>
           </div>
 
-          <div>
-            <div class="runner-box">
+          <!-- Right Column: Interactive Runner & Result Table -->
+          <div class="workbench-col-execution">
+            <div class="runner-box" style="margin-bottom:16px;">
               <div class="runner-title">
                 <span id="activeVeevaTitle">Active Tool: search_vault_documents</span>
                 <span style="font-size:12px; color:var(--muted); font-family:var(--font-mono);">POST :8792/mcp</span>
@@ -5630,7 +6103,7 @@ function compileSSML(rawText) {
   function selectTool(name, updateUrl) {
     if (updateUrl === undefined) updateUrl = true;
     currentTool = name;
-    document.querySelectorAll('#tab-servicenow .tool-item').forEach(function(el) {
+    document.querySelectorAll('#tab-servicenow .tool-item, #tab-servicenow .tool-card-item').forEach(function(el) {
       const match = el.getAttribute('data-tool-name') === name || (el.id && el.id.includes(name));
       el.classList.toggle('selected', match);
     });
@@ -5714,7 +6187,7 @@ function compileSSML(rawText) {
   function selectVeevaTool(tool, updateUrl) {
     if (updateUrl === undefined) updateUrl = true;
     currentVeevaTool = tool;
-    document.querySelectorAll('#tab-veeva .tool-item').forEach(function(el) {
+    document.querySelectorAll('#tab-veeva .tool-card-item, #tab-veeva .tool-item').forEach(function(el) {
       const match = el.getAttribute('data-veeva-tool') === tool || (el.id && el.id.includes(tool)) || el.getAttribute('onclick')?.includes(tool);
       el.classList.toggle('selected', match);
     });
@@ -5847,8 +6320,25 @@ function compileSSML(rawText) {
       let html = '<table class="data-table"><thead><tr>' + cols.map(function(c) { return '<th>' + c + '</th>'; }).join('') + '</tr></thead><tbody>';
       for (const r of rows) {
         html += '<tr>' + cols.map(function(c) {
-          const val = typeof r[c] === 'object' ? JSON.stringify(r[c]) : (r[c] ?? '');
-          return '<td>' + String(val).replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</td>';
+          const rawVal = r[c];
+          let formattedVal = typeof rawVal === 'object' ? JSON.stringify(rawVal) : (rawVal ?? '');
+          const colLower = c.toLowerCase();
+          
+          if (colLower.includes('sys_id') && String(formattedVal).length > 16) {
+            const fullStr = String(formattedVal);
+            return '<td><span class="table-mono-id" data-sysid="' + fullStr + '" title="' + fullStr + '" onclick="copySysId(this)">' + fullStr.substring(0, 10) + '…' + fullStr.substring(fullStr.length - 6) + '</span></td>';
+          }
+          if (colLower === 'state' && (formattedVal === '7' || formattedVal === 7)) {
+            return '<td><span class="badge-status-pill state-closed">Closed (7)</span></td>';
+          }
+          if (colLower === 'priority') {
+            if (formattedVal === '5' || formattedVal === 5) {
+              return '<td><span class="badge-status-pill priority-p5">P5 Planning</span></td>';
+            } else if (formattedVal === '1' || formattedVal === 1) {
+              return '<td><span class="badge-status-pill priority-p1">P1 Critical</span></td>';
+            }
+          }
+          return '<td>' + String(formattedVal).replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</td>';
         }).join('') + '</tr>';
       }
       html += '</tbody></table>';
@@ -5859,6 +6349,14 @@ function compileSSML(rawText) {
     document.getElementById('rpcOutput').textContent = JSON.stringify(rawJson, null, 2);
   };
 
+  window.copySysId = function(el) {
+    var id = el.getAttribute('data-sysid') || el.title;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(id);
+    }
+    showGcpToast('Copied SYS_ID: ' + id.substring(0, 8) + '...');
+  };
+
   // Backwards compatibility for gallery filter function
   function filterGallery(category) {
     filterGroupView(category);
@@ -5866,11 +6364,85 @@ function compileSSML(rawText) {
 
   
   // =========================================================================
+  // PROJECT CONTEXT SWITCHING & LOGICAL WORKFLOW NAVIGATION
+  // =========================================================================
+  let currentProject = 'argolis-ge-enterprise';
+
+  function toggleProjectMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('gcpProjectMenu');
+    if (!menu) return;
+    const isOpen = menu.style.display !== 'none';
+    menu.style.display = isOpen ? 'none' : 'block';
+  }
+
+  document.addEventListener('click', function(e) {
+    const menu = document.getElementById('gcpProjectMenu');
+    const chip = document.getElementById('gcpProjectChip');
+    if (menu && menu.style.display !== 'none' && !chip.contains(e.target)) {
+      menu.style.display = 'none';
+    }
+  });
+
+  function selectProjectView(projectId, tabId, groupId) {
+    currentProject = projectId;
+    const nameEl = document.getElementById('currentProjectName');
+    if (nameEl) {
+      nameEl.textContent = projectId === 'all' ? 'All Projects' : projectId;
+    }
+
+    // Update active project menu items & badges
+    document.querySelectorAll('.gcp-project-menu-item').forEach(function(el) {
+      el.classList.remove('active');
+    });
+    const activeMenuItem = document.getElementById('pItem-' + projectId);
+    if (activeMenuItem) activeMenuItem.classList.add('active');
+
+    ['argolis-ge-enterprise', 'argolis-life-sciences', 'argolis-gcp-console', 'all'].forEach(function(pid) {
+      const b = document.getElementById('badge-' + pid);
+      if (b) b.style.display = pid === projectId ? 'inline-block' : 'none';
+    });
+
+    const menu = document.getElementById('gcpProjectMenu');
+    if (menu) menu.style.display = 'none';
+
+    // Switch Tab
+    if (tabId) {
+      switchTab(tabId, false);
+    }
+
+    // If groupId specified, filter gallery
+    if (groupId) {
+      filterGroupView(groupId, false);
+    } else if (tabId === 'tab-gallery') {
+      filterGroupView('ALL', false);
+    }
+
+    // Update URL query parameters
+    updateUrlState({
+      project: projectId === 'all' ? null : projectId,
+      tab: tabId ? tabId.replace('tab-', '') : null,
+      group: groupId || null
+    });
+  }
+
+  window.selectProjectView = selectProjectView;
+  window.toggleProjectMenu = toggleProjectMenu;
+
+    // =========================================================================
   // URL SYNCHRONIZATION & IDEMPOTENT RELOAD HYDRATION ENGINE
   // =========================================================================
   function syncStateFromUrl() {
     const params = new URLSearchParams(window.location.search);
     const hash = window.location.hash.replace('#', '');
+
+    // 0. Project Hydration
+    const projectParam = params.get('project');
+    if (projectParam) {
+      currentProject = projectParam;
+      const nameEl = document.getElementById('currentProjectName');
+      if (nameEl) nameEl.textContent = projectParam === 'all' ? 'All Projects' : projectParam;
+    }
 
     // 1. Tab Hydration
     let tab = params.get('tab') || hash;

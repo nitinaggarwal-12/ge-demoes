@@ -1,8 +1,9 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
+const CHROME_PATH = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const OUT_DIR = path.resolve('scratch/screenshots_byomcp_step1');
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
@@ -40,6 +41,7 @@ async function main() {
     await waitForServer(`${BASE_URL}/.well-known/oauth-authorization-server`);
 
     const browser = await puppeteer.launch({
+      executablePath: CHROME_PATH,
       headless: 'new',
       args: [
         '--headless=new',

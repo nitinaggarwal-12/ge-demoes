@@ -1,7 +1,8 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import fs from 'fs';
 import path from 'path';
 
+const CHROME_PATH = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const OUT_DIR = path.resolve('scratch/screenshots_mode3_federated_and_ingestion');
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
@@ -210,6 +211,7 @@ async function main() {
   ]);
 
   const browser = await puppeteer.launch({
+    executablePath: CHROME_PATH,
     headless: 'new',
     args: ['--headless=new', '--no-sandbox', '--disable-setuid-sandbox', '--window-size=1600,1040'],
     defaultViewport: { width: 1600, height: 1040, deviceScaleFactor: 2 },
