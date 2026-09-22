@@ -193,6 +193,16 @@ function executeTool(name, args = {}) {
 
 export function startVeevaMcpServer(port = 8792) {
   const server = http.createServer((req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Mcp-Session-Id, x-goog-user-project');
+
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204);
+      res.end();
+      return;
+    }
+
     res.setHeader('Content-Type', 'application/json');
     let body = '';
     req.on('data', chunk => { body += chunk; });
@@ -267,7 +277,7 @@ export function startVeevaMcpServer(port = 8792) {
   });
 
   return new Promise(resolve => {
-    server.listen(port, '127.0.0.1', () => resolve(server));
+    server.listen(port, () => resolve(server));
   });
 }
 

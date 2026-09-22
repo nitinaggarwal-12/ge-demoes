@@ -1040,6 +1040,28 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // API: Veeva Vault MCP Proxy (Same-origin bridge to port 8792)
+  if (req.url === '/api/veeva-mcp') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', async () => {
+      try {
+        const veevaResp = await fetch('http://127.0.0.1:8792/mcp', {
+          method: req.method,
+          headers: { 'Content-Type': 'application/json' },
+          body: req.method === 'POST' ? body : undefined,
+        });
+        const data = await veevaResp.text();
+        res.writeHead(veevaResp.status, { 'Content-Type': 'application/json' });
+        res.end(data);
+      } catch (err) {
+        res.writeHead(502, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Failed to communicate with Veeva MCP server on port 8792: ' + err.message }));
+      }
+    });
+    return;
+  }
+
   // API: Serve Cached Audio MP3/WAV files
   if (req.url.startsWith('/api/audio/') && req.method === 'GET') {
     const filename = req.url.replace('/api/audio/', '').split('?')[0];
@@ -5220,11 +5242,21 @@ function compileSSML(rawText) {
       params: { name: currentVeevaTool, arguments: { query: q } }
     };
     try {
-      const resp = await fetch('http://localhost:8792/mcp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      let resp;
+      try {
+        resp = await fetch('http://localhost:8792/mcp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (crossErr) {
+        console.warn('Direct fetch to :8792 failed, using same-origin proxy:', crossErr.message);
+        resp = await fetch('/api/veeva-mcp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      }
       const rpcRes = await resp.json();
       let rows = null;
       if (rpcRes.result && rpcRes.result.content && rpcRes.result.content[0]) {
