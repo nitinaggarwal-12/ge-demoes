@@ -5105,11 +5105,13 @@ function compileSSML(rawText) {
                   </div>
                 </div>
               </div>
-              <div style="display:flex; gap:10px; margin-top:14px;">
+              <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
                 <button class="btn-run" onclick="executeVeevaTool()">
                   <span>&#9654;</span>
                   <span>Execute Veeva Tool Call</span>
                 </button>
+                <button class="btn-link" onclick="executeVeevaRpc('initialize', {})">Initialize MCP</button>
+                <button class="btn-link" onclick="executeVeevaRpc('tools/list', {})">List Tools</button>
               </div>
             </div>
 
@@ -5252,11 +5254,13 @@ function compileSSML(rawText) {
                   </div>
                 </div>
               </div>
-              <div style="display:flex; gap:10px; margin-top:14px;">
+              <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
                 <button class="btn-run" onclick="executeMicrosoftTool()">
                   <span>&#9654;</span>
                   <span>Execute Microsoft Tool Call</span>
                 </button>
+                <button class="btn-link" onclick="executeMsRpc('initialize', {})">Initialize MCP</button>
+                <button class="btn-link" onclick="executeMsRpc('tools/list', {})">List Tools</button>
               </div>
             </div>
 
@@ -6753,7 +6757,7 @@ function compileSSML(rawText) {
     const sampleDropdownHtml = renderSampleScenarioDropdown(name);
 
     if (name === 'search_servicenow_incidents') {
-      inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group"><label class="form-label">Search Query (optional)</label><input type="text" id="inputQuery" class="form-input" placeholder="e.g. email, network, server..." value="outage" /></div><div class="form-group" style="max-width: 140px;"><label class="form-label">Limit</label><input type="number" id="inputLimit" class="form-input" value="5" min="1" max="50" /></div></div>';
+      inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group"><label class="form-label">Search Query (optional)</label><input type="text" id="inputQuery" class="form-input" placeholder="e.g. email, network, server..." value="" /></div><div class="form-group" style="max-width: 140px;"><label class="form-label">Limit</label><input type="number" id="inputLimit" class="form-input" value="5" min="1" max="50" /></div></div>';
     } else if (name === 'get_servicenow_incident') {
       inputsDiv.innerHTML = sampleDropdownHtml + '<div class="form-row"><div class="form-group"><label class="form-label">Incident Number (e.g. INC1039)</label><input type="text" id="inputNumber" class="form-input" value="INC1039" /></div></div>';
     } else if (name === 'search_servicenow_knowledge_articles') {
@@ -6805,7 +6809,25 @@ function compileSSML(rawText) {
       const rpcRes = await resp.json();
 
       let rows = null;
-      if (rpcRes.result && rpcRes.result.content && rpcRes.result.content[0]) {
+      if (method === 'initialize' && rpcRes.result) {
+        rows = [{
+          status: '🟢 Connected & Initialized',
+          protocol_version: rpcRes.result.protocolVersion || '2025-03-26',
+          server_name: rpcRes.result.serverInfo?.name || 'gemini-enterprise-byomcp-servicenow',
+          version: rpcRes.result.serverInfo?.version || '1.0.0',
+          capabilities: 'tools.listChanged = false',
+          session_id: 'ge-byomcp-sn-session-001'
+        }];
+      } else if (method === 'tools/list' && rpcRes.result && rpcRes.result.tools) {
+        rows = rpcRes.result.tools.map(function(t) {
+          return {
+            tool_name: t.name,
+            description: t.description,
+            mode: (t.annotations && t.annotations.readOnlyHint) ? 'readOnly' : 'readWrite',
+            parameters: Object.keys(t.inputSchema?.properties || {}).join(', ') || 'none'
+          };
+        });
+      } else if (rpcRes.result && rpcRes.result.content && rpcRes.result.content[0]) {
         try {
           const parsed = JSON.parse(rpcRes.result.content[0].text);
           if (Array.isArray(parsed)) rows = parsed;
@@ -6816,8 +6838,10 @@ function compileSSML(rawText) {
         }
       }
       window.renderStepResult(method + ' • ' + (params.name || ''), rows, rpcRes);
+      showGcpToast('Executed: ' + method + (params.name ? ' (' + params.name + ')' : ''));
     } catch (err) {
       window.renderStepResult('Error: ' + err.message, null, { error: err.message });
+      showGcpToast('RPC Error: ' + err.message);
     }
   }
 
@@ -7000,6 +7024,52 @@ function compileSSML(rawText) {
     document.getElementById('veevaRpcOutput').textContent = JSON.stringify(rawJson, null, 2);
   }
 
+  async function executeVeevaRpc(method, params) {
+    const payload = { jsonrpc: '2.0', id: Date.now(), method: method, params: params };
+    try {
+      let resp;
+      try {
+        resp = await fetch('http://localhost:8792/mcp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (crossErr) {
+        resp = await fetch('/api/veeva-mcp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      }
+      const rpcRes = await resp.json();
+      let rows = null;
+      if (method === 'initialize' && rpcRes.result) {
+        rows = [{
+          status: '🟢 Connected & Initialized',
+          protocol_version: rpcRes.result.protocolVersion || '2024-11-05',
+          server_name: rpcRes.result.serverInfo?.name || 'veeva-vault-gxp-mcp-server',
+          version: rpcRes.result.serverInfo?.version || '2.0.0',
+          compliance: 'GxP / 21 CFR Part 11 Validated',
+          vault_endpoint: 'https://sbxxxxal.veevavault.com'
+        }];
+      } else if (method === 'tools/list' && rpcRes.result && rpcRes.result.tools) {
+        rows = rpcRes.result.tools.map(function(t) {
+          return {
+            tool_name: t.name,
+            description: t.description,
+            parameters: Object.keys(t.inputSchema?.properties || {}).join(', ') || 'none'
+          };
+        });
+      }
+      renderVeevaResult(rows, rpcRes);
+      showGcpToast('Veeva MCP: ' + method + ' executed');
+    } catch (err) {
+      document.getElementById('veevaRpcOutput').textContent = 'Error: ' + err.message;
+      showGcpToast('Veeva Error: ' + err.message);
+    }
+  }
+  window.executeVeevaRpc = executeVeevaRpc;
+
   function toggleResultView(mode) {
     currentViewMode = mode;
     document.getElementById('btnViewTable').classList.toggle('active', mode === 'table');
@@ -7048,8 +7118,14 @@ function compileSSML(rawText) {
       }
       html += '</tbody></table>';
       tc.innerHTML = html;
+    } else if (Array.isArray(rows) && rows.length === 0) {
+      tc.innerHTML = '<div class="no-records-box" style="padding:36px 16px; text-align:center; color:var(--muted); border:1px dashed var(--border); border-radius:8px; margin:8px 0; background:rgba(0,0,0,0.02);">' +
+        '<div style="font-size:26px; margin-bottom:8px;">🔍</div>' +
+        '<div style="font-weight:600; font-size:14px; color:var(--text); margin-bottom:4px;">No matching records found</div>' +
+        '<div style="font-size:12.5px; max-width:480px; margin:0 auto;">The query returned 0 records. Try searching with keywords like <code>VPN</code>, <code>Cisco</code>, <code>BGP</code>, <code>email</code>, or select a scenario from the dropdown above.</div>' +
+      '</div>';
     } else if (!rows) {
-      tc.innerHTML = '';
+      tc.innerHTML = '<div style="padding:28px 16px; text-align:center; color:var(--muted); font-size:13px;">JSON-RPC response received. Switch to <button class="btn-link" data-mode="json" onclick="toggleResultView(this.dataset.mode)">JSON-RPC view</button> to inspect the response payload.</div>';
     }
     document.getElementById('rpcOutput').textContent = JSON.stringify(rawJson, null, 2);
   };
@@ -7470,6 +7546,60 @@ function compileSSML(rawText) {
     }
   }
   window.renderMsResult = renderMsResult;
+
+  function executeMsRpc(method, params) {
+    let rows = null;
+    let rpcRes = null;
+    if (method === 'initialize') {
+      rpcRes = {
+        jsonrpc: '2.0',
+        id: Date.now(),
+        result: {
+          protocolVersion: '2025-03-26',
+          capabilities: { tools: { listChanged: false } },
+          serverInfo: { name: 'gemini-enterprise-microsoft-graph-mcp', version: '1.2.0' },
+          auth: { mode: 'OAuth 2.0 Auth Code (3LO)', tenant: 'argolis-enterprise.onmicrosoft.com' },
+          scopes: ['Files.Read.All', 'ChannelMessage.Read.All', 'Mail.Read', 'Sites.Read.All']
+        }
+      };
+      rows = [{
+        status: '🟢 Connected & Initialized',
+        protocol_version: '2025-03-26',
+        server_name: 'gemini-enterprise-microsoft-graph-mcp',
+        version: '1.2.0',
+        auth_mode: 'Entra ID Delegated (3LO)',
+        tenant_domain: 'argolis-enterprise.onmicrosoft.com'
+      }];
+    } else if (method === 'tools/list') {
+      rpcRes = {
+        jsonrpc: '2.0',
+        id: Date.now(),
+        result: {
+          tools: [
+            { name: 'search_sharepoint_documents', description: 'Query SharePoint Online intranet portals, document libraries, and policy files.', scope: 'Sites.Read.All' },
+            { name: 'get_teams_messages', description: 'Extract Microsoft Teams channel discussions, war room threads, and meeting transcripts.', scope: 'ChannelMessage.Read.All' },
+            { name: 'search_outlook_emails', description: 'Search Exchange Online emails, executive briefings, and calendar events.', scope: 'Mail.Read' },
+            { name: 'get_onedrive_files', description: 'Search OneDrive for Business personal and shared document drives.', scope: 'Files.Read.All' }
+          ]
+        }
+      };
+      rows = rpcRes.result.tools.map(function(t) {
+        return {
+          tool_name: t.name,
+          description: t.description,
+          graph_scope: t.scope,
+          mode: 'readOnly'
+        };
+      });
+    }
+    renderMsResult(rows);
+    const msRpcEl = document.getElementById('msRpcOutput');
+    if (msRpcEl) msRpcEl.textContent = JSON.stringify(rpcRes, null, 2);
+    const msTitle = document.getElementById('msOutputTitle');
+    if (msTitle) msTitle.textContent = 'Microsoft Graph: ' + method;
+    showGcpToast('Microsoft MCP: ' + method + ' executed');
+  }
+  window.executeMsRpc = executeMsRpc;
 
   function toggleMsView(view) {
     const btnT = document.getElementById('btnMsTable');

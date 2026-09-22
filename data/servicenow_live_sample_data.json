@@ -61,7 +61,7 @@
         "subcategory": "",
         "work_notes": "",
         "universal_request": "",
-        "short_description": "Global VPN gateway authentication timeout during peak auth",
+        "short_description": "Global VPN gateway authentication timeout and network outage during peak auth",
         "close_code": "CLOSED",
         "correlation_display": "",
         "delivery_task": "",
@@ -1094,6 +1094,26 @@
       }
     ],
     "kb_knowledge": [
+      {
+        "number": "KB0010045",
+        "short_description": "Global VPN Gateway Access, MFA Setup, and Cisco AnyConnect Troubleshooting",
+        "workflow_state": "published",
+        "article_type": "text",
+        "topic": "Network & Remote Access",
+        "sys_updated_on": "2026-09-21 14:20:00",
+        "sys_id": "9948a604db59030064dd36cb7c961999",
+        "active": "true"
+      },
+      {
+        "number": "KB0010046",
+        "short_description": "Resolving VPN Gateway Authentication Timeouts and Okta Push Delays",
+        "workflow_state": "published",
+        "article_type": "text",
+        "topic": "Security & SSO",
+        "sys_updated_on": "2026-09-20 09:15:00",
+        "sys_id": "9948a604db59030064dd36cb7c961988",
+        "active": "true"
+      },
       {
         "wiki": null,
         "rating": "",
