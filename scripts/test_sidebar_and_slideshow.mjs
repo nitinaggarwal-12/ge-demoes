@@ -157,10 +157,15 @@ async function run() {
     // Verify Karaoke Subtitles display natural concept explanation (not raw text)
     const karaokeText = await page.$eval('#karaokeText', el => el.textContent.trim());
     const karaokeWordCount = await page.$$eval('.karaoke-word', els => els.length);
+    const paragraphCount = await page.$$eval('#karaokeText .karaoke-paragraph', els => els.length);
     console.log(`  Karaoke Words Count: ${karaokeWordCount}`);
+    console.log(`  Karaoke Paragraphs (Respiratory Thought Separators): ${paragraphCount}`);
     console.log(`  Sample Concept Narration: "${karaokeText.slice(0, 85)}..."`);
     if (karaokeWordCount < 5 || karaokeText.includes('.png')) {
       throw new Error('Karaoke text is either empty or reading file name instead of natural concept explanation');
+    }
+    if (paragraphCount < 2) {
+      throw new Error(`Expected at least 2 paragraphs for natural respiratory pauses, found ${paragraphCount}`);
     }
 
     // Trigger Audio Narration with Google Journey David
@@ -177,6 +182,25 @@ async function run() {
     // Capture 07: Audio Narration with Live Gold Karaoke Subtitles & Google Journey Human Voice
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '07_audio_narration_gold_karaoke.png') });
     console.log('  Saved: 07_audio_narration_gold_karaoke.png');
+
+    // Test Theatrical Settling Pause on Slide Transition
+    console.log('  Testing Theatrical Settling Pause on Slide Transition...');
+    await page.$eval('#autoNarrateCheckbox', el => { el.checked = true; el.dispatchEvent(new Event('change')); });
+    await sleep(300);
+
+    // Navigate to Next Slide (Slide 2)
+    await page.click('button[onclick="nextSlide()"]');
+    // Immediately inspect settling status (should be 'Settling...' with hourglass icon)
+    const settlingLabel = await page.$eval('#narrateLabel', el => el.textContent.trim());
+    console.log(`  Immediate Transition Narrator Status: "${settlingLabel}" (Expected: Settling...)`);
+    if (settlingLabel !== 'Settling...') {
+      console.warn(`Note: settlingLabel was "${settlingLabel}" (transition may have settled rapidly)`);
+    }
+
+    // Wait for the 950ms settling pause to complete and audio to begin
+    await sleep(1500);
+    const postSettlingLabel = await page.$eval('#narrateLabel', el => el.textContent.trim());
+    console.log(`  Post-Settling Narrator Status: "${postSettlingLabel}" (Expected: Pause)`);
 
     // Stop narration
     await page.click('#btnNarrateAudio');

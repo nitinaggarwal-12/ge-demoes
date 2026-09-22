@@ -373,71 +373,84 @@ function getAllScreenshots() {
 }
 
 const SLIDE_CONCEPT_NARRATIONS = {
-  "00_post_login_state.png": "Welcome to Google Cloud. After authenticating through enterprise single sign-on, we land directly in the Vertex AI Search and Conversation management console. This dashboard anchors our enterprise discovery engine, coordinating indexing schedules, embeddings, and security boundaries across organizational data stores.",
-  "01_argolis_console_engines_overview.png": "Here in the Argolis console, we examine our active search and conversation engines. Each engine encapsulates search indexing, semantic retrieval, and tool definitions, serving as the AI grounding backend for Gemini Enterprise and downstream conversational agents.",
-  "02_argolis_console_datastores_overview.png": "Navigating to the Data Stores tab, we inspect the underlying knowledge repositories. Notice our custom ServiceNow Cloud Run deployment registered alongside production data stores, enabling federated retrieval without manual data replication.",
-  "03_argolis_console_create_datastore_connectors.png": "When provisioning a new data store, Google Cloud presents a choice of first-party ingestion pipelines. To integrate live IT service management data directly, we navigate to the third-party partner connector marketplace.",
-  "04_argolis_wizard_step1_search_servicenow_cards.png": "Filtering third-party sources brings up the official ServiceNow connector card. Google Cloud native connectors provide fully managed ingestion pipelines with built-in OAuth handshakes and delta synchronization.",
-  "04b_argolis_wizard_step1_servicenow_card_scrolled.png": "Selecting the ServiceNow integration card reveals its capabilities. It supports automated schema discovery across core ITSM tables\u2014including Incident, Change Request, Problem, and the Knowledge Base.",
-  "05_argolis_wizard_step2_servicenow_mode_and_auth_config.png": "Step two initiates connection configuration. Here we define our ServiceNow instance host URI and select between OAuth 2.0 authorization code grant or client credentials based on organizational security policies.",
-  "06_argolis_wizard_step2_servicenow_auth_fields_scrolled.png": "Scrolling down through the authentication parameters, we configure token endpoints, client secrets, and scopes. Google Cloud stores these credentials securely within Secret Manager with automatic encryption.",
-  "08_argolis_gemini_enterprise_app_config_and_connected_datastores.png": "Inside the Gemini Enterprise application configuration, we verify how data stores bind to the agent runtime. This mapping determines which knowledge domains the AI model can tap into during conversational grounding.",
-  "09_argolis_wizard_step2_servicenow_credentials_filled.png": "With our OAuth client identifier and instance endpoints populated, the wizard prepares to execute a cryptographic handshake against the ServiceNow identity provider.",
-  "09b_argolis_wizard_step2_servicenow_verify_auth_clicked.png": "Clicking Verify Authentication triggers an outbound mutual TLS authorization probe. Google Cloud validates tenant certificates and verifies that the provided credentials hold valid read permissions.",
-  "10_argolis_wizard_step3_servicenow_connection_tested_destinations.png": "Once authentication succeeds, Step three maps the ingested records to their destination data store. We designate a dedicated search index optimized for IT operational metadata.",
-  "10b_argolis_wizard_step3_destinations_expanded.png": "Expanding destination details confirms the index topology. Google Cloud allocates multi-region resilient storage with customer-managed encryption key support.",
-  "10c_argolis_wizard_step4_advanced_options_expanded.png": "Step four offers advanced tuning, such as custom document filters, entity extraction models, and ACL synchronization rules to mirror ServiceNow user permissions directly into Gemini search results.",
-  "11_argolis_wizard_step5_servicenow_entities_to_search.png": "Step five specifies the entity scope. By indexing incident numbers, caller identifiers, priority levels, and assignment groups, we empower Gemini Enterprise to resolve nuanced operational questions.",
-  "gcp_console_01_engines_overview.png": "This high-level perspective showcases our complete fleet of Vertex AI Search engines, illustrating how multiple conversational agents can share underlying connector infrastructure.",
-  "gcp_console_02_datastores_overview.png": "Here we audit active data stores across environments. Tracking document counts and synchronization health ensures operational visibility across all enterprise data sources.",
-  "gcp_console_03_ai_applications_start_page.png": "The AI Applications portal is the launchpad where developers create new Gemini Enterprise experiences, combining conversational agents with enterprise grounding.",
-  "gcp_console_04_ai_applications_engines.png": "Reviewing the engines linked to our enterprise applications demonstrates how modular search indexes power distinct departmental workspaces.",
-  "gcp_console_05_ai_applications_datastores.png": "Here we see the connected data stores ready for deployment, completing the foundational ingestion setup in Google Cloud Console.",
-  "07_argolis_existing_byomcp_datastore_detail_config.png": "This view captures our Bring Your Own MCP connector configuration. Unlike traditional scheduled syncs, BYOMCP connects via standard Model Context Protocol over streamable HTTP, enabling zero-latency live queries against ServiceNow APIs.",
-  "12_argolis_byomcp_view_edit_parameters_modal.png": "The View and Edit Parameters modal allows administrators to adjust endpoint headers, tune timeout thresholds, and update query filter predicates without redeploying the underlying microservice.",
-  "13_argolis_byomcp_reauthenticate_credentials_modal.png": "When security rotation policies trigger or OAuth refresh tokens expire, this modal facilitates credential renewal. It initiates an on-demand OAuth handshake with zero downtime for end users.",
-  "13b_argolis_byomcp_reauthenticate_credentials_populated.png": "Confirming the updated client secret completes the re-authentication sequence. The MCP server immediately receives fresh authorization bearer tokens to resume live queries.",
-  "14_argolis_ge_chat_home_screen.png": "Welcome to the Gemini Enterprise chat interface. This conversational interface delivers an intuitive, enterprise-grade AI workspace where employees can search documents and trigger business workflows.",
-  "15_argolis_ge_chat_servicenow_incident_retrieval_thread.png": "In this conversational thread, an IT specialist asks about recent network outages. Gemini dynamically recognizes that ServiceNow holds the authoritative records and prepares an MCP tool call.",
-  "15_argolis_ge_chat_servicenow_query_entered.png": "Notice the query prompt entered by the user. Gemini's semantic parser extracts key entities like priority and topic rather than relying on brittle keyword matching.",
-  "16_argolis_ge_chat_gxp_lims_asset_ci_thread.png": "Here we see Gemini handling a specialized life sciences query, demonstrating its versatility across IT service management and regulated laboratory information management systems.",
-  "16_argolis_ge_chat_servicenow_live_response.png": "Gemini returns a synthesized operational brief. It highlights critical incident details, current assigned technician, and recent work notes, grounding every claim in live ServiceNow data.",
-  "17_argolis_ge_chat_new_servicenow_query_entered.png": "In this follow-up query, the user asks for specific incident numbers. Gemini maintains conversational memory and refines its subsequent MCP search parameters accordingly.",
-  "18_argolis_ge_chat_new_servicenow_query_live_response.png": "The live response streams back formatted tables and direct system links. Users can review ticket status without ever needing to navigate complex ServiceNow forms.",
-  "19_ge_chat_sources_menu_servicenow_connector_selected.png": "The Sources and Tools menu allows users to inspect and toggle active integrations. Selecting the ServiceNow connector explicitly authorizes Gemini to query the live BYOMCP endpoint.",
-  "20_ge_chat_servicenow_connector_prompt_ready.png": "With the ServiceNow connector active, a visual indicator confirms tool readiness. Gemini automatically includes the connector's tool definitions within its execution context.",
-  "21_ge_chat_servicenow_connector_tool_call_state.png": "This screenshot reveals the underlying reasoning step. Gemini emits a structured JSON-RPC search_servicenow_incidents call, transmitting parameter payloads directly to our local MCP bridge.",
-  "22_ge_chat_servicenow_connector_live_query_response.png": "Upon receiving the JSON-RPC response, Gemini synthesizes a comprehensive response, formatting tabular ticket fields into clear, human-digestible prose.",
-  "ge_app_01_home_dashboard.png": "The Gemini Enterprise home dashboard serves as the daily hub for corporate knowledge discovery, providing instant access to enterprise agents and recent chats.",
-  "ge_app_02_select_tools_menu.png": "Opening the Tools selector reveals available first-party and third-party extensions, allowing granular control over which external systems the agent may contact.",
-  "ge_app_03_sources_connectors_menu.png": "The Sources panel exposes connected enterprise repositories. Administrators can verify which indexes are active and check synchronization timestamps.",
-  "ge_app_03b_sources_connectors_scrolled.png": "Scrolling through the connectors list confirms active bindings for ServiceNow, Veeva Vault, and Google Drive, forming a unified corporate knowledge fabric.",
+  // Group 1: Argolis Console & Data Stores (15 slides)
+  "00_post_login_state.png": "Welcome to Google Cloud.\n\nAfter authenticating through enterprise single sign-on... we land directly inside the Vertex AI Search and Conversation console.\n\nNotice how this dashboard anchors our enterprise discovery engine — coordinating indexing schedules, embeddings, and security boundaries across every organizational data store.",
+  "01_argolis_console_engines_overview.png": "Here in the Argolis console... we examine our active search and conversation engines.\n\nEach engine encapsulates semantic retrieval, embedding models, and tool definitions.\n\nWhy is this architecture so critical? Because it serves as the unified AI grounding backend — powering both Gemini Enterprise and downstream conversational agents with strict enterprise governance.",
+  "02_argolis_console_datastores_overview.png": "Navigating to the Data Stores tab... we inspect the underlying knowledge repositories.\n\nTake a close look at the custom ServiceNow Cloud Run deployment registered right alongside production data stores.\n\nThis design enables federated, real-time retrieval — without requiring risky or redundant manual data replication.",
+  "03_argolis_console_create_datastore_connectors.png": "When provisioning a new data store... Google Cloud presents a rich choice of first-party ingestion pipelines.\n\nTo integrate live IT service management data directly... we navigate into the third-party partner connector marketplace.",
+  "04_argolis_wizard_step1_search_servicenow_cards.png": "Filtering third-party sources brings up the official ServiceNow connector.\n\nWhy does this matter? Google Cloud native connectors provide fully managed ingestion pipelines — handling OAuth handshakes, delta synchronization, and schema discovery with zero custom code.",
+  "04b_argolis_wizard_step1_servicenow_card_scrolled.png": "Selecting the ServiceNow integration card reveals its full capabilities.\n\nIt supports automated schema discovery across core ITSM tables — including Incident, Change Request, Problem, and the Knowledge Base.\n\nNotice how all relational linkages are preserved automatically.",
+  "05_argolis_wizard_step2_servicenow_mode_and_auth_config.png": "Step two initiates connection configuration.\n\nHere we define our ServiceNow instance host URI... and choose between OAuth 2.0 authorization code grant or client credentials.\n\nThis gives enterprise architects complete flexibility to align with corporate security policies.",
+  "06_argolis_wizard_step2_servicenow_auth_fields_scrolled.png": "Scrolling down through the authentication parameters... we configure token endpoints, client secrets, and scopes.\n\nWhere do these credentials live? Google Cloud stores them securely within Secret Manager — featuring automatic encryption and customer-managed encryption keys.",
+  "08_argolis_gemini_enterprise_app_config_and_connected_datastores.png": "Inside the Gemini Enterprise application configuration... we verify how data stores bind to the agent runtime.\n\nThis mapping is critical. It defines the exact knowledge domains and operational boundaries the AI model can tap into during conversational grounding.",
+  "09_argolis_wizard_step2_servicenow_credentials_filled.png": "With our OAuth client identifier and instance endpoints populated... the wizard prepares to execute a cryptographic handshake against the ServiceNow identity provider.",
+  "09b_argolis_wizard_step2_servicenow_verify_auth_clicked.png": "Clicking Verify Authentication triggers an outbound mutual TLS authorization probe.\n\nGoogle Cloud validates tenant certificates... and confirms that the provided credentials hold valid read permissions across the target tables.",
+  "10_argolis_wizard_step3_servicenow_connection_tested_destinations.png": "Once authentication succeeds... Step three maps the ingested records directly to their destination data store.\n\nHere, we designate a dedicated search index — purpose-built and optimized for IT operational metadata.",
+  "10b_argolis_wizard_step3_destinations_expanded.png": "Expanding destination details confirms the underlying index topology.\n\nNotice that Google Cloud allocates multi-region resilient storage — backed by automated replication and enterprise disaster recovery.",
+  "10c_argolis_wizard_step4_advanced_options_expanded.png": "Step four unlocks advanced tuning.\n\nAdministrators can configure custom document filters, entity extraction models, and ACL synchronization rules — mirroring ServiceNow user permissions directly into Gemini search results.",
+  "11_argolis_wizard_step5_servicenow_entities_to_search.png": "Step five specifies the entity scope.\n\nBy indexing incident numbers, caller identifiers, priority levels, and assignment groups... we empower Gemini Enterprise to resolve nuanced, mission-critical operational questions.",
+
+  // Group 2: GCP Console 01-05 (5 slides)
+  "gcp_console_01_engines_overview.png": "This high-level perspective showcases our complete fleet of Vertex AI Search engines.\n\nIt illustrates how multiple conversational agents across different business units can share underlying connector infrastructure — without cross-tenant data leakage.",
+  "gcp_console_02_datastores_overview.png": "Here we audit active data stores across environments.\n\nTracking document counts, update frequencies, and synchronization health ensures operational visibility across all enterprise knowledge sources.",
+  "gcp_console_03_ai_applications_start_page.png": "The AI Applications portal is the launchpad where developers create new Gemini Enterprise experiences.\n\nIt seamlessly combines multi-turn conversational agents with live enterprise grounding.",
+  "gcp_console_04_ai_applications_engines.png": "Reviewing the engines linked to our enterprise applications demonstrates how modular search indexes power distinct departmental workspaces — from IT support to HR.",
+  "gcp_console_05_ai_applications_datastores.png": "Here we see the connected data stores ready for deployment... completing the foundational ingestion setup in Google Cloud Console.",
+
+  // Group 3: BYOMCP Integration Architecture (4 slides)
+  "07_argolis_existing_byomcp_datastore_detail_config.png": "Here is our Bring Your Own MCP connector configuration.\n\nUnlike traditional scheduled batch syncs... BYOMCP connects via the open Model Context Protocol over streamable HTTP.\n\nThe real breakthrough? Zero-latency live queries directly against ServiceNow APIs — with no batch ETL required.",
+  "12_argolis_byomcp_view_edit_parameters_modal.png": "The View and Edit Parameters modal allows administrators to adjust endpoint headers, tune timeout thresholds, and update query filter predicates... all without redeploying the underlying microservice.",
+  "13_argolis_byomcp_reauthenticate_credentials_modal.png": "When security rotation policies trigger or OAuth refresh tokens expire... this modal facilitates credential renewal.\n\nIt initiates an on-demand OAuth handshake — ensuring zero downtime for end users.",
+  "13b_argolis_byomcp_reauthenticate_credentials_populated.png": "Confirming the updated client secret completes the re-authentication sequence.\n\nThe MCP server immediately receives fresh authorization bearer tokens to resume live queries without missing a beat.",
+
+  // Group 4: Gemini Enterprise Conversational Threads (11 slides)
+  "14_argolis_ge_chat_home_screen.png": "Welcome to the Gemini Enterprise chat interface.\n\nThis delivers an intuitive, enterprise-grade AI workspace where employees can search documents, query systems of record, and trigger business workflows in natural language.",
+  "15_argolis_ge_chat_servicenow_incident_retrieval_thread.png": "In this conversational thread... an IT specialist asks about recent high-priority network outages.\n\nWatch how Gemini dynamically recognizes that ServiceNow holds the authoritative records... and immediately prepares an MCP tool call.",
+  "15_argolis_ge_chat_servicenow_query_entered.png": "Notice the query prompt entered by the user.\n\nGemini's semantic parser extracts key entities like priority and topic — rather than relying on brittle, keyword-based matching.",
+  "16_argolis_ge_chat_gxp_lims_asset_ci_thread.png": "Here we see Gemini handling a specialized life sciences query.\n\nThis demonstrates its remarkable versatility across IT service management... and regulated laboratory information management systems.",
+  "16_argolis_ge_chat_servicenow_live_response.png": "Gemini returns a synthesized operational brief.\n\nNotice how it highlights critical incident details, current assigned technician, and recent work notes — grounding every single claim in live ServiceNow data.",
+  "17_argolis_ge_chat_new_servicenow_query_entered.png": "In this follow-up query... the user asks for specific incident numbers.\n\nGemini maintains multi-turn conversational memory... and refines its subsequent MCP search parameters accordingly.",
+  "18_argolis_ge_chat_new_servicenow_query_live_response.png": "The live response streams back formatted tables and direct system links.\n\nUsers can review ticket status without ever needing to navigate complex ServiceNow forms.",
+  "19_ge_chat_sources_menu_servicenow_connector_selected.png": "The Sources and Tools menu allows users to inspect and toggle active integrations.\n\nSelecting the ServiceNow connector explicitly authorizes Gemini to query the live BYOMCP endpoint.",
+  "20_ge_chat_servicenow_connector_prompt_ready.png": "With the ServiceNow connector active... a visual indicator confirms tool readiness.\n\nGemini automatically includes the connector's tool definitions within its execution context.",
+  "21_ge_chat_servicenow_connector_tool_call_state.png": "This screenshot reveals the underlying reasoning step.\n\nGemini emits a structured JSON-RPC search_servicenow_incidents call — transmitting parameter payloads directly to our local MCP bridge.",
+  "22_ge_chat_servicenow_connector_live_query_response.png": "Upon receiving the JSON-RPC response... Gemini synthesizes a comprehensive response, formatting tabular ticket fields into clear, human-digestible prose.",
+
+  // Group 5: Gemini Enterprise Application & Features (12 slides)
+  "ge_app_01_home_dashboard.png": "The Gemini Enterprise home dashboard serves as the daily hub for corporate knowledge discovery... providing instant access to enterprise agents and recent chats.",
+  "ge_app_02_select_tools_menu.png": "Opening the Tools selector reveals available first-party and third-party extensions.\n\nThis gives administrators granular control over which external systems the agent may contact.",
+  "ge_app_03_sources_connectors_menu.png": "The Sources panel exposes connected enterprise repositories.\n\nAdministrators can verify which indexes are active and check synchronization timestamps.",
+  "ge_app_03b_sources_connectors_scrolled.png": "Scrolling through the connectors list confirms active bindings for ServiceNow, Veeva Vault, and Google Drive — forming a unified corporate knowledge fabric.",
   "ge_app_07_headless_verified_home.png": "This headless browser capture verifies interface responsiveness and component initialization under automated regression test conditions.",
-  "ge_app_08_servicenow_query_prompt_entered.png": "Here the operator prepares an incident query. Gemini's auto-completion and context hints guide the user toward actionable operational phrasing.",
-  "ge_app_09_servicenow_live_chat_response_part1.png": "Part one of the live response shows immediate tool invocation. Gemini streams initial ticket summaries and status badges in real time.",
-  "ge_app_10_servicenow_live_chat_response_part2.png": "Part two delivers expanded technical diagnostics, detailing root causes and recommended remediation procedures extracted from resolved ServiceNow incidents.",
-  "ge_app_04_enterprise_search_view.png": "The Enterprise Search view unifies structured database queries with unstructured document retrieval, giving staff a single search box for the entire organization.",
-  "ge_app_04_new_agent_builder.png": "Agent Studio provides a no-code canvas to build specialized virtual colleagues. Builders define persona instructions, configure guardrails, and attach tools with zero scripting.",
-  "ge_app_05_agents_gallery.png": "The Agents Gallery catalogs certified organizational agents\u2014from IT Service Desk helpers to HR onboarding guides\u2014ready for one-click deployment.",
-  "ge_app_06_new_agent_studio.png": "Inside Agent Studio, engineers can test model behavior, inspect prompt-to-tool routing, and simulate edge cases in an interactive sandbox.",
-  "13_servicenow_live_ui_query_results.png": "This is our ground-truth baseline: the native ServiceNow Polaris UI showing live incident INC1039. We inspect the raw short description, state code, and priority values.",
+  "ge_app_08_servicenow_query_prompt_entered.png": "Here the operator prepares an incident query.\n\nGemini's auto-completion and context hints guide the user toward actionable operational phrasing.",
+  "ge_app_09_servicenow_live_chat_response_part1.png": "Part one of the live response shows immediate tool invocation.\n\nGemini streams initial ticket summaries and status badges in real time.",
+  "ge_app_10_servicenow_live_chat_response_part2.png": "Part two delivers expanded technical diagnostics... detailing root causes and recommended remediation procedures extracted from resolved ServiceNow incidents.",
+  "ge_app_04_enterprise_search_view.png": "The Enterprise Search view unifies structured database queries with unstructured document retrieval — giving staff a single search box for the entire organization.",
+  "ge_app_04_new_agent_builder.png": "Agent Studio provides a no-code canvas to build specialized virtual colleagues.\n\nBuilders define persona instructions, configure guardrails, and attach tools with zero scripting.",
+  "ge_app_05_agents_gallery.png": "The Agents Gallery catalogs certified organizational agents — from IT Service Desk helpers to HR onboarding guides — ready for one-click deployment.",
+  "ge_app_06_new_agent_studio.png": "Inside Agent Studio... engineers can test model behavior, inspect prompt-to-tool routing, and simulate edge cases in an interactive sandbox.",
+
+  // Group 6: Ground-Truth Parity: Native UI vs. GE Chat Side-by-Side (7 slides)
+  "13_servicenow_live_ui_query_results.png": "This is our ground-truth baseline... the native ServiceNow Polaris UI showing live incident INC1039.\n\nWe inspect the raw short description, state code, and priority values.",
   "13b_servicenow_live_ui_full_incident_list.png": "Examining the full incident table in ServiceNow establishes the exact records present in the production database prior to agent testing.",
-  "14_ge_chat_matching_servicenow_query_results.png": "Now we examine Gemini Enterprise querying the exact same incident. Every single field\u2014from ticket ID to status timestamps\u2014matches the ServiceNow record verbatim.",
-  "15_servicenow_ui_vs_ge_chat_side_by_side_truth_comparison.png": "Here is our side-by-side parity proof: ServiceNow on the left, Gemini Enterprise on the right. This proves 100% data fidelity with zero hallucination.",
-  "11_veeva_live_ui_query_results.png": "Turning to our life sciences integration, this screenshot displays clinical trial documentation and audit records inside native Veeva Vault GxP.",
-  "12_ge_chat_matching_veeva_query_results.png": "Gemini Enterprise queries the Veeva Vault MCP server, returning exact document versions and 21 CFR Part 11 compliant approval states.",
-  "13_veeva_ui_vs_ge_chat_side_by_side_truth_comparison.png": "This final comparison confirms strict regulatory parity between Veeva Vault and Gemini Enterprise, demonstrating enterprise readiness for compliance-critical workloads.",
-  "tab1_IAM_amp_Admin_Google_Cloud_console.png": "Auditing Tab one verifies IAM permissions. We ensure the service accounts driving our connectors hold principle-of-least-privilege access.",
-  "tab2_AI_Applications_Google_Cloud_console.png": "Tab two tracks our Vertex AI application runtime, verifying healthy resource allocation and latency metrics.",
-  "tab3_Introduction_The_LLM_Extension.png": "Tab three inspects LLM extension manifests, auditing how model tool declarations are packaged and validated.",
-  "tab4_Laxis_Your_AI_Workforce.png": "Tab four confirms external partner session state, ensuring clean isolation between tenant workspaces.",
-  "tab5_AI_Applications_Google_Cloud_console.png": "Tab five verifies engine configuration across regional zones, confirming high availability for mission-critical search.",
+  "14_ge_chat_matching_servicenow_query_results.png": "Now we examine Gemini Enterprise querying the exact same incident.\n\nEvery single field — from ticket ID to status timestamps — matches the ServiceNow record verbatim.",
+  "15_servicenow_ui_vs_ge_chat_side_by_side_truth_comparison.png": "Here is the definitive side-by-side parity proof.\n\nOn the left... native ServiceNow. On the right... Gemini Enterprise.\n\nNotice every single attribute — from the incident description to priority badges — matches verbatim. That's one hundred percent data fidelity... with zero hallucination.",
+  "11_veeva_live_ui_query_results.png": "Turning to our life sciences integration... this screenshot displays clinical trial documentation and audit records inside native Veeva Vault GxP.",
+  "12_ge_chat_matching_veeva_query_results.png": "Gemini Enterprise queries the Veeva Vault MCP server — returning exact document versions and 21 CFR Part 11 compliant approval states.",
+  "13_veeva_ui_vs_ge_chat_side_by_side_truth_comparison.png": "This final comparison confirms strict regulatory parity between Veeva Vault and Gemini Enterprise... demonstrating enterprise readiness for compliance-critical workloads.",
+
+  // Group 7: Multi-Tab Audit & Identity SSO Verification (11 slides)
+  "tab1_IAM_amp_Admin_Google_Cloud_console.png": "Auditing Tab one verifies IAM permissions.\n\nWe ensure the service accounts driving our connectors hold principle-of-least-privilege access.",
+  "tab2_AI_Applications_Google_Cloud_console.png": "Tab two tracks our Vertex AI application runtime... verifying healthy resource allocation and latency metrics.",
+  "tab3_Introduction_The_LLM_Extension.png": "Tab three inspects LLM extension manifests... auditing how model tool declarations are packaged and validated.",
+  "tab4_Laxis_Your_AI_Workforce.png": "Tab four confirms external partner session state — ensuring clean isolation between tenant workspaces.",
+  "tab5_AI_Applications_Google_Cloud_console.png": "Tab five verifies engine configuration across regional zones... confirming high availability for mission-critical search.",
   "tab6_Google.png": "Tab six validates corporate identity single sign-on federation through Google Workspace and Okta.",
-  "tab7_Gemini_Enterprise.png": "Tab seven confirms the active Gemini Enterprise user session, demonstrating seamless cross-tab authentication.",
+  "tab7_Gemini_Enterprise.png": "Tab seven confirms the active Gemini Enterprise user session... demonstrating seamless cross-tab authentication.",
   "01_gemini_enterprise_app_ucs_widget.png": "Here we audit the unified conversational search widget embedded into internal portal frameworks.",
   "02_pantheon_gen_app_builder_engines.png": "This view audits underlying Gen App Builder engine endpoints in the Google Cloud Pantheon console.",
   "03_pantheon_gen_app_builder_datastores.png": "Inspecting Gen App Builder data stores confirms healthy index synchronization across all document partitions.",
-  "04_cloud_console_gen_app_builder_engines.png": "Finally, this audit view validates that all deployed engines maintain green operational status in the Google Cloud Console."
+  "04_cloud_console_gen_app_builder_engines.png": "Finally... this audit view validates that all deployed engines maintain green operational status in the Google Cloud Console."
 };
 
 function getConceptNarration(fileName, title, groupTitle, groupDesc) {
@@ -840,6 +853,27 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+// Compiles human prose into expressive SSML with natural breath pauses & pitch variation
+function compileSSML(rawText) {
+  let ssml = (rawText || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // Human respiratory breaks on paragraphs
+  ssml = ssml.replace(/\n\n+/g, '<break time="800ms"/> ');
+  // Dramatic / contemplative hesitation on ellipses
+  ssml = ssml.replace(/\.\.\./g, '<break time="550ms"/>');
+  // Conversational tempo shifts on em-dashes
+  ssml = ssml.replace(/ — /g, '<break time="350ms"/> ');
+  // Clear completion pauses on sentences and questions
+  ssml = ssml.replace(/([.!?])\s+/g, '$1 <break time="500ms"/> ');
+  // Breathing pauses on commas
+  ssml = ssml.replace(/,\s+/g, ', <break time="220ms"/> ');
+
+  return `<speak><prosody rate="94%">${ssml}</prosody></speak>`;
+}
+
   // API: Multi-Engine Audio Narrator (Google Journey, Chirp-HD, Studio, Gemini, OpenAI Omni)
   if (req.url === '/api/narrate' && req.method === 'POST') {
     let body = '';
@@ -881,6 +915,11 @@ const server = http.createServer(async (req, res) => {
           if (token) {
             const project = process.env.GOOGLE_CLOUD_PROJECT || 'vertex-ai-493102';
             try {
+              // Journey and Chirp require plain text input with paralinguistics (status 400 on SSML)
+              // Studio, Neural2, and Standard voices accept rich SSML with explicit pause breaks
+              const supportsSsml = vInfo.model.includes('Studio') || vInfo.model.includes('Neural2');
+              const inputPayload = supportsSsml ? { ssml: compileSSML(text) } : { text: text };
+
               const ttsResp = await fetch('https://texttospeech.googleapis.com/v1/text:synthesize', {
                 method: 'POST',
                 headers: {
@@ -889,9 +928,9 @@ const server = http.createServer(async (req, res) => {
                   'x-goog-user-project': project
                 },
                 body: JSON.stringify({
-                  input: { text: text },
+                  input: inputPayload,
                   voice: { languageCode: 'en-US', name: vInfo.model },
-                  audioConfig: { audioEncoding: 'MP3', speakingRate: 1.0 }
+                  audioConfig: { audioEncoding: 'MP3', speakingRate: 0.94 }
                 })
               });
               if (ttsResp.ok) {
@@ -902,6 +941,28 @@ const server = http.createServer(async (req, res) => {
               } else {
                 const errJson = await ttsResp.json().catch(() => ({}));
                 console.warn('[TTS] Google Cloud TTS error:', errJson);
+                // Fallback to plain text if SSML was rejected
+                if (supportsSsml) {
+                  const fallbackResp = await fetch('https://texttospeech.googleapis.com/v1/text:synthesize', {
+                    method: 'POST',
+                    headers: {
+                      'Authorization': `Bearer ${token}`,
+                      'Content-Type': 'application/json',
+                      'x-goog-user-project': project
+                    },
+                    body: JSON.stringify({
+                      input: { text: text },
+                      voice: { languageCode: 'en-US', name: vInfo.model },
+                      audioConfig: { audioEncoding: 'MP3', speakingRate: 0.94 }
+                    })
+                  });
+                  if (fallbackResp.ok) {
+                    const fbData = await fallbackResp.json();
+                    if (fbData.audioContent) {
+                      audioBuffer = Buffer.from(fbData.audioContent, 'base64');
+                    }
+                  }
+                }
               }
             } catch (err) {
               console.warn('[TTS] Fetch error:', err.message);
@@ -984,7 +1045,7 @@ const server = http.createServer(async (req, res) => {
                 body: JSON.stringify({
                   input: { text: text },
                   voice: { languageCode: 'en-US', name: 'en-US-Journey-D' },
-                  audioConfig: { audioEncoding: 'MP3', speakingRate: 1.0 }
+                  audioConfig: { audioEncoding: 'MP3', speakingRate: 0.94 }
                 })
               });
               if (ttsResp.ok) {
@@ -2514,11 +2575,17 @@ const server = http.createServer(async (req, res) => {
   .karaoke-text {
     font-family: var(--font-heading);
     font-size: 13.5px;
-    line-height: 1.5;
+    line-height: 1.55;
     color: var(--muted);
     text-align: left;
-    max-height: 70px;
+    max-height: 80px;
     overflow-y: auto;
+  }
+  .karaoke-paragraph {
+    margin-bottom: 6px;
+  }
+  .karaoke-paragraph:last-child {
+    margin-bottom: 0;
   }
   .karaoke-word {
     display: inline-block;
@@ -3854,20 +3921,29 @@ const server = http.createServer(async (req, res) => {
     if (btn) btn.classList.toggle('active', showKaraokeSubtitles);
   }
 
-  // Word extraction helper safe for template literals
+  // Timers for slide visual settling and outro delay
+  let slideTransitionTimer = null;
+  let autoAdvanceTimer = null;
+
+  // Word extraction helper supporting multi-paragraph text
   function splitNarrationWords(text) {
     if (!text) return [];
-    return text.split(' ').map(function(w) { return w.trim(); }).filter(Boolean);
+    return text.split(new RegExp('\\\\s+')).map(function(w) { return w.trim(); }).filter(Boolean);
   }
 
-  // Weight-based millisecond word timing alignment (from deepmind-emotional-audio-engine skill)
+  // Weight-based millisecond word timing alignment with human breathing pauses
   function computeWordTimings(text, totalDurationSec) {
     const rawWords = splitNarrationWords(text);
     const weights = rawWords.map(function(w) {
       let weight = Math.pow(Math.max(w.length, 2), 0.75);
       const last = w.slice(-1);
-      if (last === ',' || last === ':' || last === ';') weight += 1.8;
-      if (last === '.' || last === '!' || last === '?' || w.endsWith('...')) weight += 3.2;
+      // Breathing pauses on commas, colons, and em-dashes
+      if (last === ',' || last === ':' || last === ';') weight += 2.0;
+      if (last === '—') weight += 2.4;
+      // Thoughtful pauses on ellipses, questions, and sentence ends
+      if (w.endsWith('...')) weight += 4.5;
+      else if (last === '?' || last === '!') weight += 4.0;
+      else if (last === '.') weight += 3.6;
       return weight;
     });
     const totalWeight = weights.reduce(function(sum, val) { return sum + val; }, 0) || 1;
@@ -3883,10 +3959,18 @@ const server = http.createServer(async (req, res) => {
   function renderKaraokeText(narrationText) {
     const kt = document.getElementById('karaokeText');
     if (!kt) return;
-    const words = splitNarrationWords(narrationText);
-    kt.innerHTML = words.map(function(w, i) {
-      return '<span class="karaoke-word" id="kWord-' + i + '">' + w + '</span>';
-    }).join(' ');
+    const paragraphs = (narrationText || '').split(new RegExp('\\\\n\\\\n+'));
+    let wordGlobalIndex = 0;
+    const htmlParagraphs = paragraphs.map(function(para) {
+      const words = splitNarrationWords(para);
+      const spanWords = words.map(function(w) {
+        const span = '<span class="karaoke-word" id="kWord-' + wordGlobalIndex + '">' + w + '</span>';
+        wordGlobalIndex++;
+        return span;
+      }).join(' ');
+      return '<div class="karaoke-paragraph">' + spanWords + '</div>';
+    });
+    kt.innerHTML = htmlParagraphs.join('');
     karaokeWordSpans = kt.querySelectorAll('.karaoke-word');
   }
 
@@ -3955,11 +4039,13 @@ const server = http.createServer(async (req, res) => {
         span.classList.add('past');
       });
       if ((isAutoNarrating || autoAdvanceAfter) && document.getElementById('slideshowModal').classList.contains('open')) {
-        setTimeout(function() {
+        if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+        autoAdvanceTimer = setTimeout(function() {
+          autoAdvanceTimer = null;
           if (document.getElementById('slideshowModal').classList.contains('open')) {
             nextSlide();
           }
-        }, 1200);
+        }, 1800); // 1.8s unhurried outro pause before auto-advancing
       }
     };
 
@@ -4065,11 +4151,13 @@ const server = http.createServer(async (req, res) => {
         });
 
         if ((isAutoNarrating || autoAdvanceAfter) && document.getElementById('slideshowModal').classList.contains('open')) {
-          setTimeout(function() {
+          if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+          autoAdvanceTimer = setTimeout(function() {
+            autoAdvanceTimer = null;
             if (document.getElementById('slideshowModal').classList.contains('open')) {
               nextSlide();
             }
-          }, 1200);
+          }, 1800); // 1.8s unhurried outro pause before auto-advancing
         }
       };
 
@@ -4086,6 +4174,14 @@ const server = http.createServer(async (req, res) => {
   }
 
   function stopSlideNarration() {
+    if (slideTransitionTimer) {
+      clearTimeout(slideTransitionTimer);
+      slideTransitionTimer = null;
+    }
+    if (autoAdvanceTimer) {
+      clearTimeout(autoAdvanceTimer);
+      autoAdvanceTimer = null;
+    }
     if (currentAudio) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
@@ -4097,7 +4193,26 @@ const server = http.createServer(async (req, res) => {
     cleanupNarrationState();
   }
 
+  function cleanupNarrationState() {
+    isNarratorSpeaking = false;
+    clearInterval(karaokeTimer);
+    currentUtterance = null;
+    const btn = document.getElementById('btnNarrateAudio');
+    if (btn) {
+      btn.classList.remove('speaking');
+      document.getElementById('narrateLabel').textContent = 'Narrate';
+      document.getElementById('narrateIcon').textContent = '🔊';
+    }
+  }
+
   function toggleSlideNarration() {
+    // If during slide settling pause, start immediately
+    if (slideTransitionTimer) {
+      clearTimeout(slideTransitionTimer);
+      slideTransitionTimer = null;
+      playSlideNarration(currentSlideIndex, isAutoNarrating);
+      return;
+    }
     if (isNarratorSpeaking) {
       if (currentAudio) {
         currentAudio.pause();
@@ -4116,6 +4231,7 @@ const server = http.createServer(async (req, res) => {
       if (currentAudio && currentAudio.paused && currentAudio.currentTime > 0) {
         currentAudio.play();
         isNarratorSpeaking = true;
+        narrationStartTime = Date.now() - (currentAudio.currentTime * 1000);
         const btn = document.getElementById('btnNarrateAudio');
         if (btn) {
           btn.classList.add('speaking');
@@ -4123,28 +4239,8 @@ const server = http.createServer(async (req, res) => {
           document.getElementById('narrateIcon').textContent = '⏸️';
         }
       } else {
-        playSlideNarration(currentSlideIndex, false);
+        playSlideNarration(currentSlideIndex, isAutoNarrating);
       }
-    }
-  }
-
-  function cleanupNarrationState() {
-    isNarratorSpeaking = false;
-    clearInterval(karaokeTimer);
-    currentUtterance = null;
-    const btn = document.getElementById('btnNarrateAudio');
-    if (btn) {
-      btn.classList.remove('speaking');
-      document.getElementById('narrateLabel').textContent = 'Narrate';
-      document.getElementById('narrateIcon').textContent = '🔊';
-    }
-  }
-
-  function toggleSlideNarration() {
-    if (isNarratorSpeaking) {
-      stopSlideNarration();
-    } else {
-      playSlideNarration(currentSlideIndex, isAutoNarrating);
     }
   }
 
@@ -4170,6 +4266,14 @@ const server = http.createServer(async (req, res) => {
   }
 
   function closeSlideshow() {
+    if (slideTransitionTimer) {
+      clearTimeout(slideTransitionTimer);
+      slideTransitionTimer = null;
+    }
+    if (autoAdvanceTimer) {
+      clearTimeout(autoAdvanceTimer);
+      autoAdvanceTimer = null;
+    }
     stopSlideNarration();
     stopAutoPlay();
     const modal = document.getElementById('slideshowModal');
@@ -4183,6 +4287,17 @@ const server = http.createServer(async (req, res) => {
     if (index < 0 || index >= activeSlideDeck.length) return;
     currentSlideIndex = index;
     const slide = activeSlideDeck[index];
+
+    // Clear any pending timers from previous slide
+    if (slideTransitionTimer) {
+      clearTimeout(slideTransitionTimer);
+      slideTransitionTimer = null;
+    }
+    if (autoAdvanceTimer) {
+      clearTimeout(autoAdvanceTimer);
+      autoAdvanceTimer = null;
+    }
+    stopSlideNarration();
 
     const img = document.getElementById('slideshowImg');
     img.style.opacity = '0.3';
@@ -4198,9 +4313,21 @@ const server = http.createServer(async (req, res) => {
     const narrationText = slide.narration || ('This view captures ' + slide.title + ' within the ' + (slide.groupTitle || 'system') + ' workflow.');
     renderKaraokeText(narrationText);
 
-    // Auto-narrate if enabled
+    // THEATRICAL SLIDE SETTLING PAUSE (950ms delay):
+    // Allows audience to orient to the new slide, title, and screenshot before voice begins
     if (isAutoNarrating) {
-      playSlideNarration(index, true);
+      const btn = document.getElementById('btnNarrateAudio');
+      if (btn) {
+        btn.classList.remove('speaking');
+        document.getElementById('narrateLabel').textContent = 'Settling...';
+        document.getElementById('narrateIcon').textContent = '⏳';
+      }
+      slideTransitionTimer = setTimeout(function() {
+        slideTransitionTimer = null;
+        if (document.getElementById('slideshowModal').classList.contains('open') && isAutoNarrating) {
+          playSlideNarration(index, true);
+        }
+      }, 950);
     } else if (isNarratorSpeaking) {
       stopSlideNarration();
     }
@@ -4270,6 +4397,11 @@ const server = http.createServer(async (req, res) => {
     clearInterval(slideTimer);
     clearInterval(slideProgressTimer);
     if (!isPlaying) return;
+
+    // When narration is active, audio dictates slide duration; don't cut off with 5s timer
+    if (isAutoNarrating || isNarratorSpeaking) {
+      return;
+    }
 
     slideStartTime = Date.now();
     const fill = document.getElementById('slideProgressBar');
