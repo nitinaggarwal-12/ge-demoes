@@ -3704,7 +3704,8 @@ function compileSSML(rawText) {
     gap: 6px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65);
     z-index: 25;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s ease, border-radius 0.25s ease;
+    overflow: hidden;
   }
   [data-theme="light"] .slideshow-karaoke-bar {
     background: rgba(255, 255, 255, 0.95);
@@ -3716,11 +3717,48 @@ function compileSSML(rawText) {
     pointer-events: none;
     transform: translateX(-50%) translateY(15px);
   }
+  /* Collapsed by default across all slides */
+  .slideshow-karaoke-bar.collapsed {
+    padding: 6px 14px;
+    max-height: 42px;
+    border-radius: 22px;
+    gap: 0;
+    cursor: pointer;
+  }
+  .slideshow-karaoke-bar.collapsed:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  }
+  [data-theme="light"] .slideshow-karaoke-bar.collapsed:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+  .slideshow-karaoke-bar.collapsed .karaoke-text {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .karaoke-collapsed-hint {
+    font-size: 11px;
+    color: var(--muted);
+    opacity: 0.85;
+    display: none;
+    margin-left: 4px;
+  }
+  .slideshow-karaoke-bar.collapsed .karaoke-collapsed-hint {
+    display: inline-block !important;
+  }
+  .slideshow-karaoke-bar:not(.collapsed) .karaoke-collapsed-hint {
+    display: none !important;
+  }
   .karaoke-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 11px;
+    user-select: none;
   }
   .karaoke-voice-badge {
     display: inline-flex;
@@ -3747,17 +3785,50 @@ function compileSSML(rawText) {
     font-size: 11px;
     font-weight: 500;
   }
+  .btn-caption-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: var(--text-heading);
+    border-radius: 12px;
+    padding: 2px 9px;
+    font-size: 11px;
+    font-family: var(--font-heading);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+  .btn-caption-toggle:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  [data-theme="light"] .btn-caption-toggle {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.15);
+    color: var(--text-dark);
+  }
+  [data-theme="light"] .btn-caption-toggle:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
   .karaoke-text {
     font-family: var(--font-heading);
     font-size: 13.5px;
     line-height: 1.55;
     color: var(--muted);
     text-align: left;
-    max-height: 120px;
+    max-height: 130px;
     overflow-y: auto;
+    margin-top: 4px;
+    transition: opacity 0.25s ease, max-height 0.3s ease;
   }
   .karaoke-paragraph {
     margin-bottom: 6px;
+  }
   }
   .karaoke-paragraph:last-child {
     margin-bottom: 0;
@@ -5459,6 +5530,23 @@ function compileSSML(rawText) {
           <input type="checkbox" id="autoNarrateCheckbox" onchange="toggleAutoNarrate(this.checked)" />
           <span>Auto-Narrate</span>
         </label>
+        <div class="slideshow-pause-control" style="display:inline-flex; align-items:center; gap:5px;" title="Configurable pause duration across all slides">
+          <label for="slidePauseDurationSelect" style="font-size:11px; color:var(--text-muted); font-weight:600; display:flex; align-items:center; gap:4px;">
+            <span>⏱️</span>
+            <span>Pause:</span>
+          </label>
+          <select id="slidePauseDurationSelect" class="gcp-voice-select" style="padding:3px 8px; font-size:11.5px; height:28px; width:auto; min-width:88px;" onchange="changePauseDuration(this.value)" title="Configure pause duration before auto-advancing to the next slide">
+            <option value="500">0.5s</option>
+            <option value="1000">1.0s</option>
+            <option value="1500">1.5s</option>
+            <option value="1800" selected>1.8s (Standard)</option>
+            <option value="2500">2.5s</option>
+            <option value="3000">3.0s (Relaxed)</option>
+            <option value="4000">4.0s</option>
+            <option value="5000">5.0s (Extended)</option>
+            <option value="8000">8.0s (Long)</option>
+          </select>
+        </div>
         <button class="btn-slideshow-tool active" id="btnSubtitlesToggle" onclick="toggleSubtitles()" title="Toggle Live Gold Subtitles (C)">CC</button>
       </div>
 
@@ -5481,15 +5569,24 @@ function compileSSML(rawText) {
     <img class="slideshow-img" id="slideshowImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Slide View" />
     <button class="slideshow-arrow next" onclick="nextSlide()" title="Next (Right Arrow)">▶</button>
 
-    <!-- Real-Time Gold Karaoke Subtitles Bar -->
-    <div class="slideshow-karaoke-bar" id="slideshowKaraokeBar">
+    <!-- Real-Time Gold Karaoke Subtitles Bar (Collapsible by default across all slides) -->
+    <div class="slideshow-karaoke-bar collapsed" id="slideshowKaraokeBar" onclick="if(this.classList.contains('collapsed')) toggleCaptionCollapse(false)" title="Click to expand captions">
       <div class="karaoke-header">
-        <div class="karaoke-voice-badge" id="karaokeVoiceBadge">
-          <span class="karaoke-pulse-dot"></span>
-          <span id="karaokeVoiceName">Google Journey • David (Warm Human Architect)</span>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="karaoke-voice-badge" id="karaokeVoiceBadge">
+            <span class="karaoke-pulse-dot"></span>
+            <span id="karaokeVoiceName">Google Journey • David (Warm Human Architect)</span>
+          </div>
+          <span class="karaoke-collapsed-hint" id="karaokeCollapsedHint">💬 Captions Collapsed (Click to Read)</span>
         </div>
-        <div class="karaoke-concept-tag">
-          <span>💡 Architectural Concept Briefing</span>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="karaoke-concept-tag">
+            <span>💡 Architectural Concept Briefing</span>
+          </div>
+          <button class="btn-caption-toggle" id="btnCaptionCollapseToggle" onclick="event.stopPropagation(); toggleCaptionCollapse()" title="Expand / Collapse Captions (C)">
+            <span id="captionToggleIcon">▲</span>
+            <span id="captionToggleLabel">Expand</span>
+          </button>
         </div>
       </div>
       <div class="karaoke-text" id="karaokeText">
@@ -5508,18 +5605,33 @@ function compileSSML(rawText) {
           <span id="playIcon">&#9646;&#9646;</span>
           <span id="playText">Pause</span>
         </button>
-        <select class="speed-select" id="speedSelect" onchange="changeSpeed(this.value)">
+        <select class="speed-select" id="speedSelect" onchange="changeSpeed(this.value)" title="Silent playback duration per slide">
           <option value="3000">3s / slide</option>
           <option value="5000" selected>5s / slide</option>
           <option value="8000">8s / slide</option>
+          <option value="12000">12s / slide</option>
         </select>
-        <label style="font-size:12px; color:var(--muted); display:flex; align-items:center; gap:5px; cursor:pointer;">
+        <div style="display:inline-flex; align-items:center; gap:5px; font-size:11.5px; color:var(--muted); margin-left:6px;" title="Configurable pause duration across all slides">
+          <span>⏱️ Pause:</span>
+          <select id="slidePauseDurationSelectBottom" class="speed-select" onchange="changePauseDuration(this.value)">
+            <option value="500">0.5s</option>
+            <option value="1000">1.0s</option>
+            <option value="1500">1.5s</option>
+            <option value="1800" selected>1.8s</option>
+            <option value="2500">2.5s</option>
+            <option value="3000">3.0s</option>
+            <option value="4000">4.0s</option>
+            <option value="5000">5.0s</option>
+            <option value="8000">8.0s</option>
+          </select>
+        </div>
+        <label style="font-size:12px; color:var(--muted); display:flex; align-items:center; gap:5px; cursor:pointer; margin-left:6px;">
           <input type="checkbox" id="loopCheckbox" checked /> Loop
         </label>
       </div>
 
       <div style="display:flex; align-items:center; gap:10px;">
-        <span style="font-size:11.5px; color:var(--muted);">Shortcuts: &larr; / &rarr; (Navigate), Space (Play/Pause), F (Fullscreen), Esc (Exit)</span>
+        <span style="font-size:11.5px; color:var(--muted);">Shortcuts: &larr; / &rarr; (Navigate), Space (Play/Pause), C (Captions), F (Fullscreen), Esc (Exit)</span>
         <button class="filmstrip-toggle-btn" onclick="toggleFilmstrip()" id="btnFilmstripToggle">
           <span>🎞️</span>
           <span>Filmstrip</span>
@@ -5872,6 +5984,49 @@ function compileSSML(rawText) {
   let isNarratorSpeaking = false;
   let isAutoNarrating = false;
   let showKaraokeSubtitles = true;
+  let isCaptionsCollapsed = true; // Collapsible by default across all slides per user request
+  let outroPauseDuration = parseInt(localStorage.getItem('ge_slideshow_pause_duration') || '1800', 10);
+  window.outroPauseDuration = outroPauseDuration;
+
+  function toggleCaptionCollapse(forceState) {
+    if (forceState !== undefined) {
+      isCaptionsCollapsed = forceState;
+    } else {
+      isCaptionsCollapsed = !isCaptionsCollapsed;
+    }
+    const bar = document.getElementById('slideshowKaraokeBar');
+    const icon = document.getElementById('captionToggleIcon');
+    const label = document.getElementById('captionToggleLabel');
+    if (bar) {
+      bar.classList.toggle('collapsed', isCaptionsCollapsed);
+      bar.title = isCaptionsCollapsed ? 'Click to expand captions' : '';
+    }
+    if (icon) icon.textContent = isCaptionsCollapsed ? '▲' : '▼';
+    if (label) label.textContent = isCaptionsCollapsed ? 'Expand' : 'Collapse';
+
+    // If expanding while hidden, ensure it unhides
+    if (!isCaptionsCollapsed && !showKaraokeSubtitles) {
+      showKaraokeSubtitles = true;
+      if (bar) bar.classList.remove('hidden');
+      const btn = document.getElementById('btnSubtitlesToggle');
+      if (btn) btn.classList.add('active');
+    }
+  }
+  window.toggleCaptionCollapse = toggleCaptionCollapse;
+
+  function changePauseDuration(val) {
+    outroPauseDuration = parseInt(val, 10) || 1800;
+    window.outroPauseDuration = outroPauseDuration;
+    try {
+      localStorage.setItem('ge_slideshow_pause_duration', String(outroPauseDuration));
+    } catch (e) {}
+    const topSel = document.getElementById('slidePauseDurationSelect');
+    if (topSel) topSel.value = String(outroPauseDuration);
+    const btmSel = document.getElementById('slidePauseDurationSelectBottom');
+    if (btmSel) btmSel.value = String(outroPauseDuration);
+    showGcpToast('Slide pause duration set to ' + (outroPauseDuration >= 1000 ? (outroPauseDuration / 1000) + 's' : outroPauseDuration + 'ms') + ' across all slides');
+  }
+  window.changePauseDuration = changePauseDuration;
   let currentAudio = null;
   let currentUtterance = null;
   let karaokeWordSpans = [];
@@ -6047,7 +6202,7 @@ function compileSSML(rawText) {
           if (document.getElementById('slideshowModal').classList.contains('open')) {
             nextSlide();
           }
-        }, 1800); // 1.8s unhurried outro pause before auto-advancing
+        }, outroPauseDuration); // Configurable pause duration across all slides
       }
     };
 
@@ -6166,7 +6321,7 @@ function compileSSML(rawText) {
             if (document.getElementById('slideshowModal').classList.contains('open')) {
               nextSlide();
             }
-          }, 1800); // 1.8s unhurried outro pause before auto-advancing
+          }, outroPauseDuration); // Configurable pause duration across all slides
         }
       };
 
@@ -6290,6 +6445,13 @@ function compileSSML(rawText) {
 
     const modal = document.getElementById('slideshowModal');
     modal.classList.add('open');
+
+    // Sync pause duration selects to current configuration
+    const topPauseSel = document.getElementById('slidePauseDurationSelect');
+    if (topPauseSel) topPauseSel.value = String(outroPauseDuration);
+    const btmPauseSel = document.getElementById('slidePauseDurationSelectBottom');
+    if (btmPauseSel) btmPauseSel.value = String(outroPauseDuration);
+
     startAutoPlay();
   }
 
@@ -6357,6 +6519,17 @@ function compileSSML(rawText) {
     // Populate natural concept narration in Gold Karaoke bar
     const narrationText = slide.narration || ('This view captures ' + slide.title + ' within the ' + (slide.groupTitle || 'system') + ' workflow.');
     renderKaraokeText(narrationText);
+
+    // Keep captions collapsible and collapsed by default across all slides
+    const kBar = document.getElementById('slideshowKaraokeBar');
+    if (kBar) {
+      kBar.classList.toggle('collapsed', isCaptionsCollapsed);
+      kBar.title = isCaptionsCollapsed ? 'Click to expand captions' : '';
+    }
+    const cIcon = document.getElementById('captionToggleIcon');
+    const cLabel = document.getElementById('captionToggleLabel');
+    if (cIcon) cIcon.textContent = isCaptionsCollapsed ? '▲' : '▼';
+    if (cLabel) cLabel.textContent = isCaptionsCollapsed ? 'Expand' : 'Collapse';
 
     // THEATRICAL SLIDE SETTLING PAUSE (950ms delay):
     // Allows audience to orient to the new slide, title, and screenshot before voice begins
@@ -6533,7 +6706,12 @@ function compileSSML(rawText) {
       if (cb) { cb.checked = !cb.checked; toggleAutoNarrate(cb.checked); }
     } else if (e.key === 'c' || e.key === 'C') {
       e.preventDefault();
-      toggleSubtitles();
+      const kBar = document.getElementById('slideshowKaraokeBar');
+      if (kBar && kBar.classList.contains('hidden')) {
+        toggleSubtitles();
+      } else {
+        toggleCaptionCollapse();
+      }
     } else if (e.key === 'v' || e.key === 'V') {
       e.preventDefault();
       const vKeys = Object.keys(NARRATOR_VOICES);
@@ -7700,6 +7878,12 @@ function compileSSML(rawText) {
       const scope = params.get('scope') || 'all';
       openPrintModal(scope);
     }
+
+    // 6. Pause Duration Hydration from URL
+    const pauseParam = params.get('pause');
+    if (pauseParam) {
+      changePauseDuration(pauseParam);
+    }
   }
 
   // Initialization
@@ -7707,6 +7891,10 @@ function compileSSML(rawText) {
     initGcpTheme();
     initSidebar();
     syncStateFromUrl();
+    const topPauseSel = document.getElementById('slidePauseDurationSelect');
+    if (topPauseSel) topPauseSel.value = String(outroPauseDuration);
+    const btmPauseSel = document.getElementById('slidePauseDurationSelectBottom');
+    if (btmPauseSel) btmPauseSel.value = String(outroPauseDuration);
     const activeTab = document.querySelector('.view-tab.active');
     if (!activeTab || activeTab.id === 'tab-servicenow') {
       executeCurrentTool();
