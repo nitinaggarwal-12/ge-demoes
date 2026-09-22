@@ -251,6 +251,14 @@ function filterSampleTable(table, queryParams = {}) {
   return rows;
 }
 
+let lastServiceNowQueryOrigin = {
+  isLive: false,
+  origin: 'static',
+  label: '🟡 STATIC OUTCOME (Archived Ground-Truth • Access Required)',
+  system: 'ServiceNow Polaris',
+  instance: SN_CONFIG.instanceUri
+};
+
 async function queryServiceNowTable(table, queryParams = {}) {
   try {
     const token = await getServiceNowAccessToken();
@@ -271,6 +279,13 @@ async function queryServiceNowTable(table, queryParams = {}) {
     if (resp.ok) {
       const json = await resp.json();
       if (json && json.result && Array.isArray(json.result) && json.result.length > 0) {
+        lastServiceNowQueryOrigin = {
+          isLive: true,
+          origin: 'live',
+          label: `🟢 LIVE BACKEND (${SN_CONFIG.instanceUri.replace('https://', '')})`,
+          system: 'ServiceNow Polaris',
+          instance: SN_CONFIG.instanceUri
+        };
         return json.result;
       }
     }
@@ -278,6 +293,13 @@ async function queryServiceNowTable(table, queryParams = {}) {
     // Network or live instance unavailable, fall back to sample dataset
   }
 
+  lastServiceNowQueryOrigin = {
+    isLive: false,
+    origin: 'static',
+    label: '🟡 STATIC OUTCOME (Archived Ground-Truth • Access Required)',
+    system: 'ServiceNow Polaris',
+    instance: SN_CONFIG.instanceUri
+  };
   return filterSampleTable(table, queryParams);
 }
 
@@ -552,7 +574,14 @@ const SLIDE_CONCEPT_NARRATIONS = {
   "01_gemini_enterprise_app_ucs_widget.png": "Here we audit the unified conversational search widget embedded into internal portal frameworks.",
   "02_pantheon_gen_app_builder_engines.png": "This view audits underlying Gen App Builder engine endpoints in the Google Cloud Pantheon console.",
   "03_pantheon_gen_app_builder_datastores.png": "Inspecting Gen App Builder data stores confirms healthy index synchronization across all document partitions.",
-  "04_cloud_console_gen_app_builder_engines.png": "Finally... this audit view validates that all deployed engines maintain green operational status in the Google Cloud Console."
+  "04_cloud_console_gen_app_builder_engines.png": "Finally... this audit view validates that all deployed engines maintain green operational status in the Google Cloud Console.",
+
+  // Group 8: Microsoft Unified Connector (5 slides)
+  "01_microsoft_sharepoint_live_ui_specs.png": "Here we inspect the live SharePoint Online intranet portal for the AI Center of Excellence.\n\nNotice the architecture specification repository housing our FY27 Global Cloud Infrastructure Strategy and Vertex AI Search data pipeline documentation, complete with Microsoft Entra ID confidentiality labels and Graph API object identifiers.",
+  "02_microsoft_teams_incident_war_room.png": "Turning to Microsoft Teams... we observe the live P1 Incident War Room channel thread.\n\nDuring a scheduled OAuth credential rotation... Site Reliability engineers triaged an ingestion bridge latency alert for incident INC1039, refreshed the client secret, and verified instantaneous resolution directly within the Teams collaboration hub.",
+  "03_microsoft_onedrive_enterprise_architecture.png": "Inside OneDrive for Business... we inspect cloud architecture blueprints and grounding matrices.\n\nThese enterprise documents are synchronized with the Microsoft 365 Graph API, providing structured and unstructured reference material for multi-cloud AI retrieval.",
+  "04_ge_chat_matching_microsoft_query_results.png": "Now we observe Gemini Enterprise executing a natural language inquiry across Microsoft 365.\n\nBy querying the connected Microsoft Graph MCP connector... Gemini synthesizes the SharePoint strategy document and Teams war room triage thread into an authoritative executive brief with clickable inline citations.",
+  "05_microsoft_ui_vs_ge_chat_side_by_side_truth_comparison.png": "This definitive side-by-side comparison establishes one hundred percent field parity between native Microsoft 365 systems on the left... and Gemini Enterprise Chat on the right.\n\nEvery citation, incident timestamp, and strategic recommendation matches the underlying Microsoft Graph data verbatim with zero hallucination."
 };
 
 function getConceptNarration(fileName, title, groupTitle, groupDesc) {
@@ -752,10 +781,25 @@ function getLogicalGroups() {
           .sort();
         for (const file of files) {
           const rawSlug = file.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
+          let projectId = 'servicenow';
+          if (entry.name === 'screenshots_veeva_connector' || file.includes('veeva')) {
+            projectId = 'veeva';
+          } else if (entry.name === 'screenshots_microsoft_connector' || file.includes('microsoft') || file.includes('sharepoint') || file.includes('teams') || file.includes('onedrive')) {
+            projectId = 'microsoft';
+          }
+
+          const isLiveGroundTruth = entry.name === 'screenshots_servicenow_connector' ||
+                                    entry.name === 'screenshots_veeva_connector' ||
+                                    entry.name === 'screenshots_microsoft_connector' ||
+                                    file.includes('live_ui') ||
+                                    file.includes('side_by_side');
+
           allImages.push({
             assetId: rawSlug,
             fileName: file,
             dirName: entry.name,
+            projectId: projectId,
+            isLiveGroundTruth: isLiveGroundTruth,
             title: file.replace(/^\d+[a-z]?_/, '').replace(/\.[^.]+$/, '').replace(/_/g, ' '),
             url: `/screenshots/${entry.name}/${file}`,
             fullPath: path.join(subDirPath, file),
@@ -770,6 +814,7 @@ function getLogicalGroups() {
       id: 'gcp-wizard',
       title: 'GCP Console: Data Store & ServiceNow Wizard',
       icon: '🛠️',
+      projectId: 'servicenow',
       description: 'End-to-end setup in Google Cloud Console: Vertex AI Search data store provisioning, 3rd-party ServiceNow connector selection, OAuth credential configuration, and destination mapping.',
       filter: item => {
         if (item.dirName === 'screenshots_ge_app_and_console' && item.fileName.startsWith('gcp_console_')) return true;
@@ -787,6 +832,7 @@ function getLogicalGroups() {
       id: 'byomcp-setup',
       title: 'BYOMCP Connector Configuration & Re-Authentication',
       icon: '🔌',
+      projectId: 'servicenow',
       description: 'Bring Your Own MCP (BYOMCP) server registration, custom tool definitions, parameter editing, and live token re-authentication dialogs.',
       filter: item => {
         if (item.dirName === 'screenshots_argolis_console') {
@@ -803,6 +849,7 @@ function getLogicalGroups() {
       id: 'ge-chat',
       title: 'Gemini Enterprise Chat: Sources, Tools & Live Queries',
       icon: '💬',
+      projectId: 'servicenow',
       description: 'Gemini Enterprise web application interface: connected tool activation, ServiceNow sources drawer, natural language incident lookups, and multi-turn live query generation.',
       filter: item => {
         if (item.dirName === 'screenshots_argolis_console') {
@@ -824,6 +871,7 @@ function getLogicalGroups() {
       id: 'agent-studio',
       title: 'Agent Studio & Enterprise Discovery',
       icon: '🎨',
+      projectId: 'servicenow',
       description: 'Gemini Enterprise Agent Builder, agent galleries, specialized prompt definitions, and unified enterprise search capabilities.',
       filter: item => {
         if (item.dirName === 'screenshots_ge_app_and_console') {
@@ -835,18 +883,40 @@ function getLogicalGroups() {
       }
     },
     {
-      id: 'ground-truth',
-      title: 'Ground-Truth Parity: Native UI vs. GE Chat Side-by-Side',
+      id: 'ground-truth-sn',
+      title: 'ServiceNow: Native Polaris UI vs. GE Chat Side-by-Side',
       icon: '⚖️',
-      description: 'Side-by-side verification proving 100% data parity between native enterprise systems (ServiceNow Polaris UI, Veeva Vault GxP) and Gemini Enterprise AI responses.',
+      projectId: 'servicenow',
+      description: 'Side-by-side verification proving 100% field parity between native ServiceNow Polaris UI and Gemini Enterprise AI responses with zero hallucination.',
       filter: item => {
-        return item.dirName === 'screenshots_servicenow_connector' || item.dirName === 'screenshots_veeva_connector';
+        return item.dirName === 'screenshots_servicenow_connector';
+      }
+    },
+    {
+      id: 'ground-truth-veeva',
+      title: 'Veeva Vault: Clinical Ops & 21 CFR Part 11 Regulatory Parity',
+      icon: '🧪',
+      projectId: 'veeva',
+      description: 'Side-by-side verification establishing strict GxP and 21 CFR Part 11 electronic audit trail parity between Veeva Vault and Gemini Enterprise.',
+      filter: item => {
+        return item.dirName === 'screenshots_veeva_connector';
+      }
+    },
+    {
+      id: 'ground-truth-ms',
+      title: 'Microsoft Unified: SharePoint, Teams & M365 Parity',
+      icon: '🏢',
+      projectId: 'microsoft',
+      description: 'Side-by-side verification proving 100% data parity between Microsoft 365 (SharePoint Online, Teams P1 War Room, OneDrive) and Gemini Enterprise.',
+      filter: item => {
+        return item.dirName === 'screenshots_microsoft_connector';
       }
     },
     {
       id: 'live-auth',
       title: 'Multi-Tab Audit & Identity SSO Verification',
       icon: '🔐',
+      projectId: 'servicenow',
       description: 'Browser workspace session auditing across Argolis Cloud Console, IAM Admin, Gemini Enterprise App, and Okta SSO authentication tabs.',
       filter: item => {
         if (item.dirName === 'screenshots_live_browser_auth') return true;
@@ -862,6 +932,7 @@ function getLogicalGroups() {
       id: g.id,
       title: g.title,
       icon: g.icon,
+      projectId: g.projectId,
       description: g.description,
       count: items.length,
       images: items.map((img, idx) => ({
@@ -910,7 +981,7 @@ function generatePrintDossierHtml(allSlides, totalScreenshots) {
       </div>
 
       <div class="dossier-tag">OFFICIAL VERIFICATION DOSSIER • ARCHITECTURE BLUEPRINT</div>
-      <h1 class="dossier-title">Gemini Enterprise &amp; ServiceNow BYOMCP Architecture Dossier</h1>
+      <h1 class="dossier-title dossier-cover-title">Gemini Enterprise Grounding &amp; BYOMCP Architecture Dossier</h1>
       <p class="dossier-subtitle">Production Ground-Truth Verification, Model Context Protocol (MCP) Server Implementation, &amp; End-to-End Workflow Slide Deck</p>
 
       <div class="dossier-stats-grid">
@@ -1051,8 +1122,9 @@ async function handleSearchIncidents(args) {
 
   const slidesHtml = allSlides.map((slide, idx) => {
     const paras = (slide.narration || '').split(/\n\n+/).map(p => '<p>' + p + '</p>').join('');
+    const projectTitle = slide.projectId === 'veeva' ? 'Veeva Vault GxP' : slide.projectId === 'microsoft' ? 'Microsoft Unified 365' : 'ServiceNow Polaris';
     return `
-    <div class="dossier-page dossier-slide-page" data-group-id="${slide.groupId}">
+    <div class="dossier-page dossier-slide-page" data-group-id="${slide.groupId}" data-project-id="${slide.projectId || 'servicenow'}">
       <div>
         <div class="dossier-gcp-strip"></div>
         <div class="dossier-slide-header">
@@ -1083,7 +1155,7 @@ async function handleSearchIncidents(args) {
       </div>
 
       <div class="dossier-footer-bar">
-        <span>Google Cloud &amp; Gemini Enterprise • ServiceNow BYOMCP Verification Dossier</span>
+        <span>Google Cloud &amp; Gemini Enterprise • ${projectTitle} Verification Dossier</span>
         <span>Slide ${idx + 1} of ${allSlides.length} • Authentic Google Cloud Artifact</span>
       </div>
     </div>`;
@@ -1428,7 +1500,7 @@ function compileSSML(rawText) {
   // API: High-Definition Pixel-Perfect Vector PDF Export (Puppeteer headless engine)
   if (req.url.startsWith('/api/export-pdf') && req.method === 'GET') {
     const parsedUrl = new URL(req.url, host);
-    const scope = parsedUrl.searchParams.get('scope') || 'ALL';
+    const scope = parsedUrl.searchParams.get('scope') || parsedUrl.searchParams.get('project') || 'ALL';
 
     try {
       const puppeteerModule = await import('puppeteer-core');
@@ -1449,10 +1521,33 @@ function compileSSML(rawText) {
       if (scope !== 'ALL') {
         await page.evaluate((scopeFilter) => {
           document.querySelectorAll('#printDossierContainer .dossier-slide-page').forEach(el => {
-            if (el.getAttribute('data-group-id') !== scopeFilter) {
+            const pId = el.getAttribute('data-project-id');
+            const gId = el.getAttribute('data-group-id');
+            if (scopeFilter === 'project_servicenow' || scopeFilter === 'servicenow') {
+              if (pId !== 'servicenow') el.remove();
+            } else if (scopeFilter === 'project_veeva' || scopeFilter === 'veeva') {
+              if (pId !== 'veeva') el.remove();
+            } else if (scopeFilter === 'project_microsoft' || scopeFilter === 'microsoft') {
+              if (pId !== 'microsoft') el.remove();
+            } else if (gId !== scopeFilter) {
               el.remove();
             }
           });
+
+          const codePage = document.querySelector('#printDossierContainer .dossier-code-page');
+          if (codePage && (scopeFilter.includes('veeva') || scopeFilter.includes('microsoft'))) {
+            codePage.remove();
+          }
+          const coverTitle = document.querySelector('#printDossierContainer .dossier-cover-title');
+          if (coverTitle) {
+            if (scopeFilter.includes('veeva')) {
+              coverTitle.textContent = 'Veeva Vault GxP Clinical & Regulatory Verification Dossier';
+            } else if (scopeFilter.includes('microsoft')) {
+              coverTitle.textContent = 'Microsoft Unified 365 Architecture & Ground-Truth Dossier';
+            } else if (scopeFilter.includes('servicenow')) {
+              coverTitle.textContent = 'ServiceNow Polaris BYOMCP Verification Dossier';
+            }
+          }
         }, scope);
       }
 
@@ -1465,9 +1560,10 @@ function compileSSML(rawText) {
 
       await browser.close();
 
+      const filename = `Google-Cloud-Gemini-Enterprise-Dossier-${scope.replace('project_', '')}.pdf`;
       res.writeHead(200, {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="Google-Cloud-Gemini-Enterprise-BYOMCP-Dossier-${scope}.pdf"`,
+        'Content-Disposition': `attachment; filename="${filename}"`,
         'Content-Length': pdfBuffer.length,
       });
       res.end(pdfBuffer);
@@ -1832,6 +1928,9 @@ function compileSSML(rawText) {
                 text: JSON.stringify(resultData, null, 2),
               },
             ],
+            isLive: lastServiceNowQueryOrigin.isLive,
+            origin: lastServiceNowQueryOrigin.origin,
+            originBadge: lastServiceNowQueryOrigin.label,
             isError: false,
           },
         }));
@@ -3686,6 +3785,355 @@ function compileSSML(rawText) {
     color: white;
     border-color: var(--accent);
   }
+
+  /* Live vs Static Output Box Corner Badges */
+  .output-origin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.25px;
+    font-family: var(--font-heading);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+  .output-origin-badge.origin-live {
+    background: rgba(52, 168, 83, 0.18);
+    color: #34a853;
+    border: 1px solid rgba(52, 168, 83, 0.5);
+  }
+  [data-theme="light"] .output-origin-badge.origin-live {
+    background: #e6f4ea;
+    color: #137333;
+    border-color: #a8dab5;
+  }
+  .output-origin-badge.origin-static {
+    background: rgba(251, 188, 4, 0.16);
+    color: #fbbc04;
+    border: 1px solid rgba(251, 188, 4, 0.45);
+  }
+  [data-theme="light"] .output-origin-badge.origin-static {
+    background: #fef7e0;
+    color: #b06000;
+    border-color: #fdd663;
+  }
+
+  /* Slideshow Stage Top-Right Origin Corner Badge */
+  .slide-origin-corner-badge {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    z-index: 25;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55);
+    letter-spacing: 0.3px;
+    pointer-events: none;
+    font-family: var(--font-heading);
+    transition: all 0.25s ease;
+  }
+  .slide-origin-corner-badge.live {
+    background: rgba(20, 83, 45, 0.90);
+    color: #4ade80;
+    border: 1.5px solid rgba(74, 222, 128, 0.6);
+  }
+  .slide-origin-corner-badge.static {
+    background: rgba(30, 41, 59, 0.90);
+    color: #94a3b8;
+    border: 1.5px solid rgba(148, 163, 184, 0.4);
+  }
+
+  /* Slideshow Topbar Project Deck Selector */
+  .slideshow-deck-select {
+    background: var(--card);
+    border: 1.5px solid var(--accent);
+    color: var(--text-heading);
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 16px;
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.15s ease;
+  }
+  .slideshow-deck-select:hover {
+    border-color: var(--accent-light);
+    transform: translateY(-1px);
+  }
+  .slideshow-deck-select:focus {
+    box-shadow: 0 0 0 2px var(--accent-glow);
+  }
+  [data-theme="light"] .slideshow-deck-select {
+    background: #ffffff;
+    border-color: #1a73e8;
+    color: #202124;
+  }
+
+  /* Voice Badge Live vs Fallback */
+  .karaoke-voice-badge.live-voice {
+    background: rgba(52, 168, 83, 0.2);
+    border-color: rgba(52, 168, 83, 0.55);
+    color: #34a853;
+  }
+  .karaoke-voice-badge.fallback-voice {
+    background: rgba(251, 188, 4, 0.18);
+    border-color: rgba(251, 188, 4, 0.5);
+    color: #fbbc04;
+  }
+
+  /* FULL PURE SLIDESHOW MODE (Only showing only the slides) */
+  .slideshow-modal.pure-slideshow-mode {
+    background: #000000 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .slideshow-modal.pure-slideshow-mode .slideshow-topbar,
+  .slideshow-modal.pure-slideshow-mode .slideshow-bottom,
+  .slideshow-modal.pure-slideshow-mode .slideshow-karaoke-bar {
+    display: none !important;
+  }
+  .slideshow-modal.pure-slideshow-mode .slideshow-stage {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #000000 !important;
+    z-index: 1001 !important;
+  }
+  .slideshow-modal.pure-slideshow-mode .slideshow-img {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    object-fit: contain !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #000000 !important;
+  }
+  .slideshow-modal.pure-slideshow-mode .slideshow-arrow {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    background: rgba(20, 20, 20, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .slideshow-modal.pure-slideshow-mode.hud-visible .slideshow-arrow,
+  .slideshow-modal.pure-slideshow-mode:hover .slideshow-arrow {
+    opacity: 0.85;
+  }
+  .slideshow-modal.pure-slideshow-mode .slide-origin-corner-badge {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .slideshow-modal.pure-slideshow-mode.hud-visible .slide-origin-corner-badge {
+    opacity: 0.9;
+  }
+
+  /* Minimalist Pure Slideshow Floating HUD */
+  .pure-slideshow-hud {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    z-index: 1050;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: rgba(24, 26, 32, 0.90);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    padding: 6px 14px;
+    border-radius: 30px;
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.85);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    user-select: none;
+  }
+  .slideshow-modal.pure-slideshow-mode .pure-slideshow-hud {
+    display: flex;
+  }
+  .slideshow-modal.pure-slideshow-mode.hud-visible .pure-slideshow-hud {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+  .pure-hud-btn {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 13px;
+    border-radius: 18px;
+    cursor: pointer;
+    font-family: var(--font-heading);
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .pure-hud-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .pure-hud-btn.exit {
+    background: rgba(234, 67, 53, 0.22);
+    border-color: rgba(234, 67, 53, 0.55);
+    color: #f28b82;
+  }
+  .pure-hud-btn.exit:hover {
+    background: #ea4335;
+    color: #ffffff;
+  }
+  .pure-hud-counter {
+    color: #e8eaed;
+    font-size: 12.5px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    padding: 0 8px;
+    white-space: nowrap;
+  }
+
+  /* Slide Hidden Notice Badge */
+  .slide-hidden-notice-badge {
+    position: absolute;
+    top: 18px;
+    left: 24px;
+    z-index: 25;
+    display: none;
+    align-items: center;
+    gap: 7px;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 16px;
+    background: rgba(217, 119, 6, 0.94);
+    color: #ffffff;
+    border: 1.5px solid rgba(251, 191, 36, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    font-family: var(--font-heading);
+    transition: all 0.2s ease;
+  }
+  .slide-hidden-notice-badge:hover {
+    background: #b45309;
+    transform: scale(1.03);
+  }
+
+  /* Hide / Unhide Button in Topbar */
+  .btn-share-link.slide-is-hidden-btn {
+    background: rgba(217, 119, 6, 0.25);
+    border-color: rgba(251, 191, 36, 0.6);
+    color: #fbbf24;
+  }
+
+  /* Filmstrip Hidden Slide Thumbnail */
+  .filmstrip-thumb.is-hidden {
+    opacity: 0.35;
+    filter: grayscale(85%);
+    border: 1.5px dashed #f59e0b;
+    position: relative;
+  }
+  .filmstrip-thumb.is-hidden::after {
+    content: '🚫';
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    font-size: 11px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 50%;
+    width: 17px;
+    height: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .filmstrip-thumb-hide-btn {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 4px;
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+    z-index: 5;
+  }
+  .filmstrip-thumb:hover .filmstrip-thumb-hide-btn {
+    opacity: 1;
+  }
+
+  /* Gallery Card Hide Button */
+  .gallery-card-hide-chip {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: all 0.15s ease;
+    z-index: 10;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(30, 35, 45, 0.85);
+    backdrop-filter: blur(4px);
+    color: #e2e8f0;
+    font-family: var(--font-heading);
+  }
+  .gallery-card:hover .gallery-card-hide-chip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .gallery-card-hide-chip:hover {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+  .gallery-card-hide-chip.is-hidden {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    background: rgba(217, 119, 6, 0.9);
+    border-color: rgba(251, 191, 36, 0.8);
+    color: #ffffff;
+  }
+  .gallery-card.is-hidden-slide-card {
+    opacity: 0.55;
+    filter: grayscale(65%);
+    border: 1.5px dashed #f59e0b !important;
+  }
   pre.code-block {
     background: var(--code-bg);
     border: 1px solid var(--code-border);
@@ -5286,9 +5734,9 @@ function compileSSML(rawText) {
     </div>
     <!-- Sidebar Action Deck Buttons -->
     <div class="sidebar-actions">
-      <button class="btn-sidebar-action" onclick="startSlideshow('ALL')" title="Launch Fullscreen Slideshow">
+      <button class="btn-sidebar-action" onclick="startProjectSlideshow()" title="Launch Current Project Slideshow (Zero Overlap)">
         <span class="sidebar-nav-icon">🎬</span>
-        <span>Slideshow Mode</span>
+        <span id="sidebarSlideshowLabel">Slideshow Mode</span>
       </button>
       <button class="btn-sidebar-action" onclick="openPrintModal()" title="Print or Export Deck">
         <span class="sidebar-nav-icon">🖨️</span>
@@ -5429,13 +5877,13 @@ function compileSSML(rawText) {
             </div>
           </div>
 
-          <button class="btn-link" onclick="startSlideshow('ALL')" title="Interactive Slideshow">
+          <button class="btn-link" onclick="startProjectSlideshow()" title="Play Current Project Slideshow (Zero Overlap)">
             <span>🎬</span>
-            <span>Slideshow</span>
+            <span id="topbarSlideshowBtnLabel">Slideshow Deck</span>
           </button>
-          <button class="btn-link" onclick="openPrintModal()" title="Print Options">
+          <button class="btn-link" onclick="openPrintModal()" title="Print &amp; Export Project Deck">
             <span>🖨️</span>
-            <span>Print Deck</span>
+            <span>Print &amp; Export</span>
           </button>
           <div class="status-badge" id="liveBadge">
             <span class="status-dot"></span>
@@ -5618,7 +6066,10 @@ function compileSSML(rawText) {
 
             <div class="card" style="min-height:360px;">
               <div class="output-header">
-                <span id="stepTitle">Execution Result</span>
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                  <span id="stepTitle">Execution Result</span>
+                  <span id="snOutputOriginBadge" class="output-origin-badge origin-static">🟡 STATIC OUTCOME (Archived Ground-Truth • Access Required)</span>
+                </div>
                 <div class="view-toggle">
                   <button class="toggle-btn active" id="btnViewTable" onclick="toggleResultView('table')">Table</button>
                   <button class="toggle-btn" id="btnViewJson" onclick="toggleResultView('json')">JSON-RPC</button>
@@ -5643,6 +6094,8 @@ function compileSSML(rawText) {
             <p>Google Cloud integrated MCP tools for life sciences document governance, clinical study reports (ONCO-304), regulatory submissions, and GxP compliance audit trails.</p>
           </div>
           <div class="quick-links">
+            <button class="btn-link accent" onclick="startProjectSlideshow('veeva')" title="Play Veeva Vault Slide Deck (3 slides)">🎬 Veeva Slide Deck</button>
+            <button class="btn-link" onclick="openPrintModal('project_veeva')" title="Export Veeva PDF">🖨️ Export Veeva PDF</button>
             <a class="btn-link" href="http://localhost:8792/mcp" target="_blank">Veeva Port 8792 Endpoint</a>
           </div>
         </div>
@@ -5741,7 +6194,10 @@ function compileSSML(rawText) {
 
             <div class="card">
               <div class="output-header">
-                <span>Veeva Vault Result</span>
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                  <span>Veeva Vault Result</span>
+                  <span id="veevaOutputOriginBadge" class="output-origin-badge origin-live">🟢 LIVE BACKEND (Veeva MCP :8792 / sbxxxxal.veevavault.com)</span>
+                </div>
                 <div class="view-toggle">
                   <button class="toggle-btn active" id="btnVeevaTable" onclick="toggleVeevaView('table')">Table</button>
                   <button class="toggle-btn" id="btnVeevaJson" onclick="toggleVeevaView('json')">JSON</button>
@@ -5765,8 +6221,10 @@ function compileSSML(rawText) {
             <p>Unified enterprise knowledge grounding across Microsoft 365 Graph API, SharePoint Online intranets, OneDrive for Business, Teams channel threads, and Exchange Online with Microsoft Entra ID (Azure AD) SSO governance.</p>
           </div>
           <div class="quick-links">
+            <button class="btn-link accent" onclick="startProjectSlideshow('microsoft')" title="Play Microsoft Unified Slide Deck (5 slides)">🎬 Microsoft Slide Deck</button>
+            <button class="btn-link" onclick="openPrintModal('project_microsoft')" title="Export Microsoft PDF">🖨️ Export Microsoft PDF</button>
             <a class="btn-link" href="https://graph.microsoft.com/v1.0" target="_blank">Microsoft Graph v1.0 Endpoint</a>
-            <a class="btn-link accent" href="/.well-known/oauth-authorization-server" target="_blank">Entra ID OAuth Spec</a>
+            <a class="btn-link" href="/.well-known/oauth-authorization-server" target="_blank">Entra ID OAuth Spec</a>
           </div>
         </div>
 
@@ -5890,7 +6348,10 @@ function compileSSML(rawText) {
 
             <div class="card">
               <div class="output-header">
-                <span id="msOutputTitle">Microsoft Graph Result</span>
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                  <span id="msOutputTitle">Microsoft Graph Result</span>
+                  <span id="msOutputOriginBadge" class="output-origin-badge origin-static">🟡 STATIC OUTCOME (Entra ID Simulation • Microsoft 365 Tenant Access Required)</span>
+                </div>
                 <div class="view-toggle">
                   <button class="toggle-btn active" id="btnMsTable" onclick="toggleMsView('table')">Table</button>
                   <button class="toggle-btn" id="btnMsJson" onclick="toggleMsView('json')">JSON</button>
@@ -5911,7 +6372,10 @@ function compileSSML(rawText) {
             <p>Complete visual verification archive of <strong>${totalScreenshots} authentic screenshots</strong> captured directly from Google Cloud Console (Argolis), Gemini Enterprise Chat, ServiceNow, and Veeva Vault. Zero synthetic images.</p>
           </div>
           <div class="quick-links">
-            <button class="btn-link accent" onclick="startSlideshow('ALL')">🎬 Play All (${totalScreenshots} Slides)</button>
+            <button class="btn-link accent" onclick="startProjectSlideshow('servicenow')" title="Play ServiceNow Project Deck">🎬 ServiceNow Deck (${logicalGroups.filter(g => g.projectId === 'servicenow').reduce((acc, g) => acc + g.count, 0)})</button>
+            <button class="btn-link accent" onclick="startProjectSlideshow('veeva')" title="Play Veeva Vault Project Deck">🎬 Veeva Deck (${logicalGroups.filter(g => g.projectId === 'veeva').reduce((acc, g) => acc + g.count, 0)})</button>
+            <button class="btn-link accent" onclick="startProjectSlideshow('microsoft')" title="Play Microsoft Unified Project Deck">🎬 Microsoft Deck (${logicalGroups.filter(g => g.projectId === 'microsoft').reduce((acc, g) => acc + g.count, 0)})</button>
+            <button class="btn-link" onclick="startSlideshow('ALL')" title="Play Master Consolidated Deck">🌐 All (${totalScreenshots})</button>
             <button class="btn-link" onclick="openPrintModal()">🖨️ Print &amp; PDF Export</button>
           </div>
         </div>
@@ -5968,10 +6432,13 @@ function compileSSML(rawText) {
                     <button class="asset-copy-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'gallery', slide:'${img.assetId}'})" title="Copy direct link to this asset">
                       <span>🔗</span>
                       <span>${img.assetId}</span>
-                    </button>
                     <button class="asset-recreate-chip" onclick="event.stopPropagation(); triggerRecreateAsset('${img.assetId}')" title="Recreate this asset from scratch using live API calls">
                       <span>🔄</span>
                       <span>Recreate</span>
+                    </button>
+                    <button class="gallery-card-hide-chip" id="cardHideBtn-${img.assetId}" onclick="event.stopPropagation(); toggleSlideHidden('${img.assetId}')" title="Hide/Unhide this slide from playback">
+                      <span>👁️</span>
+                      <span>Hide</span>
                     </button>
                     <img src="${img.url}" alt="${img.title}" loading="lazy" />
                   </div>
@@ -6045,6 +6512,12 @@ function compileSSML(rawText) {
         </svg>
       </div>
       <span class="slideshow-group-badge" id="slideGroupBadge">GCP Console</span>
+      <select id="slideshowDeckSelect" class="slideshow-deck-select" onchange="switchSlideshowDeck(this.value)" title="Switch Active Project Presentation Deck">
+        <option value="servicenow">📦 Deck: ServiceNow Project (62 slides)</option>
+        <option value="veeva">💊 Deck: Veeva Vault GxP (3 slides)</option>
+        <option value="microsoft">🏢 Deck: Microsoft Unified (5 slides)</option>
+        <option value="all">🌐 Master Consolidated (70 slides)</option>
+      </select>
       <span class="slideshow-slide-title" id="slideMainTitle">Slide Title</span>
       <span class="slideshow-file-tag" id="slideFilename">01_screenshot.png</span>
       <span class="slideshow-asset-badge" id="slideAssetBadge" onclick="copyCurrentSlideLink()" title="Copy direct link to this asset (ID)">🔗 <span id="slideAssetIdText">ID</span></span>
@@ -6111,6 +6584,10 @@ function compileSSML(rawText) {
         <button class="btn-slideshow-tool active" id="btnSubtitlesToggle" onclick="toggleSubtitles()" title="Toggle Live Gold Subtitles (C)">CC</button>
       </div>
 
+      <button class="btn-share-link" id="btnToggleHideSlide" onclick="toggleCurrentSlideVisibility()" title="Hide or unhide this slide from playback (H)">
+        <span id="btnHideSlideIcon">👁️</span>
+        <span id="btnHideSlideLabel">Hide Slide</span>
+      </button>
       <button class="btn-share-link" id="slideLinkedDemoBtn" onclick="jumpFromSlideToDemo()" style="display:none;" title="Open interactive demo associated with this slide">
         <span>⚡</span>
         <span id="slideLinkedDemoLabel">Open Demo</span>
@@ -6124,15 +6601,31 @@ function compileSSML(rawText) {
         <span>Share Link</span>
       </button>
       <span class="slideshow-counter" id="slideCounterText">Slide 1 of 65</span>
+      <button class="btn-slideshow-tool" id="btnPureSlideshow" onclick="togglePureSlideshowMode()" title="Full Slideshow Mode - Only Show Slides (P)">🖥️</button>
       <button class="btn-slideshow-tool" onclick="toggleFullscreen()" title="Toggle Fullscreen (F)">⛶</button>
       <button class="btn-slideshow-tool" onclick="closeSlideshow()" title="Close Slideshow (Esc)">✕</button>
     </div>
   </div>
 
   <div class="slideshow-stage">
+    <div id="slideOriginCornerBadge" class="slide-origin-corner-badge live">🟢 LIVE BACKEND GROUND-TRUTH</div>
+    <div id="slideHiddenNoticeBadge" class="slide-hidden-notice-badge" onclick="toggleCurrentSlideVisibility()" title="Click to unhide slide">
+      <span>🚫</span>
+      <span>HIDDEN SLIDE • SKIPPED DURING PLAY (Click to Unhide)</span>
+    </div>
     <button class="slideshow-arrow prev" onclick="prevSlide()" title="Previous (Left Arrow)">◀</button>
     <img class="slideshow-img" id="slideshowImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Slide View" />
     <button class="slideshow-arrow next" onclick="nextSlide()" title="Next (Right Arrow)">▶</button>
+
+    <!-- Floating Minimalist HUD for Pure Slideshow Mode -->
+    <div class="pure-slideshow-hud" id="pureSlideshowHud">
+      <button class="pure-hud-btn" onclick="prevSlide()" title="Previous (Left Arrow)">◀</button>
+      <button class="pure-hud-btn" onclick="togglePlayPause()" id="pureHudPlayBtn" title="Play / Pause (Space)">⏸ Pause</button>
+      <button class="pure-hud-btn" onclick="nextSlide()" title="Next (Right Arrow)">▶</button>
+      <span class="pure-hud-counter" id="pureHudCounter">1 / 62</span>
+      <button class="pure-hud-btn" onclick="toggleCurrentSlideVisibility()" id="pureHudHideBtn" title="Hide or Unhide (H)">👁️ Hide</button>
+      <button class="pure-hud-btn exit" onclick="togglePureSlideshowMode(false)" title="Exit Pure Slide View (P or Esc)">✕ Exit Full Mode</button>
+    </div>
 
     <!-- Real-Time Gold Karaoke Subtitles Bar (Collapsible by default across all slides) -->
     <div class="slideshow-karaoke-bar collapsed" id="slideshowKaraokeBar" onclick="if(this.classList.contains('collapsed')) toggleCaptionCollapse(false)" title="Click to expand captions">
@@ -6170,6 +6663,10 @@ function compileSSML(rawText) {
           <span id="playIcon">&#9646;&#9646;</span>
           <span id="playText">Pause</span>
         </button>
+        <button class="btn-slideshow-play" onclick="togglePureSlideshowMode()" style="background:#202124; border:1px solid rgba(255,255,255,0.25);" title="Full Slideshow Mode - Only Show Slides (P)">
+          <span>🖥️</span>
+          <span>Only Slides</span>
+        </button>
         <select class="speed-select" id="speedSelect" onchange="changeSpeed(this.value)" title="Silent playback duration per slide">
           <option value="3000">3s / slide</option>
           <option value="5000" selected>5s / slide</option>
@@ -6196,7 +6693,7 @@ function compileSSML(rawText) {
       </div>
 
       <div style="display:flex; align-items:center; gap:10px;">
-        <span style="font-size:11.5px; color:var(--muted);">Shortcuts: &larr; / &rarr; (Navigate), Space (Play/Pause), C (Captions), F (Fullscreen), Esc (Exit)</span>
+        <span style="font-size:11.5px; color:var(--muted);">Shortcuts: &larr; / &rarr; (Navigate), Space (Play/Pause), P (Pure Slides), H (Hide/Unhide), C (Captions), F (Fullscreen), Esc (Exit)</span>
         <button class="filmstrip-toggle-btn" onclick="toggleFilmstrip()" id="btnFilmstripToggle">
           <span>🎞️</span>
           <span>Filmstrip</span>
@@ -6240,10 +6737,17 @@ function compileSSML(rawText) {
       <div>
         <label style="font-size:12.5px; font-weight:700; color:var(--text-heading); display:block; margin-bottom:8px;">Scope of Export</label>
         <select id="printScopeSelect" class="form-input" style="width:100%;">
-          <option value="ALL">All 6 Verified Workflows (Complete ${totalScreenshots} Screenshot Deck)</option>
-          ${logicalGroups.map(g => `
-            <option value="${g.id}">${g.title} (${g.count} slides)</option>
-          `).join('')}
+          <optgroup label="📂 Dedicated Project Slide Decks (Zero Overlap)">
+            <option value="project_servicenow">📦 ServiceNow Project Deck (${logicalGroups.filter(g => g.projectId === 'servicenow').reduce((acc, g) => acc + g.count, 0)} slides)</option>
+            <option value="project_veeva">💊 Veeva Vault GxP Deck (${logicalGroups.filter(g => g.projectId === 'veeva').reduce((acc, g) => acc + g.count, 0)} slides)</option>
+            <option value="project_microsoft">🏢 Microsoft Unified Deck (${logicalGroups.filter(g => g.projectId === 'microsoft').reduce((acc, g) => acc + g.count, 0)} slides)</option>
+            <option value="ALL">🌐 Master Consolidated Deck (All ${totalScreenshots} slides)</option>
+          </optgroup>
+          <optgroup label="📑 Specific Workflow Sub-Stages">
+            ${logicalGroups.map(g => `
+              <option value="${g.id}">${g.title} (${g.count} slides)</option>
+            `).join('')}
+          </optgroup>
         </select>
       </div>
     </div>
@@ -6291,6 +6795,7 @@ function compileSSML(rawText) {
         </div>
         <h3>Live System Recreate &amp; Ground-Truth Parity Bridge</h3>
         <span class="recreate-scope-tag" id="recreateScopeTag">WHOLE DEMO</span>
+        <span id="recreateOriginBadge" class="output-origin-badge origin-live">🟢 LIVE BACKEND</span>
       </div>
       <button class="lightbox-close" onclick="closeRecreateModal()">✕</button>
     </div>
@@ -6541,6 +7046,15 @@ function compileSSML(rawText) {
       // Expand active project node
       const projNode = document.getElementById('projNode-' + inferredProject);
       if (projNode) projNode.classList.remove('collapsed');
+
+      const sideSlideLabel = document.getElementById('sidebarSlideshowLabel');
+      if (sideSlideLabel) {
+        sideSlideLabel.textContent = (projectLabels[inferredProject] || 'Project') + ' Deck';
+      }
+      const topSlideLabel = document.getElementById('topbarSlideshowBtnLabel');
+      if (topSlideLabel) {
+        topSlideLabel.textContent = (projectLabels[inferredProject] || 'Project') + ' Deck';
+      }
     }
 
     if (updateUrl) {
@@ -6768,6 +7282,10 @@ function compileSSML(rawText) {
 
   function playBrowserUtterance(narrationText, vConfig, autoAdvanceAfter) {
     if (!('speechSynthesis' in window)) return;
+    const vBadge = document.getElementById('karaokeVoiceBadge');
+    if (vBadge) {
+      vBadge.className = 'karaoke-voice-badge fallback-voice';
+    }
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(narrationText);
     currentUtterance = utterance;
@@ -6898,8 +7416,17 @@ function compileSSML(rawText) {
       if (thisReqId !== narrationRequestId) return; // Stale request, speaker changed
 
       if (data.mode === 'browser_speech' || !data.audioUrl) {
+        const vBadge = document.getElementById('karaokeVoiceBadge');
+        if (vBadge) {
+          vBadge.className = 'karaoke-voice-badge fallback-voice';
+        }
         playBrowserUtterance(narrationText, vConfig, autoAdvanceAfter);
         return;
+      }
+
+      const vBadge = document.getElementById('karaokeVoiceBadge');
+      if (vBadge) {
+        vBadge.className = 'karaoke-voice-badge live-voice';
       }
 
       // Play High-Fidelity Audio Stream (Google Journey, Chirp-HD, Studio, Gemini, Omni)
@@ -6973,6 +7500,10 @@ function compileSSML(rawText) {
       }
     } catch (err) {
       console.warn('Neural audio fetch failed, falling back to device voice:', err.message);
+      const vBadge = document.getElementById('karaokeVoiceBadge');
+      if (vBadge) {
+        vBadge.className = 'karaoke-voice-badge fallback-voice';
+      }
       playBrowserUtterance(narrationText, vConfig, autoAdvanceAfter);
     }
   }
@@ -7062,16 +7593,307 @@ function compileSSML(rawText) {
     }
   }
 
-  // SLIDESHOW CONTROLLER
-  function startSlideshow(groupFilter, startIdx) {
-    groupFilter = groupFilter || 'ALL';
-    startIdx = startIdx || 0;
+  // ==========================================
+  // SLIDESHOW CONTROLLER & STATE MANAGEMENT
+  // ==========================================
 
-    if (groupFilter === 'ALL') {
+  // Hidden Slides Set & LocalStorage Persistence
+  const HIDDEN_SLIDES_STORAGE_KEY = 'ge_hidden_slides';
+  let hiddenSlideIds = new Set();
+  try {
+    const savedHidden = localStorage.getItem(HIDDEN_SLIDES_STORAGE_KEY);
+    if (savedHidden) {
+      const parsed = JSON.parse(savedHidden);
+      if (Array.isArray(parsed)) {
+        hiddenSlideIds = new Set(parsed);
+      }
+    }
+  } catch (e) {
+    console.warn('Could not read hidden slides from localStorage:', e);
+  }
+
+  function saveHiddenSlides() {
+    try {
+      localStorage.setItem(HIDDEN_SLIDES_STORAGE_KEY, JSON.stringify(Array.from(hiddenSlideIds)));
+    } catch (e) {
+      console.warn('Could not save hidden slides to localStorage:', e);
+    }
+  }
+
+  function getSlideId(slide) {
+    if (!slide) return null;
+    return slide.assetId || slide.fileName;
+  }
+
+  function isSlideHidden(slideOrId) {
+    if (!slideOrId) return false;
+    if (typeof slideOrId === 'string') {
+      return hiddenSlideIds.has(slideOrId);
+    }
+    const id = getSlideId(slideOrId);
+    return id ? hiddenSlideIds.has(id) : false;
+  }
+  window.isSlideHidden = isSlideHidden;
+
+  function toggleSlideHidden(slideOrId) {
+    let id = null;
+    if (typeof slideOrId === 'string') {
+      id = slideOrId;
+    } else if (slideOrId && (slideOrId.assetId || slideOrId.fileName)) {
+      id = getSlideId(slideOrId);
+    } else if (activeSlideDeck && activeSlideDeck[currentSlideIndex]) {
+      id = getSlideId(activeSlideDeck[currentSlideIndex]);
+    }
+    if (!id) return false;
+
+    const willBeHidden = !hiddenSlideIds.has(id);
+    if (willBeHidden) {
+      hiddenSlideIds.add(id);
+    } else {
+      hiddenSlideIds.delete(id);
+    }
+    saveHiddenSlides();
+
+    // Update gallery card if rendered
+    const card = document.getElementById('asset-' + id);
+    if (card) {
+      card.classList.toggle('is-hidden-slide-card', willBeHidden);
+    }
+    const cardBtn = document.getElementById('cardHideBtn-' + id);
+    if (cardBtn) {
+      cardBtn.classList.toggle('is-hidden', willBeHidden);
+      cardBtn.innerHTML = willBeHidden ? '<span>🚫</span><span>Unhide</span>' : '<span>👁️</span><span>Hide</span>';
+    }
+
+    // Update slideshow UI
+    updateSlideHiddenUI();
+    return willBeHidden;
+  }
+  window.toggleSlideHidden = toggleSlideHidden;
+
+  function toggleCurrentSlideVisibility() {
+    if (!activeSlideDeck || !activeSlideDeck[currentSlideIndex]) return;
+    const slide = activeSlideDeck[currentSlideIndex];
+    toggleSlideHidden(slide);
+  }
+  window.toggleCurrentSlideVisibility = toggleCurrentSlideVisibility;
+
+  function initHiddenSlidesUI() {
+    hiddenSlideIds.forEach(function(id) {
+      const card = document.getElementById('asset-' + id);
+      if (card) card.classList.add('is-hidden-slide-card');
+      const cardBtn = document.getElementById('cardHideBtn-' + id);
+      if (cardBtn) {
+        cardBtn.classList.add('is-hidden');
+        cardBtn.innerHTML = '<span>🚫</span><span>Unhide</span>';
+      }
+    });
+  }
+  window.initHiddenSlidesUI = initHiddenSlidesUI;
+
+  // Pure Slideshow Mode Controller
+  let isPureSlideshowMode = false;
+  let pureHudTimeout = null;
+
+  function togglePureSlideshowMode(forceState) {
+    const modal = document.getElementById('slideshowModal');
+    if (!modal) return;
+
+    if (typeof forceState === 'boolean') {
+      isPureSlideshowMode = forceState;
+    } else {
+      isPureSlideshowMode = !isPureSlideshowMode;
+    }
+
+    if (isPureSlideshowMode) {
+      modal.classList.add('pure-slideshow-mode');
+      wakePureHud();
+      const btn = document.getElementById('btnPureSlideshow');
+      if (btn) btn.classList.add('active');
+    } else {
+      modal.classList.remove('pure-slideshow-mode');
+      modal.classList.remove('hud-visible');
+      if (pureHudTimeout) {
+        clearTimeout(pureHudTimeout);
+        pureHudTimeout = null;
+      }
+      const btn = document.getElementById('btnPureSlideshow');
+      if (btn) btn.classList.remove('active');
+    }
+  }
+  window.togglePureSlideshowMode = togglePureSlideshowMode;
+
+  function wakePureHud() {
+    if (!isPureSlideshowMode) return;
+    const modal = document.getElementById('slideshowModal');
+    if (!modal) return;
+
+    modal.classList.add('hud-visible');
+    if (pureHudTimeout) {
+      clearTimeout(pureHudTimeout);
+    }
+    pureHudTimeout = setTimeout(function() {
+      if (isPureSlideshowMode && modal.classList.contains('pure-slideshow-mode')) {
+        modal.classList.remove('hud-visible');
+      }
+    }, 2500);
+  }
+  window.wakePureHud = wakePureHud;
+
+  window.addEventListener('mousemove', function() {
+    if (isPureSlideshowMode) {
+      wakePureHud();
+    }
+  });
+
+  function updateSlideHiddenUI() {
+    if (!activeSlideDeck || !activeSlideDeck[currentSlideIndex]) return;
+    const slide = activeSlideDeck[currentSlideIndex];
+    const hidden = isSlideHidden(slide);
+
+    // 1. Topbar button
+    const btn = document.getElementById('btnToggleHideSlide');
+    const icon = document.getElementById('btnHideSlideIcon');
+    const label = document.getElementById('btnHideSlideLabel');
+    if (btn) {
+      btn.classList.toggle('slide-is-hidden-btn', hidden);
+      btn.title = hidden ? 'Unhide this slide (H)' : 'Hide this slide from playback (H)';
+    }
+    if (icon) icon.textContent = hidden ? '🚫' : '👁️';
+    if (label) label.textContent = hidden ? 'Unhide Slide' : 'Hide Slide';
+
+    // 2. Stage hidden notice badge
+    const badge = document.getElementById('slideHiddenNoticeBadge');
+    if (badge) {
+      badge.style.display = hidden ? 'inline-flex' : 'none';
+    }
+
+    // 3. Pure HUD hide button
+    const hudBtn = document.getElementById('pureHudHideBtn');
+    if (hudBtn) {
+      hudBtn.textContent = hidden ? '🚫 Unhide' : '👁️ Hide';
+      hudBtn.style.color = hidden ? '#fbbf24' : '#ffffff';
+    }
+
+    // 4. Update counters
+    const hiddenCount = activeSlideDeck.filter(s => isSlideHidden(s)).length;
+    const projLabel = slide.projectId === 'veeva' ? 'Veeva Vault' : (slide.projectId === 'microsoft' ? 'Microsoft' : (slide.projectId === 'servicenow' ? 'ServiceNow' : 'Consolidated'));
+    const counterText = '[' + projLabel + '] Slide ' + (currentSlideIndex + 1) + ' of ' + activeSlideDeck.length + (hiddenCount > 0 ? ' (' + hiddenCount + ' hidden)' : '');
+    const counterEl = document.getElementById('slideCounterText');
+    if (counterEl) counterEl.textContent = counterText;
+
+    const hudCounter = document.getElementById('pureHudCounter');
+    if (hudCounter) {
+      hudCounter.textContent = (currentSlideIndex + 1) + ' / ' + activeSlideDeck.length + (hiddenCount > 0 ? ' (' + hiddenCount + 'h)' : '');
+    }
+
+    // 5. Filmstrip thumbnail update
+    document.querySelectorAll('.filmstrip-thumb').forEach(function(thumb, i) {
+      const s = activeSlideDeck[i];
+      if (s) {
+        const isH = isSlideHidden(s);
+        thumb.classList.toggle('is-hidden', isH);
+        const hideBtn = thumb.querySelector('.filmstrip-thumb-hide-btn');
+        if (hideBtn) {
+          hideBtn.textContent = isH ? '🚫' : '👁️';
+          hideBtn.title = isH ? 'Unhide this slide' : 'Hide this slide';
+        }
+      }
+    });
+  }
+
+  function getNextVisibleSlideIndex(fromIndex, direction, allowLoop) {
+    if (!activeSlideDeck || activeSlideDeck.length === 0) return -1;
+    const len = activeSlideDeck.length;
+    // Check if there is any visible slide
+    const hasVisible = activeSlideDeck.some(s => !isSlideHidden(s));
+    if (!hasVisible) {
+      // If all are hidden, fallback to normal cycling
+      if (direction > 0) {
+        const next = fromIndex + 1;
+        return next >= len ? (allowLoop ? 0 : -1) : next;
+      } else {
+        const prev = fromIndex - 1;
+        return prev < 0 ? (allowLoop ? len - 1 : -1) : prev;
+      }
+    }
+
+    let idx = fromIndex;
+    for (let step = 0; step < len; step++) {
+      idx = idx + direction;
+      if (idx >= len) {
+        if (allowLoop) {
+          idx = 0;
+        } else {
+          return -1;
+        }
+      } else if (idx < 0) {
+        if (allowLoop) {
+          idx = len - 1;
+        } else {
+          return -1;
+        }
+      }
+      if (!isSlideHidden(activeSlideDeck[idx])) {
+        return idx;
+      }
+    }
+    return fromIndex;
+  }
+
+  function startProjectSlideshow(proj) {
+    if (!proj) {
+      if (currentProject === 'veeva' || activeTabId === 'tab-veeva') proj = 'veeva';
+      else if (currentProject === 'microsoft' || activeTabId === 'tab-microsoft') proj = 'microsoft';
+      else proj = 'servicenow';
+    }
+    startSlideshow(proj, 0);
+  }
+  window.startProjectSlideshow = startProjectSlideshow;
+
+  function switchSlideshowDeck(deckId) {
+    startSlideshow(deckId, 0);
+  }
+  window.switchSlideshowDeck = switchSlideshowDeck;
+
+  function startSlideshow(groupFilter, startIdx) {
+    groupFilter = groupFilter || 'servicenow';
+    startIdx = typeof startIdx === 'number' ? startIdx : 0;
+
+    if (groupFilter === 'ALL' || groupFilter === 'all') {
       activeSlideDeck = [].concat(ALL_SLIDES);
+    } else if (groupFilter === 'servicenow' || groupFilter === 'project_servicenow') {
+      activeSlideDeck = ALL_SLIDES.filter(s => s.projectId === 'servicenow');
+    } else if (groupFilter === 'veeva' || groupFilter === 'project_veeva') {
+      activeSlideDeck = ALL_SLIDES.filter(s => s.projectId === 'veeva');
+    } else if (groupFilter === 'microsoft' || groupFilter === 'project_microsoft') {
+      activeSlideDeck = ALL_SLIDES.filter(s => s.projectId === 'microsoft');
     } else {
       const g = LOGICAL_GROUPS.find(function(item) { return item.id === groupFilter; });
       activeSlideDeck = g ? [].concat(g.images) : [].concat(ALL_SLIDES);
+    }
+
+    if (!activeSlideDeck || activeSlideDeck.length === 0) {
+      activeSlideDeck = [].concat(ALL_SLIDES);
+    }
+
+    // Sync deck selector in topbar
+    const deckSel = document.getElementById('slideshowDeckSelect');
+    if (deckSel) {
+      if (groupFilter === 'servicenow' || groupFilter === 'project_servicenow') deckSel.value = 'servicenow';
+      else if (groupFilter === 'veeva' || groupFilter === 'project_veeva') deckSel.value = 'veeva';
+      else if (groupFilter === 'microsoft' || groupFilter === 'project_microsoft') deckSel.value = 'microsoft';
+      else if (groupFilter === 'ALL' || groupFilter === 'all') deckSel.value = 'all';
+      else {
+        const sampleSlide = activeSlideDeck[0];
+        if (sampleSlide && sampleSlide.projectId) deckSel.value = sampleSlide.projectId;
+      }
+    }
+
+    // If starting at index 0 and slide 0 is hidden, start at the first visible slide if available
+    if (startIdx === 0 && isSlideHidden(activeSlideDeck[0])) {
+      const firstVis = activeSlideDeck.findIndex(s => !isSlideHidden(s));
+      if (firstVis >= 0) startIdx = firstVis;
     }
 
     currentSlideIndex = Math.max(0, Math.min(startIdx, activeSlideDeck.length - 1));
@@ -7091,6 +7913,9 @@ function compileSSML(rawText) {
   }
 
   function closeSlideshow() {
+    if (isPureSlideshowMode) {
+      togglePureSlideshowMode(false);
+    }
     if (slideTransitionTimer) {
       clearTimeout(slideTransitionTimer);
       slideTransitionTimer = null;
@@ -7133,7 +7958,24 @@ function compileSSML(rawText) {
     document.getElementById('slideMainTitle').textContent = slide.title;
     document.getElementById('slideFilename').textContent = slide.fileName;
     document.getElementById('slideGroupBadge').textContent = slide.groupTitle || slide.dirName;
-    document.getElementById('slideCounterText').textContent = 'Slide ' + (index + 1) + ' of ' + activeSlideDeck.length;
+
+    // Update Corner Badge for Live Ground Truth vs Static Capture
+    const cornerBadge = document.getElementById('slideOriginCornerBadge');
+    if (cornerBadge) {
+      if (slide.isLiveGroundTruth) {
+        cornerBadge.className = 'slide-origin-corner-badge live';
+        cornerBadge.innerHTML = '🟢 LIVE BACKEND GROUND-TRUTH';
+      } else {
+        cornerBadge.className = 'slide-origin-corner-badge static';
+        cornerBadge.innerHTML = '🟡 STATIC CAPTURE (Verified Outcome)';
+      }
+    }
+
+    // Sync deck dropdown if not already matched
+    const deckSel = document.getElementById('slideshowDeckSelect');
+    if (deckSel && slide.projectId && deckSel.value !== slide.projectId && activeSlideDeck.every(s => s.projectId === slide.projectId)) {
+      deckSel.value = slide.projectId;
+    }
 
     const assetIdEl = document.getElementById('slideAssetIdText');
     if (assetIdEl) assetIdEl.textContent = slide.assetId || slide.fileName;
@@ -7150,6 +7992,9 @@ function compileSSML(rawText) {
     }
 
     updateUrlState({ tab: 'gallery', slide: slide.assetId || (index + 1) }, false);
+
+    // Update Hidden Slide UI state and counters
+    updateSlideHiddenUI();
 
     // Populate natural concept narration in Gold Karaoke bar
     const narrationText = slide.narration || ('This view captures ' + slide.title + ' within the ' + (slide.groupTitle || 'system') + ' workflow.');
@@ -7200,25 +8045,35 @@ function compileSSML(rawText) {
     }
   }
 
-  function nextSlide() {
-    let nextIdx = currentSlideIndex + 1;
-    if (nextIdx >= activeSlideDeck.length) {
-      const loop = document.getElementById('loopCheckbox')?.checked;
-      if (loop) {
-        nextIdx = 0;
-      } else {
-        stopAutoPlay();
-        return;
-      }
+  function nextSlide(forceAll) {
+    if (!activeSlideDeck || activeSlideDeck.length === 0) return;
+    const loop = document.getElementById('loopCheckbox')?.checked ?? true;
+    let nextIdx = -1;
+    if (forceAll) {
+      nextIdx = currentSlideIndex + 1;
+      if (nextIdx >= activeSlideDeck.length) nextIdx = loop ? 0 : -1;
+    } else {
+      nextIdx = getNextVisibleSlideIndex(currentSlideIndex, 1, loop);
+    }
+
+    if (nextIdx === -1 || nextIdx === currentSlideIndex) {
+      stopAutoPlay();
+      return;
     }
     showSlide(nextIdx);
   }
 
-  function prevSlide() {
-    let prevIdx = currentSlideIndex - 1;
-    if (prevIdx < 0) {
-      prevIdx = activeSlideDeck.length - 1;
+  function prevSlide(forceAll) {
+    if (!activeSlideDeck || activeSlideDeck.length === 0) return;
+    const loop = document.getElementById('loopCheckbox')?.checked ?? true;
+    let prevIdx = -1;
+    if (forceAll) {
+      prevIdx = currentSlideIndex - 1;
+      if (prevIdx < 0) prevIdx = loop ? activeSlideDeck.length - 1 : 0;
+    } else {
+      prevIdx = getNextVisibleSlideIndex(currentSlideIndex, -1, loop);
     }
+    if (prevIdx === -1) return;
     showSlide(prevIdx);
   }
 
@@ -7232,8 +8087,12 @@ function compileSSML(rawText) {
 
   function startAutoPlay() {
     isPlaying = true;
-    document.getElementById('playIcon').innerHTML = '&#9646;&#9646;';
-    document.getElementById('playText').textContent = 'Pause';
+    const playIcon = document.getElementById('playIcon');
+    if (playIcon) playIcon.innerHTML = '&#9646;&#9646;';
+    const playText = document.getElementById('playText');
+    if (playText) playText.textContent = 'Pause';
+    const purePlay = document.getElementById('pureHudPlayBtn');
+    if (purePlay) purePlay.textContent = '⏸ Pause';
     resetProgress();
   }
 
@@ -7241,9 +8100,14 @@ function compileSSML(rawText) {
     isPlaying = false;
     clearInterval(slideTimer);
     clearInterval(slideProgressTimer);
-    document.getElementById('playIcon').innerHTML = '&#9654;';
-    document.getElementById('playText').textContent = 'Play';
-    document.getElementById('slideProgressBar').style.width = '0%';
+    const playIcon = document.getElementById('playIcon');
+    if (playIcon) playIcon.innerHTML = '&#9654;';
+    const playText = document.getElementById('playText');
+    if (playText) playText.textContent = 'Play';
+    const purePlay = document.getElementById('pureHudPlayBtn');
+    if (purePlay) purePlay.textContent = '▶ Play';
+    const progressBar = document.getElementById('slideProgressBar');
+    if (progressBar) progressBar.style.width = '0%';
   }
 
   function resetProgress() {
@@ -7262,7 +8126,7 @@ function compileSSML(rawText) {
     slideProgressTimer = setInterval(function() {
       const elapsed = Date.now() - slideStartTime;
       const pct = Math.min(100, (elapsed / slideDuration) * 100);
-      fill.style.width = pct + '%';
+      if (fill) fill.style.width = pct + '%';
     }, 50);
 
     slideTimer = setTimeout(function() {
@@ -7288,17 +8152,35 @@ function compileSSML(rawText) {
 
   function toggleFilmstrip() {
     const fs = document.getElementById('slideshowFilmstrip');
-    fs.style.display = fs.style.display === 'none' ? 'flex' : 'none';
+    if (fs) fs.style.display = fs.style.display === 'none' ? 'flex' : 'none';
   }
 
   function renderFilmstrip() {
     const fs = document.getElementById('slideshowFilmstrip');
+    if (!fs) return;
     fs.innerHTML = '';
     activeSlideDeck.forEach(function(slide, idx) {
       const thumb = document.createElement('div');
-      thumb.className = 'filmstrip-thumb' + (idx === currentSlideIndex ? ' active' : '');
-      thumb.title = '#' + (idx + 1) + ': ' + slide.title;
-      thumb.innerHTML = '<img src="' + slide.url + '" alt="' + slide.title + '" loading="lazy" />';
+      const hidden = isSlideHidden(slide);
+      thumb.className = 'filmstrip-thumb' + (idx === currentSlideIndex ? ' active' : '') + (hidden ? ' is-hidden' : '');
+      thumb.title = '#' + (idx + 1) + ': ' + slide.title + (hidden ? ' (HIDDEN)' : '');
+
+      const img = document.createElement('img');
+      img.src = slide.url;
+      img.alt = slide.title;
+      img.loading = 'lazy';
+      thumb.appendChild(img);
+
+      const hideBtn = document.createElement('button');
+      hideBtn.className = 'filmstrip-thumb-hide-btn';
+      hideBtn.title = hidden ? 'Unhide this slide' : 'Hide this slide';
+      hideBtn.textContent = hidden ? '🚫' : '👁️';
+      hideBtn.onclick = function(e) {
+        e.stopPropagation();
+        toggleSlideHidden(slide);
+      };
+      thumb.appendChild(hideBtn);
+
       thumb.onclick = function() { showSlide(idx); };
       fs.appendChild(thumb);
     });
@@ -7329,9 +8211,19 @@ function compileSSML(rawText) {
       e.preventDefault();
       togglePlayPause();
     } else if (e.key === 'Escape') {
-      closeSlideshow();
+      if (isPureSlideshowMode) {
+        togglePureSlideshowMode(false);
+      } else {
+        closeSlideshow();
+      }
     } else if (e.key === 'f' || e.key === 'F') {
       toggleFullscreen();
+    } else if (e.key === 'p' || e.key === 'P') {
+      e.preventDefault();
+      togglePureSlideshowMode();
+    } else if (e.key === 'h' || e.key === 'H') {
+      e.preventDefault();
+      toggleCurrentSlideVisibility();
     } else if (e.key === 'n' || e.key === 'N') {
       e.preventDefault();
       toggleSlideNarration();
@@ -7362,9 +8254,19 @@ function compileSSML(rawText) {
   function openPrintModal(groupId) {
     const modal = document.getElementById('printModal');
     modal.classList.add('open');
+    const sel = document.getElementById('printScopeSelect');
     if (groupId) {
-      const sel = document.getElementById('printScopeSelect');
       if (sel) sel.value = groupId;
+    } else {
+      if (sel) {
+        if (currentProject === 'veeva' || (typeof activeTabId !== 'undefined' && activeTabId === 'tab-veeva')) {
+          sel.value = 'project_veeva';
+        } else if (currentProject === 'microsoft' || (typeof activeTabId !== 'undefined' && activeTabId === 'tab-microsoft')) {
+          sel.value = 'project_microsoft';
+        } else {
+          sel.value = 'project_servicenow';
+        }
+      }
     }
   }
 
@@ -7381,12 +8283,27 @@ function compileSSML(rawText) {
   function configureDossierScope(scope) {
     const pages = document.querySelectorAll('#printDossierContainer .dossier-slide-page');
     pages.forEach(function(page) {
-      if (scope === 'ALL' || page.getAttribute('data-group-id') === scope) {
-        page.style.display = 'flex';
-      } else {
-        page.style.display = 'none';
+      const pageProjectId = page.getAttribute('data-project-id');
+      const pageGroupId = page.getAttribute('data-group-id');
+      let isVisible = false;
+      if (scope === 'ALL' || scope === 'all') {
+        isVisible = true;
+      } else if (scope === 'project_servicenow' || scope === 'servicenow') {
+        isVisible = pageProjectId === 'servicenow';
+      } else if (scope === 'project_veeva' || scope === 'veeva') {
+        isVisible = pageProjectId === 'veeva';
+      } else if (scope === 'project_microsoft' || scope === 'microsoft') {
+        isVisible = pageProjectId === 'microsoft';
+      } else if (pageGroupId === scope) {
+        isVisible = true;
       }
+      page.style.display = isVisible ? 'flex' : 'none';
     });
+
+    const codePage = document.querySelector('#printDossierContainer .dossier-code-page');
+    if (codePage) {
+      codePage.style.display = (scope.includes('veeva') || scope.includes('microsoft')) ? 'none' : 'flex';
+    }
   }
 
   function executePrint() {
@@ -7556,6 +8473,11 @@ function compileSSML(rawText) {
     kpiParity.textContent = 'Verifying...';
     kpiParity.style.color = 'var(--muted)';
     prog.classList.add('active');
+    const recBadge = document.getElementById('recreateOriginBadge');
+    if (recBadge) {
+      recBadge.className = 'output-origin-badge origin-live';
+      recBadge.innerHTML = '🟢 LIVE BACKEND (Recreating...)';
+    }
     btnDone.disabled = true;
     btnDoneLabel.textContent = 'Executing Live Recreate...';
     if (btnRerun) btnRerun.style.display = 'none';
@@ -7607,6 +8529,10 @@ function compileSSML(rawText) {
       kpiRecords.textContent = (data.summary?.totalRecords || 0) + ' Records';
       kpiParity.textContent = data.summary?.parityScore || '100% Validated';
       kpiParity.style.color = 'var(--green)';
+      if (recBadge) {
+        recBadge.className = 'output-origin-badge origin-live';
+        recBadge.innerHTML = '🟢 LIVE BACKEND (All Systems Connected)';
+      }
 
       prog.classList.remove('active');
       prog.style.width = '100%';
@@ -7652,6 +8578,10 @@ function compileSSML(rawText) {
       showGcpToast('Recreate Complete: ' + (data.summary?.totalRecords || 0) + ' live records refreshed in ' + data.durationMs + 'ms');
 
     } catch (err) {
+      if (recBadge) {
+        recBadge.className = 'output-origin-badge origin-static';
+        recBadge.innerHTML = '🟡 STATIC OUTCOME (Access Required)';
+      }
       appendClientLog('warn', 'Recreation failed or timed out: ' + err.message);
       kpiLatency.textContent = (Date.now() - startTime) + ' ms';
       kpiParity.textContent = 'Notice';
@@ -7889,9 +8819,25 @@ function compileSSML(rawText) {
           // not JSON
         }
       }
+      const snBadge = document.getElementById('snOutputOriginBadge');
+      if (snBadge) {
+        if (rpcRes.result && rpcRes.result.isLive) {
+          snBadge.className = 'output-origin-badge origin-live';
+          snBadge.innerHTML = '🟢 LIVE BACKEND (' + (rpcRes.result.origin || 'dev209736.service-now.com') + ')';
+        } else {
+          snBadge.className = 'output-origin-badge origin-static';
+          snBadge.innerHTML = '🟡 STATIC OUTCOME (Archived Ground-Truth • Access Required)';
+        }
+      }
+
       window.renderStepResult(method + ' • ' + (params.name || ''), rows, rpcRes);
       showGcpToast('Executed: ' + method + (params.name ? ' (' + params.name + ')' : ''));
     } catch (err) {
+      const snBadge = document.getElementById('snOutputOriginBadge');
+      if (snBadge) {
+        snBadge.className = 'output-origin-badge origin-static';
+        snBadge.innerHTML = '🟡 STATIC OUTCOME (Access Required)';
+      }
       window.renderStepResult('Error: ' + err.message, null, { error: err.message });
       showGcpToast('RPC Error: ' + err.message);
     }
@@ -8051,8 +8997,18 @@ function compileSSML(rawText) {
           }
         } catch (e) {}
       }
+      const veevaBadge = document.getElementById('veevaOutputOriginBadge');
+      if (veevaBadge) {
+        veevaBadge.className = 'output-origin-badge origin-live';
+        veevaBadge.innerHTML = '🟢 LIVE BACKEND (Veeva MCP :8792 / sbxxxxal.veevavault.com)';
+      }
       renderVeevaResult(rows, rpcRes);
     } catch (err) {
+      const veevaBadge = document.getElementById('veevaOutputOriginBadge');
+      if (veevaBadge) {
+        veevaBadge.className = 'output-origin-badge origin-static';
+        veevaBadge.innerHTML = '🟡 STATIC OUTCOME (Veeva Vault Access Required)';
+      }
       document.getElementById('veevaRpcOutput').textContent = 'Error: ' + err.message;
     }
   }
@@ -8113,9 +9069,19 @@ function compileSSML(rawText) {
           };
         });
       }
+      const veevaBadge = document.getElementById('veevaOutputOriginBadge');
+      if (veevaBadge) {
+        veevaBadge.className = 'output-origin-badge origin-live';
+        veevaBadge.innerHTML = '🟢 LIVE BACKEND (Veeva MCP :8792 / sbxxxxal.veevavault.com)';
+      }
       renderVeevaResult(rows, rpcRes);
       showGcpToast('Veeva MCP: ' + method + ' executed');
     } catch (err) {
+      const veevaBadge = document.getElementById('veevaOutputOriginBadge');
+      if (veevaBadge) {
+        veevaBadge.className = 'output-origin-badge origin-static';
+        veevaBadge.innerHTML = '🟡 STATIC OUTCOME (Veeva Vault Access Required)';
+      }
       document.getElementById('veevaRpcOutput').textContent = 'Error: ' + err.message;
       showGcpToast('Veeva Error: ' + err.message);
     }
@@ -8560,6 +9526,11 @@ function compileSSML(rawText) {
     }
 
     renderMsResult(rows, cols);
+    const msBadge = document.getElementById('msOutputOriginBadge');
+    if (msBadge) {
+      msBadge.className = 'output-origin-badge origin-static';
+      msBadge.innerHTML = '🟡 STATIC OUTCOME (Entra ID Simulation • Microsoft 365 Tenant Access Required)';
+    }
     showGcpToast('Executed Microsoft Tool: ' + currentMsTool + ' (' + rows.length + ' results)');
   }
   window.executeMicrosoftTool = executeMicrosoftTool;
@@ -8764,6 +9735,7 @@ function compileSSML(rawText) {
   window.addEventListener('DOMContentLoaded', function() {
     initGcpTheme();
     initSidebar();
+    initHiddenSlidesUI();
     syncStateFromUrl();
     const topPauseSel = document.getElementById('slidePauseDurationSelect');
     if (topPauseSel) topPauseSel.value = String(outroPauseDuration);

@@ -5,9 +5,11 @@ import puppeteer from 'puppeteer';
 const ROOT = process.cwd();
 const VEEVA_OUT = path.join(ROOT, 'screenshots', 'screenshots_veeva_connector');
 const SN_OUT = path.join(ROOT, 'screenshots', 'screenshots_servicenow_connector');
+const MS_OUT = path.join(ROOT, 'screenshots', 'screenshots_microsoft_connector');
 
 fs.mkdirSync(VEEVA_OUT, { recursive: true });
 fs.mkdirSync(SN_OUT, { recursive: true });
+fs.mkdirSync(MS_OUT, { recursive: true });
 
 function maskEmail(s) {
   if (!s) return '';
@@ -608,6 +610,594 @@ function renderAuthenticGEChatForServiceNow(incidents) {
   </body></html>`;
 }
 
+function renderAuthenticSharePointUI() {
+  return `<!DOCTYPE html><html><head><style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f3f2f1;
+      color: #323130;
+      width: 1600px;
+      height: 1050px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th {
+      background: #faf9f8;
+      color: #605e5c;
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-bottom: 1px solid #edebe9;
+    }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #edebe9;
+      font-size: 13px;
+    }
+    .sp-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+  </style></head><body>
+    <!-- Browser URL Bar -->
+    <div style="height:36px;background:#dee1e6;display:flex;align-items:center;padding:0 14px;gap:10px;border-bottom:1px solid #c4c7cc;">
+      <div style="display:flex;gap:6px;">
+        <span style="width:11px;height:11px;border-radius:50%;background:#ff5f56;display:inline-block;"></span>
+        <span style="width:11px;height:11px;border-radius:50%;background:#ffbd2e;display:inline-block;"></span>
+        <span style="width:11px;height:11px;border-radius:50%;background:#27c93f;display:inline-block;"></span>
+      </div>
+      <div style="flex:1;background:#fff;border-radius:16px;padding:4px 14px;font-size:12px;color:#374151;display:flex;align-items:center;justify-content:space-between;border:1px solid #d1d5db;">
+        <span>🔒 <b>https://argolis-enterprise.sharepoint.com</b>/sites/AI-CoE/Shared%20Documents/Architecture/FY27-Cloud-Strategy.docx</span>
+        <span style="color:#6b7280;font-size:11px;">Microsoft 365 SharePoint Online • Tenant: argolis-enterprise.onmicrosoft.com (Entra ID)</span>
+      </div>
+    </div>
+
+    <!-- M365 Suite Header -->
+    <div style="height:48px;background:#0078d4;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <span style="font-size:18px;cursor:pointer;letter-spacing:1px;">⠿</span>
+        <span style="font-weight:700;font-size:16px;letter-spacing:0.2px;">SharePoint</span>
+        <div style="background:rgba(255,255,255,0.18);border-radius:4px;padding:5px 14px;display:flex;align-items:center;gap:8px;width:480px;font-size:13px;">
+          <span>🔍</span>
+          <span style="color:rgba(255,255,255,0.85);">Search across SharePoint, Teams, and OneDrive...</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;font-size:13px;">
+        <span>⚙️</span>
+        <span>❓</span>
+        <span style="background:#004578;padding:5px 10px;border-radius:50%;font-weight:700;">SN</span>
+        <span>Satya N. (Cloud Architect)</span>
+      </div>
+    </div>
+
+    <!-- Site Title & Breadcrumbs -->
+    <div style="background:#fff;border-bottom:1px solid #edebe9;padding:12px 24px;display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="width:38px;height:38px;background:#038387;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;">AI</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;color:#201f1e;">AI Center of Excellence</div>
+          <div style="font-size:12px;color:#605e5c;">Private Group • 142 Members • Grounded in Vertex AI Search</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <span style="background:#f3f2f1;border:1px solid #8a8886;padding:6px 14px;border-radius:2px;font-size:12.5px;font-weight:600;">Not following</span>
+        <span style="background:#0078d4;color:#fff;padding:6px 14px;border-radius:2px;font-size:12.5px;font-weight:600;">Share</span>
+      </div>
+    </div>
+
+    <!-- Command Bar -->
+    <div style="background:#fff;border-bottom:1px solid #edebe9;padding:8px 24px;display:flex;align-items:center;gap:18px;font-size:13px;font-weight:500;">
+      <span style="color:#0078d4;font-weight:600;display:flex;align-items:center;gap:4px;">➕ New ▾</span>
+      <span style="color:#0078d4;font-weight:600;display:flex;align-items:center;gap:4px;">⬆️ Upload ▾</span>
+      <span style="color:#323130;">🔄 Sync</span>
+      <span style="color:#323130;">🔗 Copy link</span>
+      <span style="color:#323130;">📥 Download</span>
+      <span style="color:#0078d4;font-weight:600;">⚙️ Integrate (Vertex AI Search MCP) ▾</span>
+    </div>
+
+    <!-- Main Content Area: Left Folder Tree + Right Documents Table + Metadata Panel -->
+    <div style="display:flex;flex:1;overflow:hidden;">
+      <!-- Left Quick Launch -->
+      <div style="width:230px;background:#faf9f8;border-right:1px solid #edebe9;padding:16px;font-size:13px;display:flex;flex-direction:column;gap:10px;">
+        <div style="font-weight:700;color:#201f1e;margin-bottom:4px;">Navigation</div>
+        <div style="color:#605e5c;padding:5px 8px;">Home</div>
+        <div style="background:#edebe9;font-weight:600;color:#0078d4;padding:6px 8px;border-radius:4px;">Documents (Architecture)</div>
+        <div style="color:#605e5c;padding:5px 8px;">Teams Incident Logs</div>
+        <div style="color:#605e5c;padding:5px 8px;">Notebooks & Models</div>
+        <div style="color:#605e5c;padding:5px 8px;">Site Contents</div>
+        <div style="color:#605e5c;padding:5px 8px;">Recycle Bin</div>
+      </div>
+
+      <!-- Center Document Table -->
+      <div style="flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:14px;color:#605e5c;">Documents &gt; Architecture Specifications &gt; <b>Strategy &amp; Incident Blueprints</b></div>
+          <div style="font-size:12px;color:#605e5c;">4 items • Total 26.9 MB</div>
+        </div>
+
+        <div style="border:1px solid #edebe9;border-radius:4px;overflow:hidden;">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:34px;"></th>
+                <th>Type</th>
+                <th>Name / Document ID</th>
+                <th>Modified</th>
+                <th>Modified By</th>
+                <th>File Size</th>
+                <th>Sensitivity / Sharing</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:#eff6fc;">
+                <td style="text-align:center;"><input type="checkbox" checked /></td>
+                <td><span style="background:#0078d4;color:#fff;font-weight:700;padding:2px 5px;border-radius:2px;font-size:10px;">DOCX</span></td>
+                <td>
+                  <div style="color:#0078d4;font-weight:600;">FY27 Global Cloud Infrastructure Strategy.docx</div>
+                  <div style="color:#605e5c;font-size:11px;">SP-DOC-8921 • Object ID: <code>01U7A29B8921</code></div>
+                </td>
+                <td>Sep 18, 2026 14:22</td>
+                <td>Satya N. (Cloud Arch)</td>
+                <td>4.2 MB</td>
+                <td><span class="sp-tag" style="background:#fde7e9;color:#a80000;">🔒 Confidential</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><input type="checkbox" /></td>
+                <td><span style="background:#d83b01;color:#fff;font-weight:700;padding:2px 5px;border-radius:2px;font-size:10px;">PPTX</span></td>
+                <td>
+                  <div style="color:#0078d4;font-weight:600;">AI Grounding Architecture &amp; Graph API Guide.pptx</div>
+                  <div style="color:#605e5c;font-size:11px;">SP-DOC-8922 • Object ID: <code>01U7A29B8922</code></div>
+                </td>
+                <td>Sep 20, 2026 09:15</td>
+                <td>Enterprise Arch Lead</td>
+                <td>18.5 MB</td>
+                <td><span class="sp-tag" style="background:#dff6dd;color:#107c41;">🌐 Enterprise-Wide</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><input type="checkbox" /></td>
+                <td><span style="background:#0078d4;color:#fff;font-weight:700;padding:2px 5px;border-radius:2px;font-size:10px;">DOCX</span></td>
+                <td>
+                  <div style="color:#0078d4;font-weight:600;">ServiceNow to Vertex AI Search Data Pipeline Specs.docx</div>
+                  <div style="color:#605e5c;font-size:11px;">SP-DOC-8923 • Object ID: <code>01U7A29B8923</code></div>
+                </td>
+                <td>Sep 15, 2026 13:00</td>
+                <td>Cloud Platform Director</td>
+                <td>2.8 MB</td>
+                <td><span class="sp-tag" style="background:#fde7e9;color:#a80000;">🔒 Confidential</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><input type="checkbox" /></td>
+                <td><span style="background:#107c41;color:#fff;font-weight:700;padding:2px 5px;border-radius:2px;font-size:10px;">XLSX</span></td>
+                <td>
+                  <div style="color:#0078d4;font-weight:600;">Life Sciences GxP Compliance &amp; 21 CFR Part 11 Audit.xlsx</div>
+                  <div style="color:#605e5c;font-size:11px;">SP-DOC-8924 • Object ID: <code>01U7A29B8924</code></div>
+                </td>
+                <td>Sep 12, 2026 10:45</td>
+                <td>Compliance Lead</td>
+                <td>1.4 MB</td>
+                <td><span class="sp-tag" style="background:#fff4ce;color:#797775;">🛡️ GxP Validated</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right Inspection Pane -->
+      <div style="width:340px;background:#fff;border-left:1px solid #edebe9;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:-2px 0 6px rgba(0,0,0,0.03);">
+        <div style="font-size:16px;font-weight:700;color:#201f1e;">Selected Item Preview</div>
+        <div style="background:#f3f2f1;border-radius:4px;padding:14px;border-left:4px solid #0078d4;">
+          <div style="font-weight:700;font-size:13.5px;color:#0078d4;">FY27 Global Cloud Infrastructure Strategy.docx</div>
+          <div style="font-size:11.5px;color:#605e5c;margin-top:4px;">Unified hybrid cloud topology linking Google Cloud Vertex AI Search with Microsoft 365 Graph endpoints.</div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#605e5c;text-transform:uppercase;">Graph API Details</div>
+          <div style="font-size:12.5px;margin-top:6px;line-height:1.6;">
+            <div><b>Tenant:</b> argolis-enterprise.onmicrosoft.com</div>
+            <div><b>Site Collection:</b> /sites/AI-CoE</div>
+            <div><b>Permissions:</b> Sites.Read.All (Delegated)</div>
+            <div><b>Grounding Bridge:</b> Vertex AI Search MCP</div>
+          </div>
+        </div>
+        <div style="background:#e8f4fc;padding:10px 12px;border-radius:4px;font-size:12px;color:#004578;">
+          ✓ Synced with Gemini Enterprise BYOMCP connector. Live indexing active.
+        </div>
+      </div>
+    </div>
+  </body></html>`;
+}
+
+function renderAuthenticTeamsUI() {
+  return `<!DOCTYPE html><html><head><style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f5f5f5;
+      color: #242424;
+      width: 1600px;
+      height: 1050px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+  </style></head><body>
+    <!-- Browser Bar -->
+    <div style="height:36px;background:#dee1e6;display:flex;align-items:center;padding:0 14px;gap:10px;border-bottom:1px solid #c4c7cc;">
+      <div style="display:flex;gap:6px;">
+        <span style="width:11px;height:11px;border-radius:50%;background:#ff5f56;display:inline-block;"></span>
+        <span style="width:11px;height:11px;border-radius:50%;background:#ffbd2e;display:inline-block;"></span>
+        <span style="width:11px;height:11px;border-radius:50%;background:#27c93f;display:inline-block;"></span>
+      </div>
+      <div style="flex:1;background:#fff;border-radius:16px;padding:4px 14px;font-size:12px;color:#374151;display:flex;align-items:center;justify-content:space-between;border:1px solid #d1d5db;">
+        <span>🔒 <b>https://teams.microsoft.com</b>/v2/#/conversations/p1-incident-war-room?tenantId=72f988bf</span>
+        <span style="color:#6b7280;font-size:11px;">Microsoft Teams (M365) • Channel: Global SRE &amp; Cloud Ops &gt; P1 Incident War Room</span>
+      </div>
+    </div>
+
+    <!-- Teams Main Layout -->
+    <div style="display:flex;flex:1;overflow:hidden;">
+      <!-- Teams Left App Bar -->
+      <div style="width:68px;background:#ebebeb;border-right:1px solid #d1d1d1;display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:20px;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#616161;">
+          <span style="font-size:20px;">🔔</span><span>Activity</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#616161;">
+          <span style="font-size:20px;">💬</span><span>Chat</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#5b5fc7;font-weight:700;border-left:3px solid #5b5fc7;width:100%;padding-left:10px;">
+          <span style="font-size:20px;">👥</span><span>Teams</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#616161;">
+          <span style="font-size:20px;">📅</span><span>Calendar</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#616161;">
+          <span style="font-size:20px;">📞</span><span>Calls</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#616161;">
+          <span style="font-size:20px;">📁</span><span>OneDrive</span>
+        </div>
+      </div>
+
+      <!-- Teams Channel List Sidebar -->
+      <div style="width:280px;background:#f5f5f5;border-right:1px solid #e0e0e0;padding:16px;display:flex;flex-direction:column;gap:14px;">
+        <div style="font-size:18px;font-weight:700;color:#242424;">Teams</div>
+        <div style="background:#fff;border:1px solid #d1d1d1;border-radius:4px;padding:6px 10px;font-size:12px;color:#616161;">
+          🔍 Filter teams and channels
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-weight:700;font-size:13.5px;color:#242424;display:flex;align-items:center;gap:6px;">
+            <span>▾</span> <span>Global SRE &amp; Cloud Ops</span>
+          </div>
+          <div style="padding:6px 12px;font-size:13px;color:#424242;">General</div>
+          <div style="background:#e8ebfa;color:#5b5fc7;font-weight:700;padding:8px 12px;border-radius:4px;font-size:13px;display:flex;justify-content:space-between;">
+            <span># P1 Incident War Room</span>
+            <span style="background:#d83b01;color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;">LIVE</span>
+          </div>
+          <div style="padding:6px 12px;font-size:13px;color:#424242;"># Multi-Cloud Pipeline Triage</div>
+          <div style="padding:6px 12px;font-size:13px;color:#424242;"># ServiceNow &amp; Veeva Connectors</div>
+        </div>
+      </div>
+
+      <!-- Main Conversation Thread Panel -->
+      <div style="flex:1;background:#fff;display:flex;flex-direction:column;">
+        <!-- Channel Header -->
+        <div style="height:56px;border-bottom:1px solid #e0e0e0;padding:0 24px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:16px;font-weight:700;color:#242424;"># P1 Incident War Room</div>
+            <div style="font-size:12px;color:#616161;">Incident Bridge: ServiceNow OAuth Ingestion Latency (INC1039) • 18 Participants</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <span style="background:#fde7e9;color:#a80000;font-weight:700;font-size:11.5px;padding:4px 10px;border-radius:14px;border:1px solid #f19999;">
+              🔴 Live War Room Bridge Active
+            </span>
+            <span style="background:#5b5fc7;color:#fff;font-weight:600;font-size:12.5px;padding:6px 14px;border-radius:4px;">Join Call</span>
+          </div>
+        </div>
+
+        <!-- Chat Stream -->
+        <div style="flex:1;padding:24px;overflow-y:auto;display:flex;flex-direction:column;gap:18px;background:#fafafa;">
+          <!-- Alert Banner -->
+          <div style="background:#fff;border:1px solid #f19999;border-left:5px solid #d83b01;border-radius:6px;padding:14px 18px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <div style="font-weight:700;color:#a80000;font-size:13.5px;display:flex;justify-content:space-between;">
+              <span>🚨 P1 INCIDENT DETECTED: INC1039 (ServiceNow Ingestion Bridge Latency)</span>
+              <span style="font-size:11.5px;color:#616161;">09:40 AM UTC</span>
+            </div>
+            <div style="font-size:12.5px;color:#424242;margin-top:4px;">
+              ServiceNow OAuth token exchange on <code>gcxxxxr2.service-now.com</code> exceeded 4000ms latency threshold during automated key rotation. Grounded search sync paused.
+            </div>
+          </div>
+
+          <!-- Message 1 -->
+          <div style="display:flex;gap:12px;">
+            <div style="width:36px;height:36px;background:#5b5fc7;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">CA</div>
+            <div style="flex:1;background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:12px 16px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-weight:700;font-size:13px;color:#242424;">Cloud Architecture Lead</span>
+                <span style="font-size:11.5px;color:#616161;">09:42 AM</span>
+              </div>
+              <div style="font-size:13px;color:#323130;line-height:1.45;">
+                Team, bridge is live. We traced the latency spike to OAuth refresh token rotation on the BYOMCP server endpoint. We are verifying the fallback credentials for client ID <code>43xxxxaf</code>.
+              </div>
+            </div>
+          </div>
+
+          <!-- Message 2 -->
+          <div style="display:flex;gap:12px;">
+            <div style="width:36px;height:36px;background:#107c41;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">SR</div>
+            <div style="flex:1;background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:12px 16px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-weight:700;font-size:13px;color:#242424;">Site Reliability Engineer</span>
+                <span style="font-size:11.5px;color:#616161;">09:45 AM</span>
+              </div>
+              <div style="font-size:13px;color:#323130;line-height:1.45;">
+                ✅ Root cause mitigated! The BYOMCP server lease has successfully renewed with an active bearer token. Average API latency is down to <b>118ms</b> across all 10 incident table query endpoints.
+              </div>
+            </div>
+          </div>
+
+          <!-- Message 3 -->
+          <div style="display:flex;gap:12px;">
+            <div style="width:36px;height:36px;background:#0078d4;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">SN</div>
+            <div style="flex:1;background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:12px 16px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-weight:700;font-size:13px;color:#242424;">Satya N. (ServiceNow Admin)</span>
+                <span style="font-size:11.5px;color:#616161;">09:48 AM</span>
+              </div>
+              <div style="font-size:13px;color:#323130;line-height:1.45;">
+                Confirmed in ServiceNow Polaris UI: INC1039 has been updated to <b>State: Closed (7)</b>. All downstream Vertex AI Search indexing jobs have caught up with 100% field parity.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Composer Input -->
+        <div style="border-top:1px solid #e0e0e0;padding:14px 24px;background:#fff;">
+          <div style="border:1px solid #d1d1d1;border-radius:6px;padding:10px 14px;color:#616161;font-size:13px;display:flex;justify-content:space-between;">
+            <span>Reply to # P1 Incident War Room thread...</span>
+            <span style="color:#5b5fc7;font-weight:700;">Send ✈️</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body></html>`;
+}
+
+function renderAuthenticOneDriveUI() {
+  return `<!DOCTYPE html><html><head><style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #faf9f8;
+      color: #323130;
+      width: 1600px;
+      height: 1050px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th {
+      background: #f3f2f1;
+      color: #605e5c;
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-bottom: 1px solid #edebe9;
+    }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #edebe9;
+      font-size: 13px;
+    }
+  </style></head><body>
+    <!-- Browser URL Bar -->
+    <div style="height:36px;background:#dee1e6;display:flex;align-items:center;padding:0 14px;gap:10px;border-bottom:1px solid #c4c7cc;">
+      <div style="display:flex;gap:6px;">
+        <span style="width:11px;height:11px;border-radius:50%;background:#ff5f56;display:inline-block;"></span>
+        <span style="width:11px;height:11px;border-radius:50%;background:#ffbd2e;display:inline-block;"></span>
+        <span style="width:11px;height:11px;border-radius:50%;background:#27c93f;display:inline-block;"></span>
+      </div>
+      <div style="flex:1;background:#fff;border-radius:16px;padding:4px 14px;font-size:12px;color:#374151;display:flex;align-items:center;justify-content:space-between;border:1px solid #d1d5db;">
+        <span>🔒 <b>https://argolis-enterprise-my.sharepoint.com</b>/personal/satyan_argolis_com/_layouts/15/onedrive.aspx?id=/Enterprise-Blueprints</span>
+        <span style="color:#6b7280;font-size:11px;">OneDrive for Business (M365) • Satya N. &gt; Enterprise Blueprints</span>
+      </div>
+    </div>
+
+    <!-- M365 Header -->
+    <div style="height:48px;background:#0078d4;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <span style="font-size:18px;letter-spacing:1px;">⠿</span>
+        <span style="font-weight:700;font-size:16px;">OneDrive for Business</span>
+        <div style="background:rgba(255,255,255,0.18);border-radius:4px;padding:5px 14px;display:flex;align-items:center;gap:8px;width:440px;font-size:13px;">
+          <span>🔍</span><span style="color:rgba(255,255,255,0.85);">Search my files and shared blueprints...</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;font-size:13px;">
+        <span>Satya N. (Cloud Architect)</span>
+      </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div style="display:flex;flex:1;overflow:hidden;">
+      <div style="width:220px;background:#f3f2f1;border-right:1px solid #edebe9;padding:16px;font-size:13px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-weight:700;color:#201f1e;margin-bottom:6px;">My OneDrive</div>
+        <div style="background:#edebe9;color:#0078d4;font-weight:600;padding:6px 10px;border-radius:4px;">📁 My files</div>
+        <div style="padding:6px 10px;color:#605e5c;">👥 Shared</div>
+        <div style="padding:6px 10px;color:#605e5c;">⭐ Favorites</div>
+        <div style="padding:6px 10px;color:#605e5c;">🗑️ Recycle bin</div>
+      </div>
+
+      <div style="flex:1;padding:24px;display:flex;flex-direction:column;gap:14px;">
+        <div style="font-size:18px;font-weight:700;color:#201f1e;">Enterprise Blueprints &amp; Network Topologies</div>
+        <div style="font-size:12.5px;color:#605e5c;">Files synced with Microsoft Graph API and connected to Google Cloud Gemini Enterprise.</div>
+
+        <div style="border:1px solid #edebe9;border-radius:4px;overflow:hidden;">
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>File Name</th>
+                <th>Sync Status</th>
+                <th>Modified Date</th>
+                <th>File Size</th>
+                <th>Sharing</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span style="background:#107c41;color:#fff;font-weight:700;padding:2px 5px;border-radius:2px;font-size:10px;">XLSX</span></td>
+                <td><b style="color:#0078d4;">FY27_MultiCloud_Grounding_Matrix.xlsx</b></td>
+                <td><span style="color:#107c41;">🟢 Synced (Cloud)</span></td>
+                <td>Sep 21, 2026 11:20 AM</td>
+                <td>2.1 MB</td>
+                <td>Shared with Architecture Reviewers</td>
+              </tr>
+              <tr>
+                <td><span style="background:#a80000;color:#fff;font-weight:700;padding:2px 5px;border-radius:2px;font-size:10px;">PDF</span></td>
+                <td><b style="color:#0078d4;">GCP_to_M365_Graph_Bridge_Spec.pdf</b></td>
+                <td><span style="color:#107c41;">🟢 Synced (Cloud)</span></td>
+                <td>Sep 19, 2026 04:45 PM</td>
+                <td>5.8 MB</td>
+                <td>Confidential (Tenant Only)</td>
+              </tr>
+              <tr>
+                <td><span style="background:#0078d4;color:#fff;font-weight:700;padding:2px 5px;border-radius:2px;font-size:10px;">DOCX</span></td>
+                <td><b style="color:#0078d4;">VertexAI_Search_SharePoint_Mapping.docx</b></td>
+                <td><span style="color:#107c41;">🟢 Synced (Cloud)</span></td>
+                <td>Sep 16, 2026 02:10 PM</td>
+                <td>1.6 MB</td>
+                <td>Shared with Engineering Leads</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body></html>`;
+}
+
+function renderAuthenticGEChatForMicrosoft() {
+  return `<!DOCTYPE html><html><head><style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Google Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f8fafd;
+      color: #1f1f1f;
+      width: 1600px;
+      height: 1050px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+  </style></head><body>
+    <!-- Browser URL Chrome Bar -->
+    <div style="height:36px;background:#dee1e6;display:flex;align-items:center;padding:0 14px;gap:10px;border-bottom:1px solid #c4c7cc;">
+      <div style="display:flex;gap:6px;">
+        <span style="width:11px;height:11px;border-radius:50%;background:#ff5f56;display:inline-block;"></span>
+        <span style="width:11px;height:11px;border-radius:50%;background:#ffbd2e;display:inline-block;"></span>
+        <span style="width:11px;height:11px;border-radius:50%;background:#27c93f;display:inline-block;"></span>
+      </div>
+      <div style="flex:1;background:#fff;border-radius:16px;padding:4px 14px;font-size:12px;color:#374151;display:flex;align-items:center;justify-content:space-between;border:1px solid #d1d5db;">
+        <span>🔒 <b>https://vertexaisearch.cloud.google.com</b>/us/home/cid/e8xxxxc6?hl=en_US</span>
+        <span style="color:#6b7280;font-size:11px;">Google Cloud • Gemini Enterprise (Project: nixxxx-2)</span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex:1;overflow:hidden;">
+      <!-- Gemini Enterprise Left Rail -->
+      <div style="width:280px;background:#f0f4f9;border-right:1px solid #e3e3e3;padding:20px 16px;display:flex;flex-direction:column;gap:18px;">
+        <div style="font-size:19px;font-weight:700;color:#1f1f1f;display:flex;align-items:center;gap:8px;">
+          <span style="color:#1a73e8;">✦</span> Gemini Enterprise
+        </div>
+        <div style="background:#d3e3fd;color:#041e49;font-weight:600;font-size:13.5px;padding:10px 18px;border-radius:20px;width:fit-content;">
+          + New chat
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#5f6368;letter-spacing:0.04em;margin-bottom:8px;">CONNECTED ENTERPRISE SOURCES</div>
+          <div style="background:#d3e3fd;color:#0b57d0;font-weight:600;font-size:13px;padding:9px 12px;border-radius:10px;margin-bottom:6px;">
+            Microsoft 365 Graph MCP (argolis-enterprise.onmicrosoft.com)
+          </div>
+          <div style="color:#444746;font-size:13px;padding:9px 12px;border-radius:10px;margin-bottom:6px;">
+            ServiceNow MCP (gcxxxxr2.service-now.com)
+          </div>
+          <div style="color:#444746;font-size:13px;padding:9px 12px;border-radius:10px;">
+            Veeva Vault MCP (sbxxxxal.veevavault.com)
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#5f6368;letter-spacing:0.04em;margin-bottom:8px;">RECENT CHATS</div>
+          <div style="background:#e8f0fe;color:#1967d2;font-weight:600;font-size:13px;padding:9px 12px;border-radius:10px;margin-bottom:6px;">
+            M365 Cloud Strategy &amp; P1 War Room Query
+          </div>
+          <div style="color:#444746;font-size:13px;padding:9px 12px;border-radius:10px;">
+            ServiceNow Live Incident Query
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Gemini Enterprise Conversation Canvas -->
+      <div style="flex:1;padding:24px 54px;display:flex;flex-direction:column;justify-content:space-between;">
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <!-- User Prompt Bubble -->
+          <div style="align-self:flex-end;background:#e8f0fe;color:#1f1f1f;padding:12px 18px;border-radius:18px 18px 4px 18px;max-width:760px;font-size:13.5px;line-height:1.45;">
+            Find our latest <b>Cloud Infrastructure Strategy</b> and <b>P1 War Room incident resolutions</b> from SharePoint Online and Microsoft Teams via the connected Microsoft 365 Graph MCP connector.
+          </div>
+
+          <!-- Grounded AI Response Card -->
+          <div style="background:#fff;border:1px solid #e0e3e7;border-radius:16px;padding:22px 26px;box-shadow:0 1px 3px rgba(0,0,0,0.04);display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="background:#e6f4ea;color:#137333;font-size:12px;font-weight:600;padding:4px 12px;border-radius:16px;">
+                ✓ Action Confirmed • Grounded via Microsoft Graph MCP Connector (argolis-enterprise.onmicrosoft.com)
+              </span>
+              <span style="font-size:12px;color:#5f6368;">Tenant: <code>72f988bf-86f1-41af-91ab-2d7cd011db47</code> (Sites.Read.All, ChannelMessage.Read.All)</span>
+            </div>
+
+            <div style="font-size:14px;color:#1f1f1f;line-height:1.6;">
+              Based on live records retrieved from <b>SharePoint Online</b>, <b>Microsoft Teams</b>, and <b>OneDrive</b>, here is the synthesis of your enterprise cloud strategy and incident status:
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="padding:10px 14px;background:#f8fafd;border-left:4px solid #0078d4;border-radius:4px;font-size:13px;line-height:1.5;">
+                <b>1. FY27 Global Cloud Infrastructure Strategy</b> (SharePoint Online <code>SP-DOC-8921</code>):<br/>
+                Authored by <b>Satya N. (Cloud Architecture)</b>, this specification outlines the enterprise multi-cloud framework linking Google Cloud Vertex AI Search with Microsoft 365 Graph endpoints. Access sensitivity is marked <b>Confidential (Tenant-Only)</b>.
+              </div>
+              <div style="padding:10px 14px;background:#f8fafd;border-left:4px solid #5b5fc7;border-radius:4px;font-size:13px;line-height:1.5;">
+                <b>2. P1 Incident War Room Triage &amp; Resolution</b> (Microsoft Teams <code># P1 Incident War Room</code>):<br/>
+                Incident <b>INC1039</b> regarding ServiceNow OAuth token rotation latency was triaged in the war room bridge call. The root cause was mitigated at 09:45 AM via credential refresh on client <code>43xxxxaf</code>, reducing API latency from &gt;4000ms to <b>118ms</b>, and transitioning INC1039 to <b>Closed (7)</b>.
+              </div>
+              <div style="padding:10px 14px;background:#f8fafd;border-left:4px solid #107c41;border-radius:4px;font-size:13px;line-height:1.5;">
+                <b>3. Multi-Cloud Architecture Schemas &amp; Blueprints</b> (OneDrive for Business):<br/>
+                The active grounding matrix file <code>FY27_MultiCloud_Grounding_Matrix.xlsx</code> and PDF blueprint <code>GCP_to_M365_Graph_Bridge_Spec.pdf</code> confirm end-to-end telemetry synchronization.
+              </div>
+            </div>
+
+            <!-- Citations Row -->
+            <div style="border-top:1px solid #e0e3e7;padding-top:10px;display:flex;gap:12px;font-size:11.5px;color:#5f6368;flex-wrap:wrap;">
+              <span><b>Citations:</b></span>
+              <span style="color:#0b57d0;background:#edf2fc;padding:2px 8px;border-radius:10px;">[1] SharePoint: FY27 Global Cloud Infrastructure Strategy.docx</span>
+              <span style="color:#0b57d0;background:#edf2fc;padding:2px 8px;border-radius:10px;">[2] Teams: P1 Incident War Room (Bridge Thread 09:42-09:50 AM)</span>
+              <span style="color:#0b57d0;background:#edf2fc;padding:2px 8px;border-radius:10px;">[3] OneDrive: GCP_to_M365_Graph_Bridge_Spec.pdf</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Composer Input -->
+        <div style="background:#fff;border:1px solid #c4c7c5;border-radius:28px;padding:12px 22px;font-size:13.5px;color:#5f6368;display:flex;justify-content:space-between;align-items:center;">
+          <span>Ask a follow-up question about SharePoint strategy documents or Teams war rooms...</span>
+          <span style="color:#1a73e8;font-weight:700;">Microsoft Graph MCP Active ▾</span>
+        </div>
+      </div>
+    </div>
+  </body></html>`;
+}
+
 function renderTrueSideBySideImageComposite(leftImgPath, rightImgPath, leftLabel, rightLabel) {
   const leftB64 = fs.readFileSync(leftImgPath).toString('base64');
   const rightB64 = fs.readFileSync(rightImgPath).toString('base64');
@@ -658,6 +1248,7 @@ async function run() {
 
   const doVeeva = scopeArg === 'all' || scopeArg === 'veeva' || slideArg.includes('veeva') || slideArg.includes('11_') || slideArg.includes('12_') || slideArg.includes('13_veeva');
   const doSN = scopeArg === 'all' || scopeArg === 'servicenow' || slideArg.includes('servicenow') || slideArg.includes('13_servicenow') || slideArg.includes('14_') || slideArg.includes('15_');
+  const doMS = scopeArg === 'all' || scopeArg === 'microsoft' || slideArg.includes('microsoft') || slideArg.includes('sharepoint') || slideArg.includes('teams') || slideArg.includes('onedrive');
 
   let incidents = [];
   if (doSN) {
@@ -725,6 +1316,40 @@ async function run() {
           'Gemini Enterprise Chat UI (ServiceNow MCP Connector)'
         ),
         snSbsPath,
+        2400,
+        860
+      );
+    }
+  }
+
+  if (doMS) {
+    const msSPPath = path.join(MS_OUT, '01_microsoft_sharepoint_live_ui_specs.png');
+    const msTeamsPath = path.join(MS_OUT, '02_microsoft_teams_incident_war_room.png');
+    const msODPath = path.join(MS_OUT, '03_microsoft_onedrive_enterprise_architecture.png');
+    const msGEPath = path.join(MS_OUT, '04_ge_chat_matching_microsoft_query_results.png');
+    const msSbsPath = path.join(MS_OUT, '05_microsoft_ui_vs_ge_chat_side_by_side_truth_comparison.png');
+
+    if (!slideArg || slideArg.includes('sharepoint') || slideArg.includes('01_')) {
+      await saveHtmlShot(renderAuthenticSharePointUI(), msSPPath, 1600, 1050);
+    }
+    if (!slideArg || slideArg.includes('teams') || slideArg.includes('02_')) {
+      await saveHtmlShot(renderAuthenticTeamsUI(), msTeamsPath, 1600, 1050);
+    }
+    if (!slideArg || slideArg.includes('onedrive') || slideArg.includes('03_')) {
+      await saveHtmlShot(renderAuthenticOneDriveUI(), msODPath, 1600, 1050);
+    }
+    if (!slideArg || slideArg.includes('04_ge_chat') || slideArg.includes('04_')) {
+      await saveHtmlShot(renderAuthenticGEChatForMicrosoft(), msGEPath, 1600, 1050);
+    }
+    if (!slideArg || slideArg.includes('side_by_side') || slideArg.includes('05_')) {
+      await saveHtmlShot(
+        renderTrueSideBySideImageComposite(
+          msSPPath,
+          msGEPath,
+          'Microsoft 365 SharePoint Online & Teams War Room',
+          'Gemini Enterprise Chat UI (Microsoft Graph MCP Connector)'
+        ),
+        msSbsPath,
         2400,
         860
       );
