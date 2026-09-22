@@ -71,6 +71,26 @@ try {
   console.warn('[MCP Server] Notice: Unable to load veeva_vault_live_sample_data.json:', err.message);
 }
 
+// Microsoft Unified Connector Live Sample Data
+const msSampleData = {
+  tenant_id: '72f988bf-86f1-41af-91ab-2d7cd011db47',
+  client_id: 'a87265c1-3991-4c12-9c92-7f28bcde2910',
+  entra_domain: 'argolis-enterprise.onmicrosoft.com',
+  graph_endpoint: 'https://graph.microsoft.com/v1.0',
+  connector_type: 'MICROSOFT_UNIFIED (SharePoint, Teams, OneDrive, Exchange)',
+  auth_mode: 'OAuth 2.0 Auth Code (3LO) / Entra ID Delegated',
+  scopes: 'Files.Read.All, Sites.Read.All, Chat.Read, Mail.Read, offline_access',
+  status: 'ACTIVE_CONNECTED',
+  documents: [
+    { id: 'SP-DOC-8921', title: 'FY27 Global Cloud Infrastructure Strategy.docx', source: 'SharePoint Online (Global IT Intranet)', author: 'Satya N. / Cloud Architecture', modified: '2026-09-18 14:22:00', permissions: 'Confidential / Internal' },
+    { id: 'SP-DOC-8922', title: 'AI Grounding Architecture & Graph API Connector Guide.pptx', source: 'SharePoint Online (AI CoE)', author: 'Enterprise Arch Lead', modified: '2026-09-20 09:15:30', permissions: 'Enterprise-Wide' },
+    { id: 'OD-FILE-4410', title: 'Q3 Enterprise MCP Benchmarks & Latency Matrix.xlsx', source: 'OneDrive for Business', author: 'Cloud Performance Team', modified: '2026-09-21 16:40:12', permissions: 'Restricted' },
+    { id: 'TM-MSG-1092', title: 'Incident Response War Room: P1 Cloud Egress Latency', source: 'Microsoft Teams (#cloud-ops)', author: 'SecOps Director', modified: '2026-09-22 08:30:00', permissions: 'Operations Team' },
+    { id: 'EX-MAIL-3301', title: 'Approved Architecture Decision Record: Vertex AI + Microsoft Unified', source: 'Exchange Online', author: 'VP Enterprise Engineering', modified: '2026-09-22 11:05:44', permissions: 'Executive Distribution' }
+  ]
+};
+
+
 
 // Canonical Bidirectional Mapping between Interactive Demo Tools & Underlying Verification Assets
 const TOOL_ASSET_MAPPINGS = {
@@ -4276,36 +4296,45 @@ function compileSSML(rawText) {
     </div>
 
     <div class="sidebar-content">
-      <!-- Project 1: argolis-ge-enterprise -->
+      <!-- ======================================================== -->
+      <!-- PROJECT 1: ServiceNow MCP Connector                      -->
+      <!-- ======================================================== -->
       <div class="sidebar-project-group" id="projGroup-servicenow">
-        <div class="sidebar-project-header">
+        <div class="sidebar-project-header" onclick="selectProjectView('servicenow', 'tab-servicenow')" style="cursor:pointer;" title="Switch to ServiceNow MCP Connector project">
           <span class="project-pill">PROJECT</span>
-          <span class="project-name">argolis-ge-enterprise</span>
+          <span class="project-name">ServiceNow MCP Connector</span>
         </div>
         <ul class="sidebar-nav-list">
           <li>
-            <a class="sidebar-nav-item active" id="sideLink-servicenow" onclick="selectProjectView('argolis-ge-enterprise', 'tab-servicenow')">
+            <a class="sidebar-nav-item active" id="sideLink-servicenow" onclick="selectProjectView('servicenow', 'tab-servicenow')">
               <span class="sidebar-nav-icon">⚡</span>
-              <span class="sidebar-nav-label">ServiceNow BYOMCP</span>
+              <span class="sidebar-nav-label">Live MCP Workbench</span>
               <span class="sidebar-nav-tag">Live MCP</span>
             </a>
           </li>
           <li>
-            <a class="sidebar-nav-item" id="sideLink-ge-chat" onclick="selectProjectView('argolis-ge-enterprise', 'tab-gallery', 'ge-chat')">
+            <a class="sidebar-nav-item" id="sideLink-ge-chat" onclick="selectProjectView('servicenow', 'tab-gallery', 'ge-chat')">
               <span class="sidebar-nav-icon">💬</span>
               <span class="sidebar-nav-label">Gemini Enterprise Chat</span>
               <span class="sidebar-nav-badge">19</span>
             </a>
           </li>
           <li>
-            <a class="sidebar-nav-item" id="sideLink-ground-truth" onclick="selectProjectView('argolis-ge-enterprise', 'tab-gallery', 'ground-truth')">
+            <a class="sidebar-nav-item" id="sideLink-ground-truth" onclick="selectProjectView('servicenow', 'tab-gallery', 'ground-truth')">
               <span class="sidebar-nav-icon">⚖️</span>
               <span class="sidebar-nav-label">Ground-Truth Parity</span>
               <span class="sidebar-nav-badge">7</span>
             </a>
           </li>
           <li>
-            <a class="sidebar-nav-item" id="sideLink-byomcp-setup" onclick="selectProjectView('argolis-ge-enterprise', 'tab-gallery', 'byomcp-setup')">
+            <a class="sidebar-nav-item" id="sideLink-gcp-wizard" onclick="selectProjectView('servicenow', 'tab-gallery', 'gcp-wizard')">
+              <span class="sidebar-nav-icon">🛠️</span>
+              <span class="sidebar-nav-label">GCP Console Wizard</span>
+              <span class="sidebar-nav-badge">20</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar-nav-item" id="sideLink-byomcp-setup" onclick="selectProjectView('servicenow', 'tab-gallery', 'byomcp-setup')">
               <span class="sidebar-nav-icon">🔌</span>
               <span class="sidebar-nav-label">BYOMCP Setup &amp; Auth</span>
               <span class="sidebar-nav-badge">4</span>
@@ -4314,57 +4343,84 @@ function compileSSML(rawText) {
         </ul>
       </div>
 
-      <!-- Project 2: argolis-life-sciences -->
+      <!-- ======================================================== -->
+      <!-- PROJECT 2: Veeva MCP Connector                           -->
+      <!-- ======================================================== -->
       <div class="sidebar-project-group" id="projGroup-veeva">
-        <div class="sidebar-project-header">
+        <div class="sidebar-project-header" onclick="selectProjectView('veeva', 'tab-veeva')" style="cursor:pointer;" title="Switch to Veeva MCP Connector project">
           <span class="project-pill">PROJECT</span>
-          <span class="project-name">argolis-life-sciences</span>
+          <span class="project-name">Veeva MCP Connector</span>
         </div>
         <ul class="sidebar-nav-list">
           <li>
-            <a class="sidebar-nav-item" id="sideLink-veeva" onclick="selectProjectView('argolis-life-sciences', 'tab-veeva')">
+            <a class="sidebar-nav-item" id="sideLink-veeva" onclick="selectProjectView('veeva', 'tab-veeva')">
               <span class="sidebar-nav-icon">🧪</span>
-              <span class="sidebar-nav-label">Veeva Vault GxP</span>
+              <span class="sidebar-nav-label">Live Veeva Workbench</span>
               <span class="sidebar-nav-tag">21 CFR Part 11</span>
             </a>
           </li>
+          <li>
+            <a class="sidebar-nav-item" id="sideLink-veeva-parity" onclick="selectProjectView('veeva', 'tab-gallery', 'ground-truth')">
+              <span class="sidebar-nav-icon">⚖️</span>
+              <span class="sidebar-nav-label">Clinical &amp; Reg Parity</span>
+              <span class="sidebar-nav-badge">3</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar-nav-item" id="sideLink-veeva-gxp" onclick="selectProjectView('veeva', 'tab-veeva', 'gxp')">
+              <span class="sidebar-nav-icon">📜</span>
+              <span class="sidebar-nav-label">GxP Vault Governance</span>
+              <span class="sidebar-nav-badge">Audit</span>
+            </a>
+          </li>
         </ul>
       </div>
 
-      <!-- Project 3: argolis-gcp-console -->
-      <div class="sidebar-project-group" id="projGroup-gcp">
-        <div class="sidebar-project-header">
+      <!-- ======================================================== -->
+      <!-- PROJECT 3: Microsoft Unified Connector                   -->
+      <!-- ======================================================== -->
+      <div class="sidebar-project-group" id="projGroup-microsoft">
+        <div class="sidebar-project-header" onclick="selectProjectView('microsoft', 'tab-microsoft')" style="cursor:pointer;" title="Switch to Microsoft Unified Connector project">
           <span class="project-pill">PROJECT</span>
-          <span class="project-name">argolis-gcp-console</span>
+          <span class="project-name">Microsoft Unified Connector</span>
         </div>
         <ul class="sidebar-nav-list">
           <li>
-            <a class="sidebar-nav-item" id="sideLink-gcp-wizard" onclick="selectProjectView('argolis-gcp-console', 'tab-gallery', 'gcp-wizard')">
-              <span class="sidebar-nav-icon">🛠️</span>
-              <span class="sidebar-nav-label">GCP Console Wizard</span>
-              <span class="sidebar-nav-badge">20</span>
+            <a class="sidebar-nav-item" id="sideLink-microsoft" onclick="selectProjectView('microsoft', 'tab-microsoft')">
+              <span class="sidebar-nav-icon">🏢</span>
+              <span class="sidebar-nav-label">Live M365 Workbench</span>
+              <span class="sidebar-nav-tag">Graph v1.0</span>
             </a>
           </li>
           <li>
-            <a class="sidebar-nav-item" id="sideLink-agent-studio" onclick="selectProjectView('argolis-gcp-console', 'tab-gallery', 'agent-studio')">
-              <span class="sidebar-nav-icon">🎨</span>
-              <span class="sidebar-nav-label">Agent Studio &amp; Search</span>
-              <span class="sidebar-nav-badge">4</span>
+            <a class="sidebar-nav-item" id="sideLink-ms-sharepoint" onclick="selectProjectView('microsoft', 'tab-microsoft', 'sharepoint')">
+              <span class="sidebar-nav-icon">📂</span>
+              <span class="sidebar-nav-label">SharePoint &amp; OneDrive</span>
+              <span class="sidebar-nav-badge">Docs</span>
             </a>
           </li>
           <li>
-            <a class="sidebar-nav-item" id="sideLink-live-auth" onclick="selectProjectView('argolis-gcp-console', 'tab-gallery', 'live-auth')">
-              <span class="sidebar-nav-icon">🔐</span>
-              <span class="sidebar-nav-label">Identity SSO &amp; Audit</span>
-              <span class="sidebar-nav-badge">11</span>
+            <a class="sidebar-nav-item" id="sideLink-ms-teams" onclick="selectProjectView('microsoft', 'tab-microsoft', 'teams')">
+              <span class="sidebar-nav-icon">💬</span>
+              <span class="sidebar-nav-label">Teams &amp; Outlook</span>
+              <span class="sidebar-nav-badge">Chat</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar-nav-item" id="sideLink-ms-entra" onclick="selectProjectView('microsoft', 'tab-oauth')">
+              <span class="sidebar-nav-icon">🛡️</span>
+              <span class="sidebar-nav-label">Entra ID SSO &amp; Auth</span>
+              <span class="sidebar-nav-badge">OAuth</span>
             </a>
           </li>
         </ul>
       </div>
 
-      <!-- Enterprise Suite Hub -->
+      <!-- ======================================================== -->
+      <!-- CROSS-PROJECT SUITE (HUB)                                -->
+      <!-- ======================================================== -->
       <div class="sidebar-project-group" id="projGroup-hub">
-        <div class="sidebar-project-header">
+        <div class="sidebar-project-header" onclick="selectProjectView('all', 'tab-gallery')" style="cursor:pointer;" title="Switch to Unified Hub view">
           <span class="project-pill" style="background:rgba(66,133,244,0.15); color:var(--accent-light);">HUB</span>
           <span class="project-name">Enterprise Suite</span>
         </div>
@@ -4385,7 +4441,6 @@ function compileSSML(rawText) {
         </ul>
       </div>
     </div>
-
     <!-- Sidebar Action Deck Buttons -->
     <div class="sidebar-actions">
       <button class="btn-sidebar-action" onclick="startSlideshow('ALL')" title="Launch Fullscreen Slideshow">
@@ -4417,46 +4472,50 @@ function compileSSML(rawText) {
           
           <!-- Interactive GCP Project Selector Dropdown -->
           <div class="gcp-project-dropdown-wrapper">
-            <div class="gcp-project-chip" id="gcpProjectChip" onclick="toggleProjectMenu(event)" title="Switch Google Cloud Project Context">
-              <span class="gcp-project-icon">⬡</span>
-              <span class="gcp-project-label">Project:</span>
-              <span class="gcp-project-name" id="currentProjectName">argolis-ge-enterprise</span>
-              <span class="gcp-project-arrow">▾</span>
-            </div>
-            <div class="gcp-project-menu" id="gcpProjectMenu" style="display:none;">
-              <div class="gcp-project-menu-header">Select Project Context</div>
-              <div class="gcp-project-menu-item active" id="pItem-argolis-ge-enterprise" onclick="selectProjectView('argolis-ge-enterprise', 'tab-servicenow')">
+            <div class="gcp-project-chip" id="gcpProjectChip" onclick="toggleProjectMenu(event)" title="Select Enterprise Project Context">
+            <span class="project-dot"></span>
+            <span class="project-label" id="currentProjectName">ServiceNow MCP Connector</span>
+            <span class="project-arrow">▾</span>
+
+            <div class="gcp-project-menu" id="gcpProjectMenu" style="display:none;" onclick="event.stopPropagation()">
+              <div class="project-menu-header">Select Enterprise Project</div>
+              
+              <div class="gcp-project-menu-item active" id="pItem-servicenow" onclick="selectProjectView('servicenow', 'tab-servicenow')">
                 <span class="project-menu-icon">⚡</span>
-                <div class="project-menu-info">
-                  <div class="project-menu-title">argolis-ge-enterprise</div>
-                  <div class="project-menu-desc">ServiceNow BYOMCP &amp; Gemini Enterprise</div>
+                <div class="project-menu-details">
+                  <div class="project-menu-title">ServiceNow MCP Connector</div>
+                  <div class="project-menu-sub">ITSM, Incidents, KB, Catalog • 50 Artifacts</div>
                 </div>
-                <span class="project-menu-badge" id="badge-argolis-ge-enterprise">Active</span>
+                <span class="project-badge" id="badge-servicenow">ACTIVE</span>
               </div>
-              <div class="gcp-project-menu-item" id="pItem-argolis-life-sciences" onclick="selectProjectView('argolis-life-sciences', 'tab-veeva')">
+
+              <div class="gcp-project-menu-item" id="pItem-veeva" onclick="selectProjectView('veeva', 'tab-veeva')">
                 <span class="project-menu-icon">🧪</span>
-                <div class="project-menu-info">
-                  <div class="project-menu-title">argolis-life-sciences</div>
-                  <div class="project-menu-desc">Veeva Vault GxP Clinical &amp; Regulatory</div>
+                <div class="project-menu-details">
+                  <div class="project-menu-title">Veeva MCP Connector</div>
+                  <div class="project-menu-sub">Life Sciences GxP, 21 CFR Part 11, Clinical Docs</div>
                 </div>
-                <span class="project-menu-badge" id="badge-argolis-life-sciences" style="display:none;">Active</span>
+                <span class="project-badge" id="badge-veeva" style="display:none;">ACTIVE</span>
               </div>
-              <div class="gcp-project-menu-item" id="pItem-argolis-gcp-console" onclick="selectProjectView('argolis-gcp-console', 'tab-gallery', 'gcp-wizard')">
-                <span class="project-menu-icon">🛠️</span>
-                <div class="project-menu-info">
-                  <div class="project-menu-title">argolis-gcp-console</div>
-                  <div class="project-menu-desc">GCP Console Data Store Wizard &amp; Agent Studio</div>
-                </div>
-                <span class="project-menu-badge" id="badge-argolis-gcp-console" style="display:none;">Active</span>
-              </div>
-              <div class="gcp-project-menu-divider"></div>
-              <div class="gcp-project-menu-item" id="pItem-all" onclick="selectProjectView('all', 'tab-gallery')">
+
+              <div class="gcp-project-menu-item" id="pItem-microsoft" onclick="selectProjectView('microsoft', 'tab-microsoft')">
                 <span class="project-menu-icon">🏢</span>
-                <div class="project-menu-info">
-                  <div class="project-menu-title">All Projects (Unified Hub)</div>
-                  <div class="project-menu-desc">Complete cross-project gallery &amp; verification deck</div>
+                <div class="project-menu-details">
+                  <div class="project-menu-title">Microsoft Unified Connector</div>
+                  <div class="project-menu-sub">SharePoint, Teams, OneDrive, Exchange • M365 Graph</div>
                 </div>
-                <span class="project-menu-badge" id="badge-all" style="display:none;">Active</span>
+                <span class="project-badge" id="badge-microsoft" style="display:none;">ACTIVE</span>
+              </div>
+
+              <div style="height:1px; background:var(--border); margin:4px 0;"></div>
+
+              <div class="gcp-project-menu-item" id="pItem-all" onclick="selectProjectView('all', 'tab-gallery')">
+                <span class="project-menu-icon">🌐</span>
+                <div class="project-menu-details">
+                  <div class="project-menu-title">All Projects (Unified View)</div>
+                  <div class="project-menu-sub">Cross-Enterprise Workspace • 65 Visual Artifacts</div>
+                </div>
+                <span class="project-badge" id="badge-all" style="display:none;">ACTIVE</span>
               </div>
             </div>
           </div>
@@ -4794,6 +4853,153 @@ function compileSSML(rawText) {
               </div>
               <div id="veevaTableContainer" style="overflow-x:auto;"></div>
               <pre class="code-block" id="veevaRpcOutput" style="display:none;">Click 'Execute Veeva Tool Call' to query live clinical trial documents.</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Microsoft Unified Connector -->
+      <div id="tab-microsoft" class="view-tab">
+        <div class="hero-banner">
+          <div class="hero-text">
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:6px;">
+              <h1 style="margin:0;">Mode 3: Microsoft Unified Connector (SharePoint, Teams, OneDrive)</h1>
+              <button class="permalink-chip" onclick="copyDeepLink({tab:'microsoft'})" title="Copy direct link to this tab">🔗 #tab-microsoft</button>
+            </div>
+            <p>Unified enterprise knowledge grounding across Microsoft 365 Graph API, SharePoint Online intranets, OneDrive for Business, Teams channel threads, and Exchange Online with Microsoft Entra ID (Azure AD) SSO governance.</p>
+          </div>
+          <div class="quick-links">
+            <a class="btn-link" href="https://graph.microsoft.com/v1.0" target="_blank">Microsoft Graph v1.0 Endpoint</a>
+            <a class="btn-link accent" href="/.well-known/oauth-authorization-server" target="_blank">Entra ID OAuth Spec</a>
+          </div>
+        </div>
+
+        <!-- Microsoft Unified Instance Configuration Strip -->
+        <div class="config-strip-card" style="margin-bottom:20px;">
+          <div class="config-strip-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="status-indicator"></span>
+              <span style="font-weight:600; font-size:13px; color:var(--text-primary); text-transform:uppercase; letter-spacing:0.5px;">Microsoft Unified Connector Instance</span>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <span class="badge" style="background:rgba(30, 142, 62, 0.15); color:var(--google-green); border:1px solid rgba(30, 142, 62, 0.3);">Microsoft Entra ID Validated</span>
+              <span class="badge" style="background:rgba(26, 115, 232, 0.15); color:var(--google-blue); border:1px solid rgba(26, 115, 232, 0.3);">argolis-enterprise</span>
+            </div>
+          </div>
+          <div class="config-grid">
+            <div class="config-cell">
+              <span class="config-cell-label">Entra Tenant ID</span>
+              <span class="config-cell-value link-val" onclick="copySysId(this)" data-sysid="${msSampleData.tenant_id}">${msSampleData.tenant_id}</span>
+            </div>
+            <div class="config-cell">
+              <span class="config-cell-label">Entra Domain</span>
+              <span class="config-cell-value">${msSampleData.entra_domain}</span>
+            </div>
+            <div class="config-cell">
+              <span class="config-cell-label">Graph Endpoint</span>
+              <span class="config-cell-value link-val" onclick="window.open('${msSampleData.graph_endpoint}')">${msSampleData.graph_endpoint}</span>
+            </div>
+            <div class="config-cell">
+              <span class="config-cell-label">Auth Protocol</span>
+              <span class="config-cell-value">${msSampleData.auth_mode}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Balanced 2-Column Workbench Grid -->
+        <div class="workbench-grid">
+          <!-- Left Column: Tool Selector -->
+          <div class="workbench-col-tools">
+            <div class="card" style="height:100%; display:flex; flex-direction:column;">
+              <div class="card-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span>Microsoft Graph MCP Tools</span>
+                <span class="badge" style="font-size:11px;">4 M365 Tools</span>
+              </div>
+              <div class="tool-list tool-list-scrollable" style="flex:1; max-height:480px; overflow-y:auto; padding-right:4px;">
+                <div class="tool-item tool-card-item selected" id="msTool-search_sharepoint_documents" data-tool-name="search_sharepoint_documents" onclick="selectMicrosoftTool('search_sharepoint_documents')">
+                  <div class="tool-card-top">
+                    <span class="tool-card-name">search_sharepoint_documents</span>
+                    <span class="tool-tag">readOnly</span>
+                  </div>
+                  <div class="tool-card-desc">Query SharePoint Online intranet portals, document libraries, and policy files.</div>
+                  <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); selectProjectView('all', 'tab-gallery', 'ge-chat')" title="Jump to linked visual proof in gallery">
+                    <span>📸 Slide #19 • Enterprise Sources ↗</span>
+                  </div>
+                </div>
+
+                <div class="tool-item tool-card-item" id="msTool-get_teams_messages" data-tool-name="get_teams_messages" onclick="selectMicrosoftTool('get_teams_messages')">
+                  <div class="tool-card-top">
+                    <span class="tool-card-name">get_teams_messages</span>
+                    <span class="tool-tag">readOnly</span>
+                  </div>
+                  <div class="tool-card-desc">Extract Microsoft Teams channel discussions, war room threads, and meeting transcripts.</div>
+                  <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); selectProjectView('all', 'tab-gallery', 'ge-chat')" title="Jump to linked visual proof in gallery">
+                    <span>📸 Slide #20 • Conversational Grounding ↗</span>
+                  </div>
+                </div>
+
+                <div class="tool-item tool-card-item" id="msTool-search_outlook_emails" data-tool-name="search_outlook_emails" onclick="selectMicrosoftTool('search_outlook_emails')">
+                  <div class="tool-card-top">
+                    <span class="tool-card-name">search_outlook_emails</span>
+                    <span class="tool-tag">readOnly</span>
+                  </div>
+                  <div class="tool-card-desc">Search Exchange Online emails, executive briefings, and calendar events.</div>
+                  <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); selectProjectView('all', 'tab-gallery', 'ge-chat')" title="Jump to linked visual proof in gallery">
+                    <span>📸 Slide #21 • Agent Tool Calling ↗</span>
+                  </div>
+                </div>
+
+                <div class="tool-item tool-card-item" id="msTool-get_onedrive_files" data-tool-name="get_onedrive_files" onclick="selectMicrosoftTool('get_onedrive_files')">
+                  <div class="tool-card-top">
+                    <span class="tool-card-name">get_onedrive_files</span>
+                    <span class="tool-tag">readOnly</span>
+                  </div>
+                  <div class="tool-card-desc">Browse enterprise OneDrive for Business documents, spreadsheets, and presentations.</div>
+                  <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); selectProjectView('all', 'tab-gallery', 'ge-chat')" title="Jump to linked visual proof in gallery">
+                    <span>📸 Slide #22 • Live Search Results ↗</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Interactive Runner & Result Table -->
+          <div class="workbench-col-execution">
+            <div class="runner-box" style="margin-bottom:16px;">
+              <div class="runner-title">
+                <span id="activeMsTitle">Active Tool: search_sharepoint_documents</span>
+                <span style="font-size:12px; color:var(--muted); font-family:var(--font-mono);">POST /graph/mcp</span>
+              </div>
+              <div id="msToolInputs">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Search Query (KQL / Keyword)</label>
+                    <input type="text" id="msInputQuery" class="form-input" value="Cloud Infrastructure Strategy" />
+                  </div>
+                  <div class="form-group" style="max-width:140px;">
+                    <label class="form-label">Limit</label>
+                    <input type="number" id="msInputLimit" class="form-input" value="5" min="1" max="50" />
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex; gap:10px; margin-top:14px;">
+                <button class="btn-run" onclick="executeMicrosoftTool()">
+                  <span>&#9654;</span>
+                  <span>Execute Microsoft Tool Call</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="output-header">
+                <span id="msOutputTitle">Microsoft Graph Result</span>
+                <div class="view-toggle">
+                  <button class="toggle-btn active" id="btnMsTable" onclick="toggleMsView('table')">Table</button>
+                  <button class="toggle-btn" id="btnMsJson" onclick="toggleMsView('json')">JSON</button>
+                </div>
+              </div>
+              <div id="msTableContainer" style="overflow-x:auto;"></div>
+              <pre class="code-block" id="msRpcOutput" style="display:none;">Click 'Execute Microsoft Tool Call' to query live Microsoft 365 Graph documents.</pre>
             </div>
           </div>
         </div>
@@ -5185,6 +5391,8 @@ function compileSSML(rawText) {
       selectTool(toolName, true);
     } else if (tab === 'veeva') {
       selectVeevaTool(toolName, true);
+    } else if (tab === 'microsoft') {
+      selectMicrosoftTool(toolName);
     }
   }
 
@@ -5210,6 +5418,19 @@ function compileSSML(rawText) {
       toast.classList.remove('visible');
     }, 3000);
   }
+  function showGcpToast(title, url) {
+    showToast(title, url);
+  }
+  window.showToast = showToast;
+  window.showGcpToast = showGcpToast;
+
+  const projectLabels = {
+    'servicenow': 'ServiceNow MCP Connector',
+    'veeva': 'Veeva MCP Connector',
+    'microsoft': 'Microsoft Unified Connector',
+    'all': 'All Projects (Unified View)'
+  };
+  let currentProject = 'servicenow';
 
   let currentTool = 'search_servicenow_incidents';
   let currentViewMode = 'table';
@@ -5281,6 +5502,22 @@ function compileSSML(rawText) {
 
     const sideLink = document.getElementById('sideLink-' + tabId.replace('tab-', ''));
     if (sideLink) sideLink.classList.add('active');
+
+    // Sync project selector label if switching to a project-specific tab
+    let inferredProject = null;
+    if (tabId === 'tab-servicenow') inferredProject = 'servicenow';
+    else if (tabId === 'tab-veeva') inferredProject = 'veeva';
+    else if (tabId === 'tab-microsoft') inferredProject = 'microsoft';
+
+    if (inferredProject) {
+      currentProject = inferredProject;
+      const nameEl = document.getElementById('currentProjectName');
+      if (nameEl) nameEl.textContent = projectLabels[inferredProject] || inferredProject;
+      ['servicenow', 'veeva', 'microsoft', 'all'].forEach(function(pid) {
+        const b = document.getElementById('badge-' + pid);
+        if (b) b.style.display = pid === inferredProject ? 'inline-block' : 'none';
+      });
+    }
 
     if (updateUrl) {
       const cleanTab = tabId.replace('tab-', '');
@@ -6366,7 +6603,6 @@ function compileSSML(rawText) {
   // =========================================================================
   // PROJECT CONTEXT SWITCHING & LOGICAL WORKFLOW NAVIGATION
   // =========================================================================
-  let currentProject = 'argolis-ge-enterprise';
 
   function toggleProjectMenu(e) {
     if (e) e.stopPropagation();
@@ -6379,16 +6615,16 @@ function compileSSML(rawText) {
   document.addEventListener('click', function(e) {
     const menu = document.getElementById('gcpProjectMenu');
     const chip = document.getElementById('gcpProjectChip');
-    if (menu && menu.style.display !== 'none' && !chip.contains(e.target)) {
+    if (menu && menu.style.display !== 'none' && (!chip || !chip.contains(e.target))) {
       menu.style.display = 'none';
     }
   });
 
-  function selectProjectView(projectId, tabId, groupId) {
+  function selectProjectView(projectId, tabId, subView) {
     currentProject = projectId;
     const nameEl = document.getElementById('currentProjectName');
     if (nameEl) {
-      nameEl.textContent = projectId === 'all' ? 'All Projects' : projectId;
+      nameEl.textContent = projectLabels[projectId] || projectId;
     }
 
     // Update active project menu items & badges
@@ -6398,7 +6634,7 @@ function compileSSML(rawText) {
     const activeMenuItem = document.getElementById('pItem-' + projectId);
     if (activeMenuItem) activeMenuItem.classList.add('active');
 
-    ['argolis-ge-enterprise', 'argolis-life-sciences', 'argolis-gcp-console', 'all'].forEach(function(pid) {
+    ['servicenow', 'veeva', 'microsoft', 'all'].forEach(function(pid) {
       const b = document.getElementById('badge-' + pid);
       if (b) b.style.display = pid === projectId ? 'inline-block' : 'none';
     });
@@ -6411,25 +6647,146 @@ function compileSSML(rawText) {
       switchTab(tabId, false);
     }
 
-    // If groupId specified, filter gallery
-    if (groupId) {
-      filterGroupView(groupId, false);
-    } else if (tabId === 'tab-gallery') {
-      filterGroupView('ALL', false);
+    // Sub-view actions
+    if (projectId === 'servicenow') {
+      if (subView === 'ge-chat') {
+        filterGroupView('ge-chat', false);
+      } else if (subView === 'ground-truth') {
+        filterGroupView('ground-truth', false);
+      } else if (subView === 'gcp-wizard') {
+        filterGroupView('gcp-wizard', false);
+      } else if (subView === 'byomcp-setup') {
+        filterGroupView('byomcp-setup', false);
+      }
+    } else if (projectId === 'veeva') {
+      if (subView === 'parity') {
+        filterGroupView('ground-truth', false);
+      }
+    } else if (projectId === 'microsoft') {
+      if (subView === 'sharepoint') {
+        selectMicrosoftTool('search_sharepoint_documents');
+      } else if (subView === 'teams') {
+        selectMicrosoftTool('get_teams_messages');
+      }
     }
 
     // Update URL query parameters
+    const cleanTab = tabId ? tabId.replace('tab-', '') : (projectId === 'microsoft' ? 'microsoft' : (projectId === 'veeva' ? 'veeva' : 'servicenow'));
     updateUrlState({
       project: projectId === 'all' ? null : projectId,
-      tab: tabId ? tabId.replace('tab-', '') : null,
-      group: groupId || null
+      tab: cleanTab,
+      group: subView || null
     });
+    showGcpToast('Project context: ' + (projectLabels[projectId] || projectId));
   }
 
   window.selectProjectView = selectProjectView;
   window.toggleProjectMenu = toggleProjectMenu;
 
-    // =========================================================================
+  // =========================================================================
+  // MICROSOFT UNIFIED CONNECTOR CLIENT HANDLERS
+  // =========================================================================
+  let currentMsTool = 'search_sharepoint_documents';
+
+  function selectMicrosoftTool(name) {
+    currentMsTool = name;
+    document.querySelectorAll('#tab-microsoft .tool-item').forEach(function(el) {
+      const match = el.getAttribute('data-tool-name') === name || (el.id && el.id.includes(name));
+      el.classList.toggle('selected', match);
+    });
+    const titleEl = document.getElementById('activeMsTitle');
+    if (titleEl) titleEl.textContent = 'Active Tool: ' + name;
+
+    const inputsDiv = document.getElementById('msToolInputs');
+    if (!inputsDiv) return;
+    if (name === 'search_sharepoint_documents') {
+      inputsDiv.innerHTML = '<div class="form-row"><div class="form-group"><label class="form-label">Search Query (KQL / Keyword)</label><input type="text" id="msInputQuery" class="form-input" value="Cloud Infrastructure Strategy" /></div><div class="form-group" style="max-width:140px;"><label class="form-label">Limit</label><input type="number" id="msInputLimit" class="form-input" value="5" min="1" max="50" /></div></div>';
+    } else if (name === 'get_teams_messages') {
+      inputsDiv.innerHTML = '<div class="form-row"><div class="form-group"><label class="form-label">Teams Channel ID / Name</label><input type="text" id="msInputQuery" class="form-input" value="19:cloud-ops-incident-war-room@thread.tacv2" /></div><div class="form-group" style="max-width:140px;"><label class="form-label">Limit</label><input type="number" id="msInputLimit" class="form-input" value="10" min="1" max="50" /></div></div>';
+    } else if (name === 'search_outlook_emails') {
+      inputsDiv.innerHTML = '<div class="form-row"><div class="form-group"><label class="form-label">Email Search Query</label><input type="text" id="msInputQuery" class="form-input" value="subject:Architecture Decision Record" /></div><div class="form-group" style="max-width:140px;"><label class="form-label">Folder</label><input type="text" id="msInputFolder" class="form-input" value="Inbox" /></div></div>';
+    } else if (name === 'get_onedrive_files') {
+      inputsDiv.innerHTML = '<div class="form-row"><div class="form-group"><label class="form-label">OneDrive Path</label><input type="text" id="msInputQuery" class="form-input" value="/Shared/Enterprise Architecture/MCP Benchmarks" /></div><div class="form-group" style="max-width:140px;"><label class="form-label">Limit</label><input type="number" id="msInputLimit" class="form-input" value="5" min="1" max="50" /></div></div>';
+    }
+  }
+  window.selectMicrosoftTool = selectMicrosoftTool;
+
+  function executeMicrosoftTool() {
+    const q = document.getElementById('msInputQuery')?.value || '';
+    const docs = [
+      { doc_id: 'SP-DOC-8921', title: 'FY27 Global Cloud Infrastructure Strategy.docx', source: 'SharePoint Online (Global IT)', author: 'Satya N. / Cloud Arch', modified: '2026-09-18 14:22:00', permissions: 'Confidential' },
+      { doc_id: 'SP-DOC-8922', title: 'AI Grounding Architecture & Graph API Guide.pptx', source: 'SharePoint Online (AI CoE)', author: 'Enterprise Arch Lead', modified: '2026-09-20 09:15:30', permissions: 'Enterprise-Wide' },
+      { doc_id: 'OD-FILE-4410', title: 'Q3 Enterprise MCP Benchmarks & Latency Matrix.xlsx', source: 'OneDrive for Business', author: 'Cloud Performance Team', modified: '2026-09-21 16:40:12', permissions: 'Restricted' },
+      { doc_id: 'TM-MSG-1092', title: 'Incident Response War Room: P1 Cloud Egress Latency', source: 'Microsoft Teams (#cloud-ops)', author: 'SecOps Director', modified: '2026-09-22 08:30:00', permissions: 'Operations Team' },
+      { doc_id: 'EX-MAIL-3301', title: 'Approved Architecture Decision Record: Vertex AI + Microsoft Unified', source: 'Exchange Online', author: 'VP Enterprise Engineering', modified: '2026-09-22 11:05:44', permissions: 'Executive Dist' }
+    ];
+
+    let filtered = docs;
+    if (q) {
+      filtered = docs.filter(function(d) {
+        return d.title.toLowerCase().includes(q.toLowerCase()) || d.source.toLowerCase().includes(q.toLowerCase());
+      });
+      if (filtered.length === 0) filtered = docs;
+    }
+
+    renderMsResult(filtered);
+    showGcpToast('Executed Microsoft Tool: ' + currentMsTool + ' (' + filtered.length + ' results)');
+  }
+  window.executeMicrosoftTool = executeMicrosoftTool;
+
+  function renderMsResult(rows) {
+    const tc = document.getElementById('msTableContainer');
+    if (!tc) return;
+    const cols = ['doc_id', 'title', 'source', 'author', 'modified', 'permissions'];
+    let html = '<table class="data-table"><thead><tr>' + cols.map(function(c) { return '<th>' + c.toUpperCase() + '</th>'; }).join('') + '</tr></thead><tbody>';
+    for (const r of rows) {
+      html += '<tr>' + cols.map(function(c) {
+        const val = r[c] || '';
+        if (c === 'doc_id') {
+          return '<td><span class="table-mono-id" data-sysid="' + val + '" title="' + val + '" onclick="copySysId(this)">' + val + '</span></td>';
+        }
+        if (c === 'permissions') {
+          return '<td><span class="badge-status-pill ' + (val.includes('Confidential') || val.includes('Restricted') ? 'priority-p1' : 'state-closed') + '">' + val + '</span></td>';
+        }
+        return '<td>' + String(val).replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</td>';
+      }).join('') + '</tr>';
+    }
+    html += '</tbody></table>';
+    tc.innerHTML = html;
+
+    const rpcOut = document.getElementById('msRpcOutput');
+    if (rpcOut) {
+      rpcOut.textContent = JSON.stringify({
+        status: 200,
+        tool: currentMsTool,
+        tenant_id: '72f988bf-86f1-41af-91ab-2d7cd011db47',
+        records: rows
+      }, null, 2);
+    }
+  }
+  window.renderMsResult = renderMsResult;
+
+  function toggleMsView(view) {
+    const btnT = document.getElementById('btnMsTable');
+    const btnJ = document.getElementById('btnMsJson');
+    const tc = document.getElementById('msTableContainer');
+    const rpc = document.getElementById('msRpcOutput');
+    if (!btnT || !btnJ || !tc || !rpc) return;
+    if (view === 'table') {
+      btnT.classList.add('active');
+      btnJ.classList.remove('active');
+      tc.style.display = 'block';
+      rpc.style.display = 'none';
+    } else {
+      btnT.classList.remove('active');
+      btnJ.classList.add('active');
+      tc.style.display = 'none';
+      rpc.style.display = 'block';
+    }
+  }
+  window.toggleMsView = toggleMsView;
+
+  // =========================================================================
   // URL SYNCHRONIZATION & IDEMPOTENT RELOAD HYDRATION ENGINE
   // =========================================================================
   function syncStateFromUrl() {
@@ -6449,7 +6806,7 @@ function compileSSML(rawText) {
     if (tab && !tab.startsWith('tab-')) {
       tab = 'tab-' + tab;
     }
-    if (tab && ['tab-servicenow', 'tab-veeva', 'tab-gallery', 'tab-oauth'].includes(tab)) {
+    if (tab && ['tab-servicenow', 'tab-veeva', 'tab-microsoft', 'tab-gallery', 'tab-oauth'].includes(tab)) {
       switchTab(tab, false);
     } else {
       switchTab('tab-servicenow', false);
@@ -6460,6 +6817,8 @@ function compileSSML(rawText) {
     if (tool) {
       if (tab === 'tab-veeva') {
         selectVeevaTool(tool, false);
+      } else if (tab === 'tab-microsoft') {
+        selectMicrosoftTool(tool);
       } else {
         selectTool(tool, false);
       }

@@ -116,6 +116,21 @@ async function audit() {
     await page.click('#btnVeevaTable');
     await sleep(400);
 
+    // 2b. Audit Tab: Microsoft Unified Connector (Dark Mode)
+    console.log('\n[2b/8] Auditing Tab: Microsoft Unified Connector (Dark Mode)...');
+    await page.goto(`${BASE_URL}/?tab=microsoft`, { waitUntil: 'networkidle2' });
+    await sleep(800);
+    await checkBrokenImages('tab-microsoft-dark');
+    await checkHorizontalOverflow('tab-microsoft-dark');
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '06b_tab_microsoft_dark.png') });
+    console.log('  Captured: 06b_tab_microsoft_dark.png');
+
+    // Execute Microsoft Tool Call
+    await page.$eval('#tab-microsoft .btn-run', el => el.click());
+    await sleep(800);
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '06c_tab_microsoft_executed.png') });
+    console.log('  Captured: 06c_tab_microsoft_executed.png');
+
     // 3. Audit Tab: Visual Gallery (All Workflows)
     console.log('\n[3/8] Auditing Tab 3: Visual Gallery (All 6 Workflows)...');
     await page.goto(`${BASE_URL}/?tab=gallery`, { waitUntil: 'networkidle2' });
