@@ -7,6 +7,7 @@
     "test": "node scripts/test_headless_chrome.mjs",
     "test:headless": "node scripts/test_headless_chrome.mjs",
     "test:e2e": "node scripts/test_sidebar_and_slideshow.mjs",
+    "test:links": "node scripts/test_unique_links_and_assets.mjs",
     "start:mcp-server": "node src/mcp-server/server.mjs",
     "setup:step1-inspect": "node scripts/setup/step1_inspect_ge_instance.mjs",
     "setup:mode1-byomcp": "node scripts/setup/run_byomcp_e2e_with_screenshots.mjs",

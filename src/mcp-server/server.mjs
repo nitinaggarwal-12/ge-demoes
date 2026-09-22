@@ -70,6 +70,78 @@ try {
   console.warn('[MCP Server] Notice: Unable to load veeva_vault_live_sample_data.json:', err.message);
 }
 
+
+// Canonical Bidirectional Mapping between Interactive Demo Tools & Underlying Verification Assets
+const TOOL_ASSET_MAPPINGS = {
+  'search_servicenow_incidents': {
+    toolName: 'search_servicenow_incidents',
+    tab: 'servicenow',
+    assetId: '14_ge_chat_matching_servicenow_query_results',
+    label: 'Incident Search Proof (INC1039)',
+    group: 'ground-truth'
+  },
+  'get_servicenow_incident': {
+    toolName: 'get_servicenow_incident',
+    tab: 'servicenow',
+    assetId: '15_servicenow_ui_vs_ge_chat_side_by_side_truth_comparison',
+    label: 'Incident INC1039 Side-by-Side Parity',
+    group: 'ground-truth'
+  },
+  'search_servicenow_knowledge_articles': {
+    toolName: 'search_servicenow_knowledge_articles',
+    tab: 'servicenow',
+    assetId: '19_ge_chat_sources_menu_servicenow_connector_selected',
+    label: 'Knowledge Sources Menu',
+    group: 'ge-chat'
+  },
+  'list_servicenow_catalog_items': {
+    toolName: 'list_servicenow_catalog_items',
+    tab: 'servicenow',
+    assetId: '21_ge_chat_servicenow_connector_tool_call_state',
+    label: 'Live Tool Call & Catalog State',
+    group: 'ge-chat'
+  },
+  'search_servicenow_problems_and_changes': {
+    toolName: 'search_servicenow_problems_and_changes',
+    tab: 'servicenow',
+    assetId: '13b_servicenow_live_ui_full_incident_list',
+    label: 'ServiceNow Polaris Live Records List',
+    group: 'ground-truth'
+  },
+  'search_vault_documents': {
+    toolName: 'search_vault_documents',
+    tab: 'veeva',
+    assetId: '11_veeva_live_ui_query_results',
+    label: 'Veeva Live UI Regulatory Documents',
+    group: 'ground-truth'
+  },
+  'get_audit_trail': {
+    toolName: 'get_audit_trail',
+    tab: 'veeva',
+    assetId: '12_ge_chat_matching_veeva_query_results',
+    label: 'GE Chat Veeva Audit Query & Response',
+    group: 'ground-truth'
+  },
+  'get_binder_structure': {
+    toolName: 'get_binder_structure',
+    tab: 'veeva',
+    assetId: '13_veeva_ui_vs_ge_chat_side_by_side_truth_comparison',
+    label: '21 CFR Part 11 Compliance Parity',
+    group: 'ground-truth'
+  }
+};
+
+const ASSET_TOOL_MAPPINGS = {
+  '14_ge_chat_matching_servicenow_query_results': { tab: 'servicenow', tool: 'search_servicenow_incidents', label: 'search_servicenow_incidents' },
+  '15_servicenow_ui_vs_ge_chat_side_by_side_truth_comparison': { tab: 'servicenow', tool: 'get_servicenow_incident', label: 'get_servicenow_incident' },
+  '13b_servicenow_live_ui_full_incident_list': { tab: 'servicenow', tool: 'search_servicenow_problems_and_changes', label: 'search_servicenow_problems_and_changes' },
+  '19_ge_chat_sources_menu_servicenow_connector_selected': { tab: 'servicenow', tool: 'search_servicenow_knowledge_articles', label: 'search_servicenow_knowledge_articles' },
+  '21_ge_chat_servicenow_connector_tool_call_state': { tab: 'servicenow', tool: 'list_servicenow_catalog_items', label: 'list_servicenow_catalog_items' },
+  '11_veeva_live_ui_query_results': { tab: 'veeva', tool: 'search_vault_documents', label: 'search_vault_documents' },
+  '12_ge_chat_matching_veeva_query_results': { tab: 'veeva', tool: 'get_audit_trail', label: 'get_audit_trail' },
+  '13_veeva_ui_vs_ge_chat_side_by_side_truth_comparison': { tab: 'veeva', tool: 'get_binder_structure', label: 'get_binder_structure' }
+};
+
 let cachedToken = null;
 let cachedTokenExpiry = 0;
 
@@ -649,7 +721,9 @@ function getLogicalGroups() {
           .filter(f => /\.(png|jpg|jpeg|webp|svg)$/i.test(f))
           .sort();
         for (const file of files) {
+          const rawSlug = file.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
           allImages.push({
+            assetId: rawSlug,
             fileName: file,
             dirName: entry.name,
             title: file.replace(/^\d+[a-z]?_/, '').replace(/\.[^.]+$/, '').replace(/_/g, ' '),
@@ -766,6 +840,7 @@ function getLogicalGroups() {
         groupId: g.id,
         groupTitle: g.title,
         narration: getConceptNarration(img.fileName, img.title, g.title, g.description),
+        linkedTool: ASSET_TOOL_MAPPINGS[img.assetId] || null,
       }))
     };
   });
@@ -956,6 +1031,7 @@ async function handleSearchIncidents(args) {
             <span class="dossier-slide-title">${slide.title}</span>
           </div>
           <div class="dossier-slide-right">
+            <span class="dossier-asset-id-badge" style="background:#1a73e8; color:#fff; padding:2px 8px; border-radius:4px; font-family:monospace; font-size:10px; font-weight:bold;">ID: ${slide.assetId || slide.fileName}</span>
             <span class="dossier-filename-badge">${slide.fileName}</span>
             <span class="dossier-page-indicator">Slide ${idx + 1} of ${allSlides.length}</span>
           </div>
@@ -1554,7 +1630,10 @@ function compileSSML(rawText) {
   const allSlides = [];
   logicalGroups.forEach(group => {
     group.images.forEach(img => {
-      allSlides.push(img);
+      allSlides.push({
+        ...img,
+        globalIndex: allSlides.length + 1,
+      });
     });
   });
 
@@ -2629,6 +2708,191 @@ function compileSSML(rawText) {
     color: white;
     border-color: var(--accent);
   }
+
+  
+  /* ==========================================================================
+     UNIQUE DEEP LINKS, ASSET IDS, & PERMALINKS DESIGN SYSTEM
+     ========================================================================== */
+  .permalink-chip {
+    background: rgba(66, 133, 244, 0.12);
+    border: 1px solid rgba(66, 133, 244, 0.3);
+    color: var(--accent-light);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+    text-decoration: none;
+  }
+  .permalink-chip:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+
+  .permalink-tool-chip {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.15s ease;
+  }
+  .permalink-tool-chip:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+
+  .asset-copy-chip {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(31, 33, 40, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+    z-index: 2;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .asset-copy-chip:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+
+  .linked-demo-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #34a853;
+    background: rgba(52, 168, 83, 0.12);
+    border: 1px solid rgba(52, 168, 83, 0.3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .linked-demo-pill:hover {
+    background: #34a853;
+    color: #ffffff;
+  }
+
+  .linked-asset-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--accent-light);
+    background: rgba(66, 133, 244, 0.08);
+    border: 1px solid rgba(66, 133, 244, 0.22);
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: all 0.15s ease;
+    text-decoration: none;
+  }
+  .linked-asset-link:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+
+  .slideshow-asset-badge {
+    background: rgba(66, 133, 244, 0.2);
+    border: 1px solid rgba(66, 133, 244, 0.4);
+    color: #8ab4f8;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+  }
+  .slideshow-asset-badge:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+
+  .btn-share-link {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e8eaed;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+  }
+  .btn-share-link:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+
+  /* Toast Notification */
+  .gcp-toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    background: #202124;
+    color: #ffffff;
+    border: 1px solid #4285f4;
+    border-radius: 30px;
+    padding: 10px 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    z-index: 99999;
+    transition: transform 0.28s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.28s ease;
+    opacity: 0;
+    pointer-events: none;
+    max-width: 90vw;
+  }
+  .gcp-toast.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .gcp-toast-icon { font-size: 16px; }
+  .gcp-toast-title { font-size: 12.5px; font-weight: 600; font-family: var(--font-heading); }
+  .gcp-toast-url { font-size: 11px; color: #9aa0a6; font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 420px; }
 
   .gallery-grid {
     display: grid;
@@ -3775,9 +4039,10 @@ function compileSSML(rawText) {
       <div id="tab-servicenow" class="view-tab active">
         <div class="hero-banner">
           <div class="hero-text">
-            <h1>
-              <span>Mode 1: ServiceNow Bring Your Own MCP (BYOMCP)</span>
-            </h1>
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:6px;">
+              <h1 style="margin:0;"><span>Mode 1: ServiceNow Bring Your Own MCP (BYOMCP)</span></h1>
+              <button class="permalink-chip" onclick="copyDeepLink({tab:'servicenow'})" title="Copy direct link to this tab">🔗 #tab-servicenow</button>
+            </div>
             <p>Google Cloud standard JSON-RPC 2.0 streamable-HTTP server running at <code>http://localhost:${PORT}/mcp</code> with built-in OAuth 2.0 metadata discovery and live incident / KB / catalog query endpoints.</p>
           </div>
           <div class="quick-links">
@@ -3813,40 +4078,70 @@ function compileSSML(rawText) {
                 <span style="font-size:12px; color:var(--muted)">Click to select</span>
               </div>
               <div class="tool-list">
-                <div class="tool-item selected" onclick="selectTool('search_servicenow_incidents')">
+                <div class="tool-item selected" id="tool-search_servicenow_incidents" data-tool-name="search_servicenow_incidents" onclick="selectTool('search_servicenow_incidents')">
                   <div class="tool-header">
                     <span class="tool-name">search_servicenow_incidents</span>
-                    <span class="tool-tag">readOnly</span>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <span class="tool-tag">readOnly</span>
+                      <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'search_servicenow_incidents'})" title="Copy direct link to this tool demo">🔗</button>
+                    </div>
                   </div>
                   <div class="tool-desc">Search incident tickets by keyword, priority, or category.</div>
+                  <div class="linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('14_ge_chat_matching_servicenow_query_results')" title="Jump to linked visual proof in gallery">
+                    <span>📸 Linked Asset: #14_ge_chat_matching_servicenow_query_results ↗</span>
+                  </div>
                 </div>
-                <div class="tool-item" onclick="selectTool('get_servicenow_incident')">
+                <div class="tool-item" id="tool-get_servicenow_incident" data-tool-name="get_servicenow_incident" onclick="selectTool('get_servicenow_incident')">
                   <div class="tool-header">
                     <span class="tool-name">get_servicenow_incident</span>
-                    <span class="tool-tag">readOnly</span>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <span class="tool-tag">readOnly</span>
+                      <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'get_servicenow_incident'})" title="Copy direct link to this tool demo">🔗</button>
+                    </div>
                   </div>
                   <div class="tool-desc">Fetch full incident record by ticket number (e.g. INC1039).</div>
+                  <div class="linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('15_servicenow_ui_vs_ge_chat_side_by_side_truth_comparison')" title="Jump to linked visual proof in gallery">
+                    <span>📸 Linked Asset: #15_servicenow_ui_vs_ge_chat_side_by_side_truth_comparison ↗</span>
+                  </div>
                 </div>
-                <div class="tool-item" onclick="selectTool('search_servicenow_knowledge_articles')">
+                <div class="tool-item" id="tool-search_servicenow_knowledge_articles" data-tool-name="search_servicenow_knowledge_articles" onclick="selectTool('search_servicenow_knowledge_articles')">
                   <div class="tool-header">
                     <span class="tool-name">search_servicenow_knowledge_articles</span>
-                    <span class="tool-tag">readOnly</span>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <span class="tool-tag">readOnly</span>
+                      <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'search_servicenow_knowledge_articles'})" title="Copy direct link to this tool demo">🔗</button>
+                    </div>
                   </div>
                   <div class="tool-desc">Search published IT Knowledge Base articles (kb_knowledge).</div>
+                  <div class="linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('19_ge_chat_sources_menu_servicenow_connector_selected')" title="Jump to linked visual proof in gallery">
+                    <span>📸 Linked Asset: #19_ge_chat_sources_menu_servicenow_connector_selected ↗</span>
+                  </div>
                 </div>
-                <div class="tool-item" onclick="selectTool('list_servicenow_catalog_items')">
+                <div class="tool-item" id="tool-list_servicenow_catalog_items" data-tool-name="list_servicenow_catalog_items" onclick="selectTool('list_servicenow_catalog_items')">
                   <div class="tool-header">
                     <span class="tool-name">list_servicenow_catalog_items</span>
-                    <span class="tool-tag">readOnly</span>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <span class="tool-tag">readOnly</span>
+                      <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'list_servicenow_catalog_items'})" title="Copy direct link to this tool demo">🔗</button>
+                    </div>
                   </div>
                   <div class="tool-desc">List active Service Catalog items available for ordering.</div>
+                  <div class="linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('21_ge_chat_servicenow_connector_tool_call_state')" title="Jump to linked visual proof in gallery">
+                    <span>📸 Linked Asset: #21_ge_chat_servicenow_connector_tool_call_state ↗</span>
+                  </div>
                 </div>
-                <div class="tool-item" onclick="selectTool('search_servicenow_problems_and_changes')">
+                <div class="tool-item" id="tool-search_servicenow_problems_and_changes" data-tool-name="search_servicenow_problems_and_changes" onclick="selectTool('search_servicenow_problems_and_changes')">
                   <div class="tool-header">
                     <span class="tool-name">search_servicenow_problems_and_changes</span>
-                    <span class="tool-tag">readOnly</span>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <span class="tool-tag">readOnly</span>
+                      <button class="permalink-tool-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'servicenow', tool:'search_servicenow_problems_and_changes'})" title="Copy direct link to this tool demo">🔗</button>
+                    </div>
                   </div>
                   <div class="tool-desc">Query live ServiceNow Problem records and Change Requests.</div>
+                  <div class="linked-asset-link" onclick="event.stopPropagation(); openSlideshowAtSlide('13b_servicenow_live_ui_full_incident_list')" title="Jump to linked visual proof in gallery">
+                    <span>📸 Linked Asset: #13b_servicenow_live_ui_full_incident_list ↗</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -3903,7 +4198,10 @@ function compileSSML(rawText) {
       <div id="tab-veeva" class="view-tab">
         <div class="hero-banner">
           <div class="hero-text">
-            <h1>Veeva Vault GxP Clinical &amp; Regulatory Connector</h1>
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:6px;">
+              <h1 style="margin:0;">Veeva Vault GxP Clinical &amp; Regulatory Connector</h1>
+              <button class="permalink-chip" onclick="copyDeepLink({tab:'veeva'})" title="Copy direct link to this tab">🔗 #tab-veeva</button>
+            </div>
             <p>Google Cloud integrated MCP tools for life sciences document governance, clinical study reports (ONCO-304), regulatory submissions, and GxP compliance audit trails.</p>
           </div>
           <div class="quick-links">
@@ -4020,7 +4318,10 @@ function compileSSML(rawText) {
               <div class="workflow-title-area">
                 <span class="workflow-icon">${g.icon}</span>
                 <div>
-                  <h2 class="workflow-title">${g.title}</h2>
+                  <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <h2 class="workflow-title" style="margin:0;">${g.title}</h2>
+                    <button class="permalink-chip" onclick="copyDeepLink({tab:'gallery', group:'${g.id}'})" title="Copy direct link to this workflow section">🔗 #${g.id}</button>
+                  </div>
                   <p class="workflow-desc">${g.description}</p>
                 </div>
               </div>
@@ -4038,13 +4339,20 @@ function compileSSML(rawText) {
 
             <div class="gallery-grid">
               ${g.images.map(img => `
-                <div class="gallery-card" onclick="openSlideshowAtSlide('${img.fileName}')" title="Click to view full slide in presentation mode">
+                <div class="gallery-card" id="asset-${img.assetId}" data-asset-id="${img.assetId}" onclick="openSlideshowAtSlide('${img.assetId}')" title="Click to view full slide in presentation mode">
                   <div class="gallery-img-wrap">
-                    <span class="slide-num-pill">#${img.index + 1}</span>
+                    <span class="slide-num-pill">#${img.groupIndex || (img.index + 1)}</span>
+                    <button class="asset-copy-chip" onclick="event.stopPropagation(); copyDeepLink({tab:'gallery', slide:'${img.assetId}'})" title="Copy direct link to this asset">
+                      <span>🔗</span>
+                      <span>${img.assetId}</span>
+                    </button>
                     <img src="${img.url}" alt="${img.title}" loading="lazy" />
                   </div>
                   <div class="gallery-info">
-                    <div class="gallery-cat">${g.title.split(':')[0]}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+                      <span class="gallery-cat">${g.title.split(':')[0]}</span>
+                      ${img.linkedTool ? `<span class="linked-demo-pill" onclick="event.stopPropagation(); jumpToDemoTool('${img.linkedTool.tab}', '${img.linkedTool.tool}')" title="Linked to demo tool: ${img.linkedTool.label}">⚡ Demo ↗</span>` : ''}
+                    </div>
                     <div class="gallery-title">${img.title}</div>
                     <div class="gallery-file">${img.fileName}</div>
                   </div>
@@ -4112,6 +4420,7 @@ function compileSSML(rawText) {
       <span class="slideshow-group-badge" id="slideGroupBadge">GCP Console</span>
       <span class="slideshow-slide-title" id="slideMainTitle">Slide Title</span>
       <span class="slideshow-file-tag" id="slideFilename">01_screenshot.png</span>
+      <span class="slideshow-asset-badge" id="slideAssetBadge" onclick="copyCurrentSlideLink()" title="Copy direct link to this asset (ID)">🔗 <span id="slideAssetIdText">ID</span></span>
     </div>
     <div class="slideshow-header-tools">
       <!-- Google DeepMind Neural Audio Narrator Controls -->
@@ -4158,6 +4467,14 @@ function compileSSML(rawText) {
         <button class="btn-slideshow-tool active" id="btnSubtitlesToggle" onclick="toggleSubtitles()" title="Toggle Live Gold Subtitles (C)">CC</button>
       </div>
 
+      <button class="btn-share-link" id="slideLinkedDemoBtn" onclick="jumpFromSlideToDemo()" style="display:none;" title="Open interactive demo associated with this slide">
+        <span>⚡</span>
+        <span id="slideLinkedDemoLabel">Open Demo</span>
+      </button>
+      <button class="btn-share-link" onclick="copyCurrentSlideLink()" title="Copy deep link to this slide">
+        <span>🔗</span>
+        <span>Share Link</span>
+      </button>
       <span class="slideshow-counter" id="slideCounterText">Slide 1 of 65</span>
       <button class="btn-slideshow-tool" onclick="toggleFullscreen()" title="Toggle Fullscreen (F)">⛶</button>
       <button class="btn-slideshow-tool" onclick="closeSlideshow()" title="Close Slideshow (Esc)">✕</button>
@@ -4291,6 +4608,93 @@ function compileSSML(rawText) {
   // CLIENT STATE
   const LOGICAL_GROUPS = ${logicalGroupsJson};
   const ALL_SLIDES = ${allSlidesJson};
+  const TOOL_ASSET_MAPPINGS = ${JSON.stringify(TOOL_ASSET_MAPPINGS)};
+  const ASSET_TOOL_MAPPINGS = ${JSON.stringify(ASSET_TOOL_MAPPINGS)};
+
+  
+  // =========================================================================
+  // URL STATE & DEEP LINKING CONTROLLER (URI ADDRESSABILITY PROTOCOL)
+  // =========================================================================
+  function updateUrlState(params, push) {
+    try {
+      const url = new URL(window.location.href);
+      for (const [k, v] of Object.entries(params)) {
+        if (v === null || v === undefined || v === '') {
+          url.searchParams.delete(k);
+        } else {
+          url.searchParams.set(k, v);
+        }
+      }
+      if (push) {
+        window.history.pushState({}, '', url.toString());
+      } else {
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch (e) {}
+  }
+
+  function getDeepLink(params) {
+    const u = new URL(window.location.origin + window.location.pathname);
+    for (const [k, v] of Object.entries(params)) {
+      if (v !== null && v !== undefined && v !== '') {
+        u.searchParams.set(k, v);
+      }
+    }
+    return u.toString();
+  }
+
+  function copyDeepLink(params, label) {
+    const link = getDeepLink(params);
+    updateUrlState(params, true);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link).then(function() {
+        showToast('🔗 Deep link copied to clipboard!', link);
+      }).catch(function() {
+        showToast('🔗 Direct Link:', link);
+      });
+    } else {
+      showToast('🔗 Direct Link:', link);
+    }
+  }
+
+  function copyCurrentSlideLink() {
+    const slide = activeSlideDeck[currentSlideIndex];
+    if (slide) {
+      copyDeepLink({ tab: 'gallery', slide: slide.assetId || (currentSlideIndex + 1) }, slide.title);
+    }
+  }
+
+  function jumpToDemoTool(tab, toolName) {
+    switchTab('tab-' + tab, true);
+    if (tab === 'servicenow') {
+      selectTool(toolName, true);
+    } else if (tab === 'veeva') {
+      selectVeevaTool(toolName, true);
+    }
+  }
+
+  function jumpFromSlideToDemo() {
+    const slide = activeSlideDeck[currentSlideIndex];
+    if (slide && slide.linkedTool) {
+      closeSlideshow();
+      jumpToDemoTool(slide.linkedTool.tab, slide.linkedTool.tool);
+    }
+  }
+
+  let toastTimer = null;
+  function showToast(title, url) {
+    const toast = document.getElementById('gcpToast');
+    const titleEl = document.getElementById('toastTitle');
+    const urlEl = document.getElementById('toastUrl');
+    if (!toast) return;
+    if (titleEl) titleEl.textContent = title;
+    if (urlEl) urlEl.textContent = url || '';
+    toast.classList.add('visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() {
+      toast.classList.remove('visible');
+    }, 3000);
+  }
 
   let currentTool = 'search_servicenow_incidents';
   let currentViewMode = 'table';
@@ -4348,7 +4752,8 @@ function compileSSML(rawText) {
     }
   }
 
-  function switchTab(tabId) {
+  function switchTab(tabId, updateUrl) {
+    if (updateUrl === undefined) updateUrl = true;
     document.querySelectorAll('.view-tab').forEach(function(el) { el.classList.remove('active'); });
     document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
     document.querySelectorAll('.sidebar-nav-item').forEach(function(el) { el.classList.remove('active'); });
@@ -4362,12 +4767,17 @@ function compileSSML(rawText) {
     const sideLink = document.getElementById('sideLink-' + tabId.replace('tab-', ''));
     if (sideLink) sideLink.classList.add('active');
 
+    if (updateUrl) {
+      const cleanTab = tabId.replace('tab-', '');
+      updateUrlState({ tab: cleanTab, slide: null });
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function jumpToWorkflow(groupId) {
-    switchTab('tab-gallery');
-    filterGroupView('ALL');
+    switchTab('tab-gallery', false);
+    filterGroupView('ALL', false);
+    updateUrlState({ tab: 'gallery', group: groupId, slide: null });
     setTimeout(function() {
       const section = document.getElementById('workflow-' + groupId);
       if (section) {
@@ -4376,7 +4786,8 @@ function compileSSML(rawText) {
     }, 100);
   }
 
-  function filterGroupView(groupId) {
+  function filterGroupView(groupId, updateUrl) {
+    if (updateUrl === undefined) updateUrl = true;
     document.querySelectorAll('.gallery-filter-btn').forEach(function(btn) {
       const oc = btn.getAttribute('onclick') || '';
       btn.classList.toggle('active', oc.indexOf("'" + groupId + "'") !== -1);
@@ -4389,6 +4800,10 @@ function compileSSML(rawText) {
         card.style.display = 'none';
       }
     });
+
+    if (updateUrl) {
+      updateUrlState({ tab: 'gallery', group: groupId === 'ALL' ? null : groupId });
+    }
   }
 
   // =========================================================================
@@ -4852,6 +5267,7 @@ function compileSSML(rawText) {
     stopAutoPlay();
     const modal = document.getElementById('slideshowModal');
     modal.classList.remove('open');
+    updateUrlState({ slide: null }, false);
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(function() {});
     }
@@ -4882,6 +5298,22 @@ function compileSSML(rawText) {
     document.getElementById('slideFilename').textContent = slide.fileName;
     document.getElementById('slideGroupBadge').textContent = slide.groupTitle || slide.dirName;
     document.getElementById('slideCounterText').textContent = 'Slide ' + (index + 1) + ' of ' + activeSlideDeck.length;
+
+    const assetIdEl = document.getElementById('slideAssetIdText');
+    if (assetIdEl) assetIdEl.textContent = slide.assetId || slide.fileName;
+
+    const linkedBtn = document.getElementById('slideLinkedDemoBtn');
+    const linkedLabel = document.getElementById('slideLinkedDemoLabel');
+    if (linkedBtn && linkedLabel) {
+      if (slide.linkedTool) {
+        linkedBtn.style.display = 'inline-flex';
+        linkedLabel.textContent = 'Demo: ' + slide.linkedTool.label;
+      } else {
+        linkedBtn.style.display = 'none';
+      }
+    }
+
+    updateUrlState({ tab: 'gallery', slide: slide.assetId || (index + 1) }, false);
 
     // Populate natural concept narration in Gold Karaoke bar
     const narrationText = slide.narration || ('This view captures ' + slide.title + ' within the ' + (slide.groupTitle || 'system') + ' workflow.');
@@ -5025,8 +5457,15 @@ function compileSSML(rawText) {
     });
   }
 
-  function openSlideshowAtSlide(fileName) {
-    const idx = ALL_SLIDES.findIndex(function(s) { return s.fileName === fileName; });
+  function openSlideshowAtSlide(identifier) {
+    let idx = -1;
+    if (typeof identifier === 'number') {
+      idx = identifier;
+    } else {
+      idx = ALL_SLIDES.findIndex(function(s) {
+        return s.assetId === identifier || s.fileName === identifier || s.fileName.startsWith(identifier);
+      });
+    }
     startSlideshow('ALL', idx >= 0 ? idx : 0);
   }
 
@@ -5146,15 +5585,19 @@ function compileSSML(rawText) {
   }
 
   // TOOL INTERACTION & RUNNER
-  function selectTool(name) {
+  function selectTool(name, updateUrl) {
+    if (updateUrl === undefined) updateUrl = true;
     currentTool = name;
     document.querySelectorAll('#tab-servicenow .tool-item').forEach(function(el) {
-      el.classList.remove('selected');
+      const match = el.getAttribute('data-tool-name') === name || (el.id && el.id.includes(name));
+      el.classList.toggle('selected', match);
     });
-    if (event && event.currentTarget) {
-      event.currentTarget.classList.add('selected');
+    const titleEl = document.getElementById('activeToolTitle');
+    if (titleEl) titleEl.textContent = 'Active Tool: ' + name;
+
+    if (updateUrl) {
+      updateUrlState({ tab: 'servicenow', tool: name });
     }
-    document.getElementById('activeToolTitle').textContent = 'Active Tool: ' + name;
 
     const inputsDiv = document.getElementById('toolInputs');
     if (name === 'search_servicenow_incidents') {
@@ -5226,11 +5669,19 @@ function compileSSML(rawText) {
 
   // Veeva Tool Runner
   let currentVeevaTool = 'search_vault_documents';
-  function selectVeevaTool(tool) {
+  function selectVeevaTool(tool, updateUrl) {
+    if (updateUrl === undefined) updateUrl = true;
     currentVeevaTool = tool;
-    document.querySelectorAll('#tab-veeva .tool-item').forEach(function(el) { el.classList.remove('selected'); });
-    if (event && event.currentTarget) event.currentTarget.classList.add('selected');
-    document.getElementById('activeVeevaTitle').textContent = 'Active Tool: ' + tool;
+    document.querySelectorAll('#tab-veeva .tool-item').forEach(function(el) {
+      const match = el.getAttribute('data-veeva-tool') === tool || (el.id && el.id.includes(tool));
+      el.classList.toggle('selected', match);
+    });
+    const titleEl = document.getElementById('activeVeevaTitle');
+    if (titleEl) titleEl.textContent = 'Active Tool: ' + tool;
+
+    if (updateUrl) {
+      updateUrlState({ tab: 'veeva', tool: tool });
+    }
   }
 
   async function executeVeevaTool() {
@@ -5332,14 +5783,96 @@ function compileSSML(rawText) {
     filterGroupView(category);
   }
 
+  
+  // =========================================================================
+  // URL SYNCHRONIZATION & IDEMPOTENT RELOAD HYDRATION ENGINE
+  // =========================================================================
+  function syncStateFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const hash = window.location.hash.replace('#', '');
+
+    // 1. Tab Hydration
+    let tab = params.get('tab') || hash;
+    if (tab && !tab.startsWith('tab-')) {
+      tab = 'tab-' + tab;
+    }
+    if (tab && ['tab-servicenow', 'tab-veeva', 'tab-gallery', 'tab-oauth'].includes(tab)) {
+      switchTab(tab, false);
+    } else {
+      switchTab('tab-servicenow', false);
+    }
+
+    // 2. Tool / Demo Hydration
+    const tool = params.get('tool') || params.get('demo');
+    if (tool) {
+      if (tab === 'tab-veeva') {
+        selectVeevaTool(tool, false);
+      } else {
+        selectTool(tool, false);
+      }
+    }
+
+    // 3. Workflow Group in Gallery
+    const group = params.get('group');
+    if (group) {
+      filterGroupView(group, false);
+    }
+
+    // 4. Slide / Asset Deep Link Hydration
+    const slideParam = params.get('slide') || params.get('asset');
+    if (slideParam) {
+      let targetIdx = -1;
+      if (/^\d+$/.test(slideParam)) {
+        const num = parseInt(slideParam, 10);
+        if (num >= 1 && num <= ALL_SLIDES.length) {
+          targetIdx = num - 1;
+        }
+      }
+      if (targetIdx === -1) {
+        targetIdx = ALL_SLIDES.findIndex(function(s) {
+          return s.assetId === slideParam || s.fileName === slideParam || s.fileName.startsWith(slideParam);
+        });
+      }
+      if (targetIdx !== -1) {
+        setTimeout(function() {
+          startSlideshow('ALL', targetIdx);
+        }, 150);
+      }
+    }
+
+    // 5. Print Modal Deep Link Hydration
+    if (params.get('print') === '1' || params.get('modal') === 'print') {
+      const scope = params.get('scope') || 'all';
+      openPrintModal(scope);
+    }
+  }
+
   // Initialization
   window.addEventListener('DOMContentLoaded', function() {
     initGcpTheme();
     initSidebar();
-    executeCurrentTool();
+    syncStateFromUrl();
+    const activeTab = document.querySelector('.view-tab.active');
+    if (!activeTab || activeTab.id === 'tab-servicenow') {
+      executeCurrentTool();
+    }
+  });
+
+  window.addEventListener('popstate', function() {
+    syncStateFromUrl();
   });
 </script>
 ${generatePrintDossierHtml(allSlides, totalScreenshots)}
+
+<!-- GCP Toast Notification for Deep Links -->
+<div id="gcpToast" class="gcp-toast">
+  <div class="gcp-toast-icon">🔗</div>
+  <div>
+    <div class="gcp-toast-title" id="toastTitle">Deep link copied to clipboard!</div>
+    <div class="gcp-toast-url" id="toastUrl"></div>
+  </div>
+</div>
+
 </body>
 </html>`);
 });
