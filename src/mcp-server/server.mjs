@@ -4664,7 +4664,7 @@ function compileSSML(rawText) {
         <div class="sidebar-submenu" id="submenu-microsoft">
           <a class="sub-nav-item" id="sideLink-microsoft" onclick="selectProjectView('microsoft', 'tab-microsoft')">
             <span class="sub-nav-icon">🏢</span>
-            <span class="sub-nav-label">Live M365 Workbench</span>
+            <span class="sub-nav-label" title="Live M365 Workbench">Live Workbench</span>
             <span class="sub-nav-count">4 tools</span>
           </a>
           <div class="sub-nav-item" id="sideLink-microsoft-assets" onclick="toggleAssetSubmenu('microsoft', event)">
