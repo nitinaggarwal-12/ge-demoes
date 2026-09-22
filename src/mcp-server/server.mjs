@@ -4,6 +4,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { startVeevaMcpServer } from '../veeva-mcp-server/server.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -2347,8 +2348,11 @@ function compileSSML(rawText) {
   /* Two Column Layout */
   .grid-2col {
     display: grid;
-    grid-template-columns: 460px 1fr;
+    grid-template-columns: 440px minmax(0, 1fr);
     gap: 24px;
+  }
+  .grid-2col > div {
+    min-width: 0;
   }
   @media (max-width: 1180px) {
     .grid-2col { grid-template-columns: 1fr; }
@@ -3126,7 +3130,7 @@ function compileSSML(rawText) {
     line-height: 1.55;
     color: var(--muted);
     text-align: left;
-    max-height: 80px;
+    max-height: 120px;
     overflow-y: auto;
   }
   .karaoke-paragraph {
@@ -3165,38 +3169,73 @@ function compileSSML(rawText) {
     display: flex;
   }
   .slideshow-topbar {
-    padding: 12px 24px;
+    padding: 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--border);
     background: var(--sidebar-bg);
+    gap: 16px;
+    min-width: 0;
   }
   .slideshow-meta {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
   }
   .slideshow-group-badge {
     background: rgba(26, 115, 232, 0.15);
     border: 1px solid rgba(26, 115, 232, 0.4);
     color: var(--accent-light);
     font-family: var(--font-heading);
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 600;
-    padding: 3px 10px;
+    padding: 3px 9px;
     border-radius: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .slideshow-slide-title {
     font-family: var(--font-heading);
-    font-size: 15px;
+    font-size: 14.5px;
     font-weight: 600;
     color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex: 0 1 auto;
   }
   .slideshow-file-tag {
     font-family: var(--font-mono);
     font-size: 11px;
     color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+    max-width: 180px;
+  }
+  .slideshow-asset-badge {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent-light);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .slideshow-counter {
     background: rgba(255, 255, 255, 0.08);
@@ -3205,11 +3244,14 @@ function compileSSML(rawText) {
     font-size: 12px;
     font-weight: 600;
     color: #e8eaed;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .slideshow-header-tools {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-shrink: 0;
   }
   .btn-slideshow-tool {
     background: rgba(255, 255, 255, 0.08);
@@ -4483,7 +4525,7 @@ function compileSSML(rawText) {
 
   <div class="slideshow-stage">
     <button class="slideshow-arrow prev" onclick="prevSlide()" title="Previous (Left Arrow)">◀</button>
-    <img class="slideshow-img" id="slideshowImg" src="" alt="Slide View" />
+    <img class="slideshow-img" id="slideshowImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Slide View" />
     <button class="slideshow-arrow next" onclick="nextSlide()" title="Next (Right Arrow)">▶</button>
 
     <!-- Real-Time Gold Karaoke Subtitles Bar -->
@@ -4491,7 +4533,7 @@ function compileSSML(rawText) {
       <div class="karaoke-header">
         <div class="karaoke-voice-badge" id="karaokeVoiceBadge">
           <span class="karaoke-pulse-dot"></span>
-          <span id="karaokeVoiceName">Google DeepMind Narrator • Aoede</span>
+          <span id="karaokeVoiceName">Google Journey • David (Warm Human Architect)</span>
         </div>
         <div class="karaoke-concept-tag">
           <span>💡 Architectural Concept Briefing</span>
@@ -4599,7 +4641,7 @@ function compileSSML(rawText) {
       <button class="lightbox-close" onclick="closeLightboxDirect()">✕</button>
     </div>
     <div class="lightbox-body">
-      <img id="lightboxImg" src="" alt="Enlarged Screenshot" />
+      <img id="lightboxImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Enlarged Screenshot" />
     </div>
   </div>
 </div>
@@ -5661,7 +5703,7 @@ function compileSSML(rawText) {
           // not JSON
         }
       }
-      window.renderStepResult(method + ' &bull; ' + (params.name || ''), rows, rpcRes);
+      window.renderStepResult(method + ' • ' + (params.name || ''), rows, rpcRes);
     } catch (err) {
       window.renderStepResult('Error: ' + err.message, null, { error: err.message });
     }
@@ -5673,11 +5715,29 @@ function compileSSML(rawText) {
     if (updateUrl === undefined) updateUrl = true;
     currentVeevaTool = tool;
     document.querySelectorAll('#tab-veeva .tool-item').forEach(function(el) {
-      const match = el.getAttribute('data-veeva-tool') === tool || (el.id && el.id.includes(tool));
+      const match = el.getAttribute('data-veeva-tool') === tool || (el.id && el.id.includes(tool)) || el.getAttribute('onclick')?.includes(tool);
       el.classList.toggle('selected', match);
     });
     const titleEl = document.getElementById('activeVeevaTitle');
     if (titleEl) titleEl.textContent = 'Active Tool: ' + tool;
+
+    const labelEl = document.querySelector('#veevaInputs .form-label');
+    const inputEl = document.getElementById('veevaQuery');
+    if (labelEl && inputEl) {
+      if (tool === 'get_audit_trail') {
+        labelEl.textContent = 'Document Number / ID (21 CFR Part 11 Audit Trail)';
+        inputEl.placeholder = 'e.g. DOC-030201';
+        inputEl.value = 'DOC-030201';
+      } else if (tool === 'get_binder_structure') {
+        labelEl.textContent = 'Binder Filter (eCTD Regulatory Submission)';
+        inputEl.placeholder = 'e.g. eTMF or Master';
+        inputEl.value = '';
+      } else {
+        labelEl.textContent = 'VQL Query Filter';
+        inputEl.placeholder = "e.g. status__v = 'Approved for Submission'";
+        inputEl.value = "status__v = 'Approved for Submission'";
+      }
+    }
 
     if (updateUrl) {
       updateUrlState({ tab: 'veeva', tool: tool });
@@ -5686,11 +5746,20 @@ function compileSSML(rawText) {
 
   async function executeVeevaTool() {
     const q = document.getElementById('veevaQuery')?.value || '';
+    const args = {};
+    if (currentVeevaTool === 'get_audit_trail') {
+      args.document_id = q || 'DOC-030201';
+    } else if (currentVeevaTool === 'get_binder_structure') {
+      args.filter = q;
+    } else {
+      args.vql_query = q;
+      args.query = q;
+    }
     const payload = {
       jsonrpc: '2.0',
       id: Date.now(),
       method: 'tools/call',
-      params: { name: currentVeevaTool, arguments: { query: q } }
+      params: { name: currentVeevaTool, arguments: args }
     };
     try {
       let resp;
@@ -5713,7 +5782,19 @@ function compileSSML(rawText) {
       if (rpcRes.result && rpcRes.result.content && rpcRes.result.content[0]) {
         try {
           const parsed = JSON.parse(rpcRes.result.content[0].text);
-          rows = Array.isArray(parsed) ? parsed : [parsed];
+          if (parsed.documents && Array.isArray(parsed.documents)) {
+            rows = parsed.documents;
+          } else if (parsed.binders && Array.isArray(parsed.binders)) {
+            rows = parsed.binders;
+          } else if (parsed.audit_trail && Array.isArray(parsed.audit_trail)) {
+            rows = parsed.audit_trail;
+          } else if (parsed.records && Array.isArray(parsed.records)) {
+            rows = parsed.records;
+          } else if (Array.isArray(parsed)) {
+            rows = parsed;
+          } else {
+            rows = [parsed];
+          }
         } catch (e) {}
       }
       renderVeevaResult(rows, rpcRes);
@@ -5880,4 +5961,13 @@ ${generatePrintDossierHtml(allSlides, totalScreenshots)}
 server.listen(PORT, () => {
   console.log(`BYOMCP ServiceNow Server listening on http://localhost:${PORT}/mcp`);
   console.log(`Interactive Workbench UI available at http://localhost:${PORT}/`);
+  try {
+    startVeevaMcpServer(8792).then(() => {
+      console.log('Integrated Veeva Vault GxP MCP Server listening on http://127.0.0.1:8792/mcp');
+    }).catch(err => {
+      console.log('Veeva Vault MCP Server on port 8792 status:', err.message);
+    });
+  } catch (e) {
+    console.warn('Veeva Vault MCP Server start error:', e.message);
+  }
 });
