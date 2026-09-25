@@ -1110,7 +1110,6 @@ function decorateRunRecordWithWebUrls(runRecord) {
 }
 
 export async function handleDemoGeneratorRequest(req, res, port = 4390, allowRootHtml = false) {
-  await ensureSession();
   const url = new URL(req.url, `http://localhost:${port}`);
 
   // Serve captured PNG screenshots from /scratch/* (with Cloud Run fallback to screenshots/argolis_dual_evidence)
@@ -1141,6 +1140,12 @@ export async function handleDemoGeneratorRequest(req, res, port = 4390, allowRoo
     res.end(req.method === 'HEAD' ? undefined : renderStudioHtml());
     return true;
   }
+
+  if (!url.pathname.startsWith('/api/')) {
+    return false;
+  }
+
+  await ensureSession();
 
   if (req.method === 'GET' && url.pathname === '/api/connections') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
