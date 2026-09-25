@@ -118,8 +118,20 @@ function geChatShellHtml(centerHtml) {
 }
 
 async function main() {
-  const server = await startVeevaMcpServer(8792);
-  console.log('Started live Veeva Vault MCP server on port 8792');
+  let server = null;
+  try {
+    const probe = await fetch('http://127.0.0.1:8792/mcp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 0, method: 'initialize', params: { protocolVersion: '2024-11-05', clientInfo: { name: 'probe', version: '1.0.0' } } })
+    });
+    if (probe.ok) {
+      console.log('Live Veeva Vault MCP server already running on port 8792, reusing...');
+    }
+  } catch (probeErr) {
+    server = await startVeevaMcpServer(8792);
+    console.log('Started live Veeva Vault MCP server on port 8792');
+  }
 
   // Execute live OAuth/OIDC + Federated Session Exchange + all 8 MCP tools
   const step1Token = await postJson('http://127.0.0.1:8792/oauth/token', {
@@ -395,7 +407,7 @@ async function main() {
   await page.screenshot({ path: path.join(OUT_DIR, '10_veeva_mcp_step2_live_vql_and_8_document_tools_verified.png') });
 
   await browser.close();
-  server.close();
+  if (server) server.close();
   console.log('Successfully generated all 10 Veeva Vault MCP Connector screenshots in', OUT_DIR);
 }
 

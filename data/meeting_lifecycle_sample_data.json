@@ -1,0 +1,255 @@
+{
+  "meeting_id": "MEET-2026-AI-Q4",
+  "title": "Q4 Enterprise AI Architecture & Budget Alignment",
+  "date_time": "2026-09-24T14:00:00Z",
+  "duration_minutes": 60,
+  "conference_platform": "Google Meet",
+  "meet_url": "https://meet.google.com/xya-qjkm-bvt",
+  "organizer": {
+    "name": "Elena Rostova",
+    "role": "VP of Engineering & Cloud Infrastructure",
+    "email": "elena.rostova@enterprise-ai.corp"
+  },
+  "attendees": [
+    {
+      "name": "Elena Rostova",
+      "role": "VP of Engineering",
+      "email": "elena.rostova@enterprise-ai.corp",
+      "focus": "Budget allocation, cross-team velocity, executive sponsor sign-off",
+      "prior_decisions": "Approved $1.2M initial annual AI infrastructure budget in Q2"
+    },
+    {
+      "name": "Marcus Chen",
+      "role": "Principal Enterprise Architect",
+      "email": "marcus.chen@enterprise-ai.corp",
+      "focus": "BYOMCP microservice latency (<85ms), multi-tenant GPU cluster topology",
+      "prior_decisions": "Proposed hybrid Cloud Run + GKE GPU inference node standard"
+    },
+    {
+      "name": "Sarah Jenkins",
+      "role": "Director of Product Management",
+      "email": "sarah.jenkins@enterprise-ai.corp",
+      "focus": "ServiceNow & Veeva connector launch timelines, business user adoption",
+      "prior_decisions": "Locked GA deadline for internal enterprise assistant to Nov 15"
+    },
+    {
+      "name": "Tariq Al-Mansoor",
+      "role": "Staff Security & Governance Lead",
+      "email": "tariq.almansoor@enterprise-ai.corp",
+      "focus": "21 CFR Part 11 audit trails, zero-trust token relay, SOC2 compliance",
+      "prior_decisions": "Mandated confidential VM encryption & customer-managed encryption keys (CMEK)"
+    }
+  ],
+  "stage_1_pre_meeting_brief": {
+    "generated_at": "2026-09-24T13:30:00Z",
+    "status": "Ready (Delivered 30 mins prior to call)",
+    "executive_context": "Annual enterprise AI roadmap review to finalize $450K GKE GPU cluster expansion and sign off on OAuth 2.0 zero-trust token exchange specification for ServiceNow BYOMCP.",
+    "linked_documents": [
+      {
+        "title": "Q4 Enterprise AI Infrastructure Capacity Model v3.2",
+        "system": "Google Drive",
+        "url": "https://drive.google.com/file/d/1A2bC3d4E5fG6h-capacity-model/view",
+        "relevance": "Outlines 45% inference volume surge from pilot users"
+      },
+      {
+        "title": "ServiceNow BYOMCP OAuth 2.0 Security Architecture Spec",
+        "system": "Google Drive",
+        "url": "https://drive.google.com/file/d/1X9yZ8w7V6u-byomcp-sec-spec/view",
+        "relevance": "Defines mutual TLS and token mediation across VPC-SC perimeter"
+      },
+      {
+        "title": "EPIC-4820: Multi-Tenant Enterprise Agent Studio Rollout",
+        "system": "Jira Software",
+        "url": "https://jira.enterprise-ai.corp/browse/EPIC-4820",
+        "relevance": "Tracks Q4 deliverables across 3 squad engineering pods"
+      }
+    ],
+    "strategic_talking_points": [
+      "Decision Point: Approve $450k capital expenditure for 8x H100 GPU cluster reserve or defer to Q1 2027.",
+      "Architecture Consensus: Validate Marcus's OAuth 2.0 token-exchange standard for BYOMCP connectors.",
+      "Security Guardrail: Confirm Tariq's Part 11 electronic signature requirements for Veeva Vault regulatory connectors."
+    ],
+    "potential_blockers": [
+      "Hardware Lead Time: H100 reservation requires 14-day advance provisioning in GCP us-central1.",
+      "Regulatory Audit: Veeva Vault connector requires formal 21 CFR Part 11 sign-off before production pilot."
+    ]
+  },
+  "stage_2_meeting_transcript_and_summary": {
+    "transcript_metadata": {
+      "captured_by": "Google Meet AI Companion & Gemini Cloud Audio",
+      "duration_recorded": "00:58:42",
+      "word_count": 6480,
+      "audio_quality": "100% High Fidelity Studio HD"
+    },
+    "key_transcript_excerpts": [
+      {
+        "timestamp": "00:08:15",
+        "speaker": "Elena Rostova",
+        "quote": "Marcus, we saw the inference latency spikes in the European cluster during the peak morning hours. Is the $450k H100 expansion going to resolve this without exceeding our cloud gross margin threshold?"
+      },
+      {
+        "timestamp": "00:10:40",
+        "speaker": "Marcus Chen",
+        "quote": "Yes Elena. By provisioning 8 reserved H100 nodes in us-central1 with speculative decoding, p99 latency will drop from 380ms down to 68ms. It keeps our cost per token at $0.00042, well below the $0.00060 margin budget."
+      },
+      {
+        "timestamp": "00:18:22",
+        "speaker": "Tariq Al-Mansoor",
+        "quote": "From the security and GxP audit side, the OAuth 2.0 token exchange pattern for ServiceNow passes SOC2 Type II, provided tokens expire in 15 minutes and all refresh rotations are stored in GCP Secret Manager."
+      },
+      {
+        "timestamp": "00:24:50",
+        "speaker": "Sarah Jenkins",
+        "quote": "The enterprise customers are clamoring for the ServiceNow and Veeva demo next week. If we commit to this architecture today, can we guarantee the live workbench will be battle-tested by Tuesday?"
+      },
+      {
+        "timestamp": "00:26:10",
+        "speaker": "Elena Rostova",
+        "quote": "Approved. Let's record the $450k allocation formally, adopt Marcus's token relay spec, and assign the implementation tasks across the pods right now."
+      }
+    ],
+    "executive_summary": "In this 60-minute executive alignment session, leadership formally approved the $450,000 Q4 budget allocation for 8x GCP H100 GPU cluster reserve to slash p99 latency to 68ms. The team unanimously ratified the OAuth 2.0 zero-trust token exchange specification for ServiceNow and Veeva BYOMCP connectors with 15-minute token rotation. Four high-priority action items were assigned across Engineering, Product, and Governance with complete accountability and next-step milestones locked for Tuesday's customer keynote.",
+    "hard_decisions": [
+      {
+        "decision_id": "DEC-2026-01",
+        "category": "Budget & CapEx",
+        "summary": "Approved $450,000 for 8x H100 GCP reserved nodes in us-central1.",
+        "rationale": "Guarantees p99 latency under 75ms and locks token generation costs under budget threshold.",
+        "sign_off": "Elena Rostova (VP of Engineering)"
+      },
+      {
+        "decision_id": "DEC-2026-02",
+        "category": "Architecture Standard",
+        "summary": "Ratified OAuth 2.0 token-exchange proxy pattern for all BYOMCP connectors.",
+        "rationale": "Eliminates hardcoded credentials and establishes uniform identity propagation across ServiceNow and Veeva.",
+        "sign_off": "Marcus Chen (Principal Architect) & Tariq Al-Mansoor (Security Lead)"
+      },
+      {
+        "decision_id": "DEC-2026-03",
+        "category": "Compliance & Governance",
+        "summary": "Mandated 15-minute token TTL and GCP Secret Manager rotation for 21 CFR Part 11 audit trails.",
+        "rationale": "Maintains strict compliance for pharmaceutical life sciences customer deployments.",
+        "sign_off": "Tariq Al-Mansoor (Security Lead)"
+      }
+    ],
+    "action_items": [
+      {
+        "item_id": "ACT-101",
+        "title": "Provision 8x H100 GPU reservation in GCP us-central1",
+        "assignee": "Marcus Chen",
+        "assignee_role": "Principal Architect",
+        "due_date": "2026-09-28",
+        "priority": "P0 - Blocker",
+        "target_system": "Jira / Terraform",
+        "jira_key": "CLOUD-1904"
+      },
+      {
+        "item_id": "ACT-102",
+        "title": "Implement 15-minute OAuth token refresh in BYOMCP server",
+        "assignee": "Marcus Chen",
+        "assignee_role": "Principal Architect",
+        "due_date": "2026-09-29",
+        "priority": "P1 - High",
+        "target_system": "GitHub / GCP Cloud Run",
+        "jira_key": "SEC-882"
+      },
+      {
+        "item_id": "ACT-103",
+        "title": "Complete 21 CFR Part 11 compliance audit sign-off memo for Veeva",
+        "assignee": "Tariq Al-Mansoor",
+        "assignee_role": "Security Lead",
+        "due_date": "2026-09-30",
+        "priority": "P1 - High",
+        "target_system": "Google Docs / Drive",
+        "jira_key": "GOV-314"
+      },
+      {
+        "item_id": "ACT-104",
+        "title": "Publish updated Enterprise AI Keynote presentation deck to sales leads",
+        "assignee": "Sarah Jenkins",
+        "assignee_role": "Director of Product",
+        "due_date": "2026-10-01",
+        "priority": "P2 - Medium",
+        "target_system": "Google Slides / Gmail",
+        "jira_key": "PROD-210"
+      }
+    ],
+    "open_risks": [
+      {
+        "risk": "GCP Cloud quota approval timeline for H100 hardware in us-central1",
+        "severity": "Medium",
+        "mitigation": "Elena escalated ticket with Google Cloud Executive Account Team with expedited 24h SLA."
+      }
+    ]
+  },
+  "stage_3_automated_followup": {
+    "generated_at": "2026-09-24T15:02:15Z",
+    "delivery_summary": "4 personalized Gmail drafts prepared, 4 Jira issues staged with bidirectional references, and 1 milestone sync scheduled in Google Calendar.",
+    "gmail_drafts": [
+      {
+        "recipient": "marcus.chen@enterprise-ai.corp",
+        "subject": "Follow-Up: Q4 AI Architecture Alignment — H100 Provisioning & OAuth Spec",
+        "body_preview": "Hi Marcus,\n\nThanks for your presentation on the inference capacity modeling today. As approved in the meeting:\n\n1. Please proceed with reserving the 8x H100 GPU cluster in us-central1 (Ticket: CLOUD-1904, Due: Sept 28).\n2. Update the BYOMCP server OAuth token expiration to 15 minutes with GCP Secret Manager rotation (Ticket: SEC-882, Due: Sept 29).\n\nLet Elena know if you need quota ticket escalation.\n\nBest regards,\nGemini Enterprise Meeting Assistant (on behalf of Elena Rostova)"
+      },
+      {
+        "recipient": "tariq.almansoor@enterprise-ai.corp",
+        "subject": "Follow-Up: Veeva Vault 21 CFR Part 11 Compliance Sign-Off Memo",
+        "body_preview": "Hi Tariq,\n\nThank you for outlining the security parameters today. Following up on your commitment:\n\n- Complete the 21 CFR Part 11 compliance audit sign-off memo for the Veeva Vault MCP connector by Sept 30 (Ticket: GOV-314).\n\nDrive Spec Link: https://drive.google.com/file/d/1X9yZ8w7V6u-byomcp-sec-spec/view\n\nBest regards,\nGemini Enterprise Meeting Assistant"
+      },
+      {
+        "recipient": "sarah.jenkins@enterprise-ai.corp",
+        "subject": "Follow-Up: Product GA Timeline & Sales Keynote Deck",
+        "body_preview": "Hi Sarah,\n\nAll architecture and budget decisions for the November 15 GA deadline were signed off. As agreed, please review and publish the updated customer keynote presentation by Oct 1 (Ticket: PROD-210).\n\nBest regards,\nGemini Enterprise Meeting Assistant"
+      }
+    ],
+    "jira_tickets_staged": [
+      {
+        "key": "CLOUD-1904",
+        "summary": "Reserve 8x H100 GPU cluster in GCP us-central1 (Budget: $450k)",
+        "assignee": "Marcus Chen",
+        "due_date": "2026-09-28",
+        "status": "Ready for Sprint",
+        "priority": "Highest"
+      },
+      {
+        "key": "SEC-882",
+        "summary": "Implement 15-minute token TTL & Secret Manager rotation in BYOMCP",
+        "assignee": "Marcus Chen",
+        "due_date": "2026-09-29",
+        "status": "Ready for Sprint",
+        "priority": "High"
+      },
+      {
+        "key": "GOV-314",
+        "summary": "Publish 21 CFR Part 11 compliance sign-off memo for Veeva Vault",
+        "assignee": "Tariq Al-Mansoor",
+        "due_date": "2026-09-30",
+        "status": "In Progress",
+        "priority": "High"
+      },
+      {
+        "key": "PROD-210",
+        "summary": "Publish Q4 Enterprise AI Keynote presentation deck to field teams",
+        "assignee": "Sarah Jenkins",
+        "due_date": "2026-10-01",
+        "status": "To Do",
+        "priority": "Medium"
+      }
+    ],
+    "calendar_milestone_event": {
+      "summary": "Checkpoint: H100 Provisioning & BYOMCP Security Audit Review",
+      "date": "2026-09-30T16:00:00Z",
+      "duration_minutes": 30,
+      "attendees": ["elena.rostova@enterprise-ai.corp", "marcus.chen@enterprise-ai.corp", "tariq.almansoor@enterprise-ai.corp"]
+    }
+  },
+  "lifecycle_roi_metrics": {
+    "manual_meeting_overhead_hours": 4.5,
+    "agent_assisted_overhead_hours": 0.25,
+    "time_saved_percentage": 94.4,
+    "action_item_follow_through_rate_manual": "62%",
+    "action_item_follow_through_rate_agent": "100%",
+    "average_days_to_send_minutes_manual": 2.8,
+    "average_days_to_send_minutes_agent": 0.003
+  }
+}

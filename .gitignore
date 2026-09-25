@@ -1,7 +1,8 @@
 node_modules/
 .DS_Store
-*.log
 .env
-Auth
-Auth.md
+.env.local
+.gemini/
 scratch/
+MERCK_*
+*.log

@@ -1,0 +1,234 @@
+{
+  "project_info": {
+    "project_id": "ucs-agentspace-dogfood",
+    "project_number": "670560280865",
+    "widget_config_id": "fdd1e98d-1f52-4407-98fd-80e27c61fbc9",
+    "engine_id": "spark_dogfood_search_assistant_v1",
+    "location": "global",
+    "account": "nitinagga@google.com",
+    "status": "READY",
+    "deep_link": "gemini-enterprise://configure?cid=fdd1e98d-1f52-4407-98fd-80e27c61fbc9&project=670560280865&cid_location=global&env=prod",
+    "web_url": "https://ucs-widget.corp.google.com/home/cid/fdd1e98d-1f52-4407-98fd-80e27c61fbc9?e=SparkDogfoodLaunch%3A%3ALaunch"
+  },
+  "architecture": {
+    "execution_mode": "HYBRID (Native Desktop Electron & Headless Background Gateway)",
+    "gateway_port": 56679,
+    "gateway_host": "127.0.0.1",
+    "headless_daemon": "/Applications/Gemini Enterprise.app/Contents/Resources/python/bin/python3 -c cowork_gateway.gateway_public.gateway_server.main",
+    "auth_split": {
+      "user_token": "X-Cowork-Token (loopback CLI/MCP access)",
+      "admin_token": "X-Cowork-Admin-Token (high-authority session/prompt execution & sandbox policy)"
+    },
+    "sandbox_engine": "Orcas Policy & Credential Scrubbing Engine"
+  },
+  "projects": [
+    {
+      "project_id": "73f8e7f188be4fbe8fc7b12ecbbf1c67",
+      "name": "Enterprise Cloud Migration",
+      "emoji": "☁️",
+      "folder": "/Users/nitinagga/ge_spark_workspace/projects/Enterprise Cloud Migration",
+      "active_session": "cloud-migration-readiness"
+    },
+    {
+      "project_id": "53d90d8b75d24dbfa6778cf4ca0d6f06",
+      "name": "GxP Regulatory Compliance Audit",
+      "emoji": "📋",
+      "folder": "/Users/nitinagga/ge_spark_workspace/projects/GxP Regulatory Compliance Audit",
+      "active_session": "clinical-protocol-audit"
+    },
+    {
+      "project_id": "79325c1e37374e6fad9198664a56de28",
+      "name": "ITSM Critical Incident War Room",
+      "emoji": "🚨",
+      "folder": "/Users/nitinagga/ge_spark_workspace/projects/ITSM Critical Incident War Room",
+      "active_session": "p1-incident-war-room-triage"
+    },
+    {
+      "project_id": "7961b108614044a6825962c59453c6ae",
+      "name": "Executive Meeting Intelligence",
+      "emoji": "📊",
+      "folder": "/Users/nitinagga/ge_spark_workspace/projects/Executive Meeting Intelligence",
+      "active_session": "pre-meeting-brief"
+    }
+  ],
+  "custom_skills": [
+    {
+      "name": "clinical-audit-verifier",
+      "path": "/Users/nitinagga/ge_spark_workspace/skills/clinical-audit-verifier/SKILL.md",
+      "description": "Automates 21 CFR Part 11 and GxP regulatory audit compliance checks across Veeva Vault clinical trial trial master files (TMF), electronic batch records, and validation protocols."
+    },
+    {
+      "name": "it-incident-triager",
+      "path": "/Users/nitinagga/ge_spark_workspace/skills/it-incident-triager/SKILL.md",
+      "description": "Accelerates enterprise P1/P2 critical incident resolution by analyzing live ServiceNow incident records, correlating Microsoft Teams war room transcripts, and synthesizing executive post-incident root cause analysis (RCA) reports."
+    }
+  ],
+  "schedules": [
+    {
+      "job_id": "cron_exec_brief",
+      "name": "daily-executive-briefing",
+      "schedule": "0 8 * * 1-5",
+      "cadence": "Weekdays at 8:00 AM",
+      "description": "Compile a consolidated morning executive brief analyzing overnight high-priority ServiceNow P1 incident closures, pending Veeva Vault clinical trial signatures, and key Microsoft Teams leadership discussions."
+    },
+    {
+      "job_id": "cron_gxp_audit",
+      "name": "weekly-gxp-compliance-audit",
+      "schedule": "0 17 * * 5",
+      "cadence": "Fridays at 5:00 PM",
+      "description": "Execute an automated 21 CFR Part 11 compliance scan across all newly uploaded Veeva Vault documentation, verifying electronic signatures, lifecycle states, and effective review periods."
+    },
+    {
+      "job_id": "cron_itsm_monitor",
+      "name": "hourly-itsm-incident-monitor",
+      "schedule": "0 * * * *",
+      "cadence": "Hourly at :00",
+      "description": "Poll ServiceNow incident table for new P1/P2 tickets. Alert on SLA breach risks and summarize cross-system dependencies."
+    },
+    {
+      "job_id": "cron_2e1deeac",
+      "name": "pre-meeting-brief",
+      "schedule": "45 7 * * 1-5",
+      "cadence": "Weekdays at 7:45 AM",
+      "description": "Summarize what I need to know for my next few meetings today -- attendees, any attached docs, and open action items from the last time I met them."
+    }
+  ],
+  "tasks": [
+    {
+      "session_id": "d6fa5029-d8cd-4489-986a-0299c4568ece",
+      "custom_name": "p1-incident-war-room-triage",
+      "project": "ITSM Critical Incident War Room",
+      "prompt": "Analyze open ServiceNow incident INC1039, verify the caller and assigned group, and draft a high-priority status update.",
+      "policy_gate": "Orcas Policy Sandbox Confirmed (scoped to project root)",
+      "status": "COMPLETED"
+    },
+    {
+      "session_id": "79f31168-2fcb-4452-af9d-280ca84982b0",
+      "custom_name": "clinical-protocol-audit",
+      "project": "GxP Regulatory Compliance Audit",
+      "prompt": "Audit Veeva Vault Clinical Trial Master File records for missing Part 11 electronic signatures.",
+      "policy_gate": "Orcas Policy Document Read Confirmed",
+      "status": "COMPLETED"
+    },
+    {
+      "session_id": "a448e66a-4f51-4270-bd87-1339401797b1",
+      "custom_name": "cloud-migration-readiness",
+      "project": "Enterprise Cloud Migration",
+      "prompt": "Assess cross-cloud egress metrics and compliance readiness across hybrid AWS/GCP workloads.",
+      "policy_gate": "Orcas Policy Sandbox Scoped",
+      "status": "COMPLETED"
+    }
+  ],
+  "morning_handoff": {
+    "task_id": "TASK-SPARK-MORN-0923",
+    "task_name": "morning-handoff",
+    "scheduled_time": "07:30:00 AM EDT",
+    "executive": "Nitin Aggarwal (VP / Global Head of AI Solutions)",
+    "scenario_title": "Executive Morning Handoff: Overnight Triage & Advisory Committee Prep",
+    "stages": [
+      {
+        "id": "stage_1_calendar",
+        "name": "1. Schedule Intelligence & Critical Meeting Detection",
+        "mcp_server": "gcalendar_oauth",
+        "mcp_tools_used": ["list_calendar_events", "get_event_details", "get_attendee_availability"],
+        "critical_meeting": {
+          "time": "10:00 AM - 11:00 AM EDT",
+          "title": "MK-3475 Global Steering Committee & Q3 Milestone Review",
+          "room": "Google Meet (meet.google.com/mk-exec-steering)",
+          "attendees": [
+            "Dr. Sarah Jenkins (Global Trial Lead)",
+            "Dr. Marcus Vance (Biostatistics Director)",
+            "Elena Rostova (Regulatory Affairs VP)",
+            "David Chen (Clinical Finance Lead)"
+          ],
+          "urgency": "HIGH",
+          "objective": "Review unexpected protocol deviation in Cohort B and approve adjusted Q4 enrollment timeline."
+        }
+      },
+      {
+        "id": "stage_2_gmail",
+        "name": "2. Overnight Inbox Triage & Escalation Extraction",
+        "mcp_server": "gmail_oauth",
+        "mcp_tools_used": ["search_threads", "get_thread_messages", "extract_action_items"],
+        "triaged_items": [
+          {
+            "from": "Dr. Sarah Jenkins <sjenkins@merck.com>",
+            "subject": "URGENT: Cohort B Site 104 Protocol Deviation & Re-supply Notice",
+            "received": "03:14 AM EDT",
+            "snippet": "Cold-chain excursion detected at Brussels clinical site. 42 vials compromised. Re-supply en route, but will delay Cohort B completion by 14 days without buffer intervention.",
+            "priority": "P1_BLOCKER"
+          },
+          {
+            "from": "Elena Rostova <erostova@merck.com>",
+            "subject": "FDA Advisory Committee Prep - Briefing Packet Sign-off Needed",
+            "received": "05:42 AM EDT",
+            "snippet": "FDA division director requested preliminary bio-distribution summaries ahead of next week's formal submission. Needs executive sign-off by 12:00 PM today.",
+            "priority": "P2_CRITICAL"
+          },
+          {
+            "from": "David Chen <dchen@merck.com>",
+            "subject": "Q3 Trial Budget Variance - Site Acceleration Costs",
+            "received": "06:15 AM EDT",
+            "snippet": "Accelerating backup clinical sites in Milan and Munich will require a $420,000 reallocation from the contingency reserve. Spreadsheet updated.",
+            "priority": "P2_FINANCE"
+          }
+        ]
+      },
+      {
+        "id": "stage_3_drive_sheets",
+        "name": "3. Drive & Sheets Protocol Reconciler",
+        "mcp_server": "gdrive_oauth / gsheets_oauth / gdocs_oauth",
+        "mcp_tools_used": ["search_drive_files", "read_docs_section", "update_sheet_cells", "append_sheet_row"],
+        "reconciliation": {
+          "target_doc": "MK-3475-Study-Protocol-v4.2.gdoc (Drive ID: 1Ez9PCgkpA6MHNoXWMubeqJ8y_v1jB4sJj4KugycQH64)",
+          "mitigation_clause": "Section 8.4: Secondary depot failover protocol allows 48-hour expedited shipment from Amsterdam distribution hub.",
+          "target_sheet": "MK-3475_Financial_Forecast_2026.gsheet",
+          "updates_applied": [
+            { "cell": "F14 (Contingency Reserve)", "old_value": "$2,500,000", "new_value": "$2,080,000" },
+            { "cell": "G14 (Expedited Site Allocation)", "old_value": "$0", "new_value": "$420,000" },
+            { "cell": "H14 (Net Projected Completion)", "old_value": "Nov 12, 2026", "new_value": "Nov 18, 2026 (6-day delay vs 14-day unmitigated)" }
+          ]
+        }
+      },
+      {
+        "id": "stage_4_slides_chat",
+        "name": "4. Briefing Synthesis & Stakeholder Dispatch",
+        "mcp_server": "gslides_oauth / gchat_oauth",
+        "mcp_tools_used": ["create_presentation_from_template", "insert_slide_content", "send_chat_card", "create_threaded_message"],
+        "generated_deck": {
+          "title": "MK-3475 Steering Committee: Site 104 Resolution & Budget Alignment",
+          "slides_count": 3,
+          "slides": [
+            { "slide": 1, "title": "Executive Summary: Site 104 Protocol Incident", "takeaway": "Cold-chain anomaly resolved; 48-hr Amsterdam depot dispatch activated." },
+            { "slide": 2, "title": "Timeline Impact Analysis: 6-Day Buffer Recovery", "takeaway": "Parallel site activation recovers 8 days; primary Q4 endpoint preserved." },
+            { "slide": 3, "title": "Financial Reallocation: $420k Contingency Draw", "takeaway": "Contingency reserve remains healthy at $2.08M (83% remaining)." }
+          ],
+          "slides_url": "https://docs.google.com/presentation/d/1LU_y0EPU9VasB0KHtDz0PcFKz45MjGDuTjPD-sHt3HI/edit"
+        },
+        "chat_dispatch": {
+          "space": "Clinical Operations Leadership (AAQAwnt4VrU)",
+          "card_title": "🌅 Spark Morning Handoff Complete (07:34 AM)",
+          "status": "DISPATCHED",
+          "actions_created": [
+            "Executive Deck ready for 10:00 AM meeting",
+            "Budget sheet reconciled and saved",
+            "Draft reply prepared for Dr. Sarah Jenkins"
+          ]
+        }
+      }
+    ]
+  },
+  "mcp_inventory": {
+    "total_servers": 7,
+    "total_tools": 244,
+    "servers": [
+      { "id": "gmail", "name": "Google Mail", "tools": 38, "binary": "gmail_oauth", "status": "AUTHORIZED" },
+      { "id": "gchat", "name": "Google Chat", "tools": 55, "binary": "gchat_oauth", "status": "AUTHORIZED" },
+      { "id": "gcalendar", "name": "Google Calendar", "tools": 22, "binary": "gcalendar_oauth", "status": "AUTHORIZED" },
+      { "id": "gdrive", "name": "Google Drive", "tools": 23, "binary": "gdrive_oauth", "status": "AUTHORIZED" },
+      { "id": "gdocs", "name": "Google Docs", "tools": 37, "binary": "gdocs_oauth", "status": "AUTHORIZED" },
+      { "id": "gsheets", "name": "Google Sheets", "tools": 39, "binary": "gsheets_oauth", "status": "AUTHORIZED" },
+      { "id": "gslides", "name": "Google Slides", "tools": 30, "binary": "gslides_oauth", "status": "AUTHORIZED" }
+    ]
+  }
+}

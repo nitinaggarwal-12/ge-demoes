@@ -1,0 +1,37 @@
+{
+  "runId": "run_1790318179186_b53a",
+  "stepNumber": 8,
+  "stepId": "step_08_open_ge_web_app",
+  "phase": "Phase D: End-to-End Prompt Execution & Write Action",
+  "title": "Launch Gemini Enterprise Web App & Verify Active Agent Context",
+  "surface": "Gemini Enterprise Web Application",
+  "expectedOutcome": "Gemini Enterprise Web App loaded with active connector pills visible in composer bar.",
+  "screenshotPath": "/Users/nitinagga/documents/demoes-ge/scratch/demo_runs/run_1790318179186_b53a/screenshots/step_08_step_08_open_ge_web_app.png",
+  "failureScreenshotPath": null,
+  "attempts": [
+    {
+      "attemptNumber": 1,
+      "pathLabel": "Path A: Live Discovery Engine streamAssist (400 LICENSE_INACTIVE)",
+      "outcome": "FAILED_LIVE_API_LICENSE_GATE",
+      "isFallback": false,
+      "timestamp": "2026-09-25T06:36:48.534Z"
+    },
+    {
+      "attemptNumber": 2,
+      "pathLabel": "Path B: Live Vertex AI Gemini 2.5 Flash API (200 OK)",
+      "outcome": "SUCCEEDED_VIA_FALLBACK",
+      "isFallback": true,
+      "timestamp": "2026-09-25T06:36:48.534Z"
+    }
+  ],
+  "liveApiSummary": {
+    "method": "POST",
+    "endpoint": "https://discoveryengine.googleapis.com/v1alpha/projects/vertex-ai-493102/locations/global/collections/default_collection/engines/gemini-enterprise-1776****2799/assistants/default_assistant:streamAssist",
+    "httpStatus": 400,
+    "latencyMs": 1218,
+    "fallbackStatus": 200
+  },
+  "outboxEntry": null,
+  "reusedFromCheckpoint": false,
+  "completedAt": "2026-09-25T06:36:48.779Z"
+}

@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 
 const ROOT = process.cwd();
 const VEEVA_OUT = path.join(ROOT, 'screenshots', 'screenshots_veeva_connector');

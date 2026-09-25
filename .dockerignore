@@ -1,0 +1,9 @@
+node_modules
+.git
+.gemini
+scratch
+MERCK_*
+*.mp4
+*.mov
+*.zip
+.DS_Store

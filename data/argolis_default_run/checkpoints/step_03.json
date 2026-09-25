@@ -1,0 +1,30 @@
+{
+  "runId": "run_1790318179186_b53a",
+  "stepNumber": 3,
+  "stepId": "step_03_secret_manager_vault",
+  "phase": "Phase B: Connector & Tool Registration",
+  "title": "ServiceNow Credential & OAuth Token Binding in Secret Manager",
+  "surface": "Google Cloud Console — Secret Manager",
+  "expectedOutcome": "Secret \"ge-demo-servicenow-oauth\" bound with version 1 active.",
+  "screenshotPath": "/Users/nitinagga/documents/demoes-ge/scratch/demo_runs/run_1790318179186_b53a/screenshots/step_03_step_03_secret_manager_vault.png",
+  "failureScreenshotPath": null,
+  "attempts": [
+    {
+      "attemptNumber": 1,
+      "pathLabel": "Path A: Live GCP API (403 OK in 269ms)",
+      "outcome": "SUCCEEDED",
+      "isFallback": false,
+      "timestamp": "2026-09-25T06:36:27.590Z"
+    }
+  ],
+  "liveApiSummary": {
+    "method": "GET",
+    "endpoint": "https://secretmanager.googleapis.com/v1/projects/vertex-ai-493102/secrets?pageSize=5",
+    "httpStatus": 403,
+    "latencyMs": 269,
+    "fallbackStatus": null
+  },
+  "outboxEntry": null,
+  "reusedFromCheckpoint": false,
+  "completedAt": "2026-09-25T06:36:27.805Z"
+}

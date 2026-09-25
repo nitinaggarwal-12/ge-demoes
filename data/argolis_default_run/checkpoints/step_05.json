@@ -1,0 +1,30 @@
+{
+  "runId": "run_1790318179186_b53a",
+  "stepNumber": 5,
+  "stepId": "step_05_schema_and_acl_mapping",
+  "phase": "Phase B: Connector & Tool Registration",
+  "title": "ServiceNow Entity Schema, Citations & Document ACL Mapping",
+  "surface": "Gemini Enterprise — Schema & Permissions",
+  "expectedOutcome": "All 5 core schema attributes indexed and ACL group enforcement verified.",
+  "screenshotPath": "/Users/nitinagga/documents/demoes-ge/scratch/demo_runs/run_1790318179186_b53a/screenshots/step_05_step_05_schema_and_acl_mapping.png",
+  "failureScreenshotPath": null,
+  "attempts": [
+    {
+      "attemptNumber": 1,
+      "pathLabel": "Path A: Live GCP API (200 OK in 237ms)",
+      "outcome": "SUCCEEDED",
+      "isFallback": false,
+      "timestamp": "2026-09-25T06:36:30.471Z"
+    }
+  ],
+  "liveApiSummary": {
+    "method": "GET",
+    "endpoint": "https://discoveryengine.googleapis.com/v1alpha/projects/vertex-ai-493102/locations/global/collections/default_collection/dataStores",
+    "httpStatus": 200,
+    "latencyMs": 237,
+    "fallbackStatus": null
+  },
+  "outboxEntry": null,
+  "reusedFromCheckpoint": false,
+  "completedAt": "2026-09-25T06:36:30.596Z"
+}

@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));

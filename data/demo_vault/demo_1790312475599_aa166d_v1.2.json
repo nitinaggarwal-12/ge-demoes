@@ -1,0 +1,20 @@
+{
+  "sessionId": "demo_1790312475599_aa166d",
+  "version": "v1.2",
+  "inputs": {
+    "title": "Merck Clinical Deviation & CAPA Triage Demo",
+    "prompt": "Query Veeva Vault SOP-4092 and create CAPA-2026-991 with EU GxP compliance verification.",
+    "connector": "Veeva Vault",
+    "mode": "Mode 1: BYOMCP Server (Cloud Run / Local)",
+    "industry": "Life Sciences / Pharma (GxP)",
+    "geAppUrl": "https://vertexaisearch.cloud.google.com/home/cid/mmcg-did-rgpt-5872",
+    "gcpConsoleUrl": "https://console.cloud.google.com/gen-app-builder/engines?project=mmcg-did-rgpt-5872",
+    "gcpProject": "mmcg-did-rgpt-5872",
+    "region": "global",
+    "authMechanism": "Google-Signed Chrome SSO + OAuth 2.0 Client Credentials"
+  },
+  "reusedCheckpointsCount": 8,
+  "reExecutedStepsCount": 4,
+  "runId": "run_1790312543987_a9db",
+  "savedAt": "2026-09-25T05:02:41.742Z"
+}

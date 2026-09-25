@@ -1,0 +1,30 @@
+{
+  "runId": "run_1790318179186_b53a",
+  "stepNumber": 12,
+  "stepId": "step_12_side_by_side_executive_summary",
+  "phase": "Phase E: Target System Proof & Executive Export",
+  "title": "End-to-End Executive Verification Summary (GE App Output + Target Record + Telemetry)",
+  "surface": "Demo Generator — Side-by-Side Executive Proof",
+  "expectedOutcome": "Complete 12-step visual runbook verified and ready for Approve & Save or Partial Modify.",
+  "screenshotPath": "/Users/nitinagga/documents/demoes-ge/scratch/demo_runs/run_1790318179186_b53a/screenshots/step_12_step_12_side_by_side_executive_summary.png",
+  "failureScreenshotPath": null,
+  "attempts": [
+    {
+      "attemptNumber": 1,
+      "pathLabel": "Path A: Live GCP API (200 OK in 121ms)",
+      "outcome": "SUCCEEDED",
+      "isFallback": false,
+      "timestamp": "2026-09-25T06:36:58.854Z"
+    }
+  ],
+  "liveApiSummary": {
+    "method": "GET",
+    "endpoint": "https://discoveryengine.googleapis.com/v1alpha/projects/vertex-ai-493102/locations/global/collections/default_collection/engines",
+    "httpStatus": 200,
+    "latencyMs": 121,
+    "fallbackStatus": null
+  },
+  "outboxEntry": null,
+  "reusedFromCheckpoint": false,
+  "completedAt": "2026-09-25T06:36:59.174Z"
+}

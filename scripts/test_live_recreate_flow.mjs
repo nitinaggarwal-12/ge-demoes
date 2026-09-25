@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));

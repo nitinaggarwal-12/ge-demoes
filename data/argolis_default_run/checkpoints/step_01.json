@@ -1,0 +1,30 @@
+{
+  "runId": "run_1790318179186_b53a",
+  "stepNumber": 1,
+  "stepId": "step_01_initial_login",
+  "phase": "Phase A: Authentication & Session Bootstrap",
+  "title": "Initial Login & Google Cloud / Enterprise Identity Session Verification",
+  "surface": "Google Cloud & Corporate SSO Login",
+  "expectedOutcome": "Authenticated corporate identity badge + active OAuth/ADC session confirmed without login redirect.",
+  "screenshotPath": "/Users/nitinagga/documents/demoes-ge/scratch/demo_runs/run_1790318179186_b53a/screenshots/step_01_step_01_initial_login.png",
+  "failureScreenshotPath": null,
+  "attempts": [
+    {
+      "attemptNumber": 1,
+      "pathLabel": "Path A: Live GCP API (200 OK in 179ms)",
+      "outcome": "SUCCEEDED",
+      "isFallback": false,
+      "timestamp": "2026-09-25T06:36:24.366Z"
+    }
+  ],
+  "liveApiSummary": {
+    "method": "GET",
+    "endpoint": "https://oauth2.googleapis.com/tokeninfo?access_token=[DLP-REDACTED-TOKEN]",
+    "httpStatus": 200,
+    "latencyMs": 179,
+    "fallbackStatus": null
+  },
+  "outboxEntry": null,
+  "reusedFromCheckpoint": false,
+  "completedAt": "2026-09-25T06:36:24.548Z"
+}

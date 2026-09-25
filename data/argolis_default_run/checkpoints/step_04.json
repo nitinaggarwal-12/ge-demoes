@@ -1,0 +1,30 @@
+{
+  "runId": "run_1790318179186_b53a",
+  "stepNumber": 4,
+  "stepId": "step_04_connector_or_mcp_setup",
+  "phase": "Phase B: Connector & Tool Registration",
+  "title": "Mode 1: BYOMCP Server (Cloud Run / Local) — ServiceNow Connection & Endpoint Health Check",
+  "surface": "Gemini Enterprise — Data Stores & MCP Tools",
+  "expectedOutcome": "ServiceNow endpoint returns HTTP 200 OK and exposes read/write tool schemas.",
+  "screenshotPath": "/Users/nitinagga/documents/demoes-ge/scratch/demo_runs/run_1790318179186_b53a/screenshots/step_04_step_04_connector_or_mcp_setup.png",
+  "failureScreenshotPath": null,
+  "attempts": [
+    {
+      "attemptNumber": 1,
+      "pathLabel": "Path A: Live GCP API (200 OK in 260ms)",
+      "outcome": "SUCCEEDED",
+      "isFallback": false,
+      "timestamp": "2026-09-25T06:36:29.029Z"
+    }
+  ],
+  "liveApiSummary": {
+    "method": "GET",
+    "endpoint": "https://discoveryengine.googleapis.com/v1alpha/projects/vertex-ai-493102/locations/global/collections/default_collection/engines/gemini-enterprise-1776****2799",
+    "httpStatus": 200,
+    "latencyMs": 260,
+    "fallbackStatus": null
+  },
+  "outboxEntry": null,
+  "reusedFromCheckpoint": false,
+  "completedAt": "2026-09-25T06:36:29.216Z"
+}

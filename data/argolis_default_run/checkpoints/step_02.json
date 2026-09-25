@@ -1,0 +1,30 @@
+{
+  "runId": "run_1790318179186_b53a",
+  "stepNumber": 2,
+  "stepId": "step_02_gcp_project_iam",
+  "phase": "Phase A: Authentication & Session Bootstrap",
+  "title": "GCP Project Selection, Discovery Engine API & IAM Role Verification",
+  "surface": "Google Cloud Console — APIs & IAM",
+  "expectedOutcome": "Discovery Engine API, Secret Manager API, and Cloud Run Admin roles verified GREEN.",
+  "screenshotPath": "/Users/nitinagga/documents/demoes-ge/scratch/demo_runs/run_1790318179186_b53a/screenshots/step_02_step_02_gcp_project_iam.png",
+  "failureScreenshotPath": null,
+  "attempts": [
+    {
+      "attemptNumber": 1,
+      "pathLabel": "Path A: Live GCP API (200 OK in 523ms)",
+      "outcome": "SUCCEEDED",
+      "isFallback": false,
+      "timestamp": "2026-09-25T06:36:26.090Z"
+    }
+  ],
+  "liveApiSummary": {
+    "method": "GET",
+    "endpoint": "https://cloudresourcemanager.googleapis.com/v1/projects/vertex-ai-493102",
+    "httpStatus": 200,
+    "latencyMs": 523,
+    "fallbackStatus": null
+  },
+  "outboxEntry": null,
+  "reusedFromCheckpoint": false,
+  "completedAt": "2026-09-25T06:36:26.217Z"
+}

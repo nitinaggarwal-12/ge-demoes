@@ -1,0 +1,30 @@
+{
+  "runId": "run_1790318179186_b53a",
+  "stepNumber": 7,
+  "stepId": "step_07_preflight_tool_ping",
+  "phase": "Phase C: Gemini Enterprise Agent & Grounding Setup",
+  "title": "Pre-Flight Live Tool Handshake & Schema Introspection (ServiceNow)",
+  "surface": "Gemini Enterprise — Tool Test Console",
+  "expectedOutcome": "Tool ping succeeded in 340ms; schema contract verified.",
+  "screenshotPath": "/Users/nitinagga/documents/demoes-ge/scratch/demo_runs/run_1790318179186_b53a/screenshots/step_07_step_07_preflight_tool_ping.png",
+  "failureScreenshotPath": null,
+  "attempts": [
+    {
+      "attemptNumber": 1,
+      "pathLabel": "Path A: Live GCP API (200 OK in 2684ms)",
+      "outcome": "SUCCEEDED",
+      "isFallback": false,
+      "timestamp": "2026-09-25T06:36:35.349Z"
+    }
+  ],
+  "liveApiSummary": {
+    "method": "POST",
+    "endpoint": "https://us-central1-aiplatform.googleapis.com/v1/projects/vertex-ai-493102/locations/us-central1/publishers/google/models/gemini-2.5-flash:generateContent",
+    "httpStatus": 200,
+    "latencyMs": 2684,
+    "fallbackStatus": null
+  },
+  "outboxEntry": null,
+  "reusedFromCheckpoint": false,
+  "completedAt": "2026-09-25T06:36:35.545Z"
+}

@@ -1,0 +1,35 @@
+{
+  "runId": "run_1790318179186_b53a",
+  "stepNumber": 10,
+  "stepId": "step_10_execute_write_action_idempotent",
+  "phase": "Phase D: End-to-End Prompt Execution & Write Action",
+  "title": "Execute Idempotent Write Action in ServiceNow (Exactly-Once Outbox Key)",
+  "surface": "Gemini Enterprise Web Application — Action Confirmation",
+  "expectedOutcome": "Created single authoritative record in ServiceNow (Write Count = 1, Deduplicated on retry).",
+  "screenshotPath": "/Users/nitinagga/documents/demoes-ge/scratch/demo_runs/run_1790318179186_b53a/screenshots/step_10_step_10_execute_write_action_idempotent.png",
+  "failureScreenshotPath": null,
+  "attempts": [
+    {
+      "attemptNumber": 1,
+      "pathLabel": "Path A: Live GCP API (200 OK in 1764ms)",
+      "outcome": "SUCCEEDED",
+      "isFallback": false,
+      "timestamp": "2026-09-25T06:36:55.475Z"
+    }
+  ],
+  "liveApiSummary": {
+    "method": "POST",
+    "endpoint": "https://us-central1-aiplatform.googleapis.com/v1/projects/vertex-ai-493102/locations/us-central1/publishers/google/models/gemini-2.5-flash:generateContent",
+    "httpStatus": 200,
+    "latencyMs": 1764,
+    "fallbackStatus": null
+  },
+  "outboxEntry": {
+    "idempotencyKey": "idem_ec46e1124f1c199c335f648e",
+    "targetRecordId": "CAPA-2026-991",
+    "connector": "ServiceNow",
+    "committedAt": "2026-09-25T06:36:55.475Z"
+  },
+  "reusedFromCheckpoint": false,
+  "completedAt": "2026-09-25T06:36:55.666Z"
+}

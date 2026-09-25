@@ -1,0 +1,30 @@
+{
+  "runId": "run_1790318179186_b53a",
+  "stepNumber": 11,
+  "stepId": "step_11_verify_in_target_system",
+  "phase": "Phase E: Target System Proof & Executive Export",
+  "title": "Direct Verification Inside Target System (ServiceNow Native Record View)",
+  "surface": "ServiceNow Enterprise Portal",
+  "expectedOutcome": "ServiceNow native UI displays record CAPA-2026-991 with matching correlation ID from Gemini Enterprise.",
+  "screenshotPath": "/Users/nitinagga/documents/demoes-ge/scratch/demo_runs/run_1790318179186_b53a/screenshots/step_11_step_11_verify_in_target_system.png",
+  "failureScreenshotPath": null,
+  "attempts": [
+    {
+      "attemptNumber": 1,
+      "pathLabel": "Path A: Live GCP API (200 OK in 495ms)",
+      "outcome": "SUCCEEDED",
+      "isFallback": false,
+      "timestamp": "2026-09-25T06:36:57.326Z"
+    }
+  ],
+  "liveApiSummary": {
+    "method": "GET",
+    "endpoint": "https://discoveryengine.googleapis.com/v1alpha/projects/vertex-ai-493102/locations/global/collections/default_collection/engines/gemini-enterprise-1776****2799/assistants",
+    "httpStatus": 200,
+    "latencyMs": 495,
+    "fallbackStatus": null
+  },
+  "outboxEntry": null,
+  "reusedFromCheckpoint": false,
+  "completedAt": "2026-09-25T06:36:57.479Z"
+}
