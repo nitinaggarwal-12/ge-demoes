@@ -2935,12 +2935,13 @@ function compileSSML(rawText) {
     --accent-hover: #1557b0;
     --accent-light: #8ab4f8;
     --accent-glow: rgba(26, 115, 232, 0.35);
-    --green: #34a853;
-    --green-bg: rgba(52, 168, 83, 0.16);
-    --amber: #fbbc04;
-    --yellow: #fbbc04;
-    --purple: #a142f4;
-    --cyan: #24c1e0;
+    --green: #4ade80;
+    --green-bg: #0f291e;
+    --amber: #fbbf24;
+    --yellow: #fbbf24;
+    --purple: #c084fc;
+    --cyan: #38bdf8;
+    --pink-accent: #f472b6;
     --red-text: #f28b82;
     --code-bg: #15171c;
     --code-border: #2e323b;
@@ -2978,11 +2979,12 @@ function compileSSML(rawText) {
     --accent-light: #1d4ed8;
     --accent-glow: rgba(29, 78, 216, 0.2);
     --green: #047857;
-    --green-bg: rgba(4, 120, 87, 0.12);
+    --green-bg: #d1fae5;
     --amber: #b45309;
     --yellow: #b45309;
     --purple: #6d28d9;
     --cyan: #0369a1;
+    --pink-accent: #9d174d;
     --red-text: #b91c1c;
     --code-bg: #f1f5f9;
     --code-border: #cbd5e1;
@@ -3129,7 +3131,6 @@ function compileSSML(rawText) {
   }
   .app-sidebar.collapsed .sidebar-toggle-btn {
     margin: 0 auto;
-    transform: rotate(180deg);
   }
 
   .sidebar-content {
@@ -3328,34 +3329,40 @@ function compileSSML(rawText) {
   .topbar-inner {
     max-width: 1600px;
     margin: 0 auto;
-    padding: 8px 20px;
+    padding: 6px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    gap: 8px 12px;
+    flex-wrap: wrap;
+    overflow-x: visible;
   }
   .topbar-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     min-width: 0;
-    flex-shrink: 1;
+    flex: 0 1 auto;
   }
   .topbar-toggle-btn {
     background: transparent;
     border: 1px solid var(--border);
     color: var(--text);
-    width: 34px;
-    height: 34px;
+    width: 32px;
+    height: 32px;
     border-radius: 4px;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.15s;
     font-size: 15px;
+    flex-shrink: 0;
+  }
+  @media (max-width: 768px) {
+    .topbar-toggle-btn {
+      display: flex;
+    }
   }
   .topbar-toggle-btn:hover {
     background: var(--card-hover);
@@ -3366,23 +3373,24 @@ function compileSSML(rawText) {
   .gcp-project-chip {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: 6px;
     background: var(--card);
     border: 1px solid var(--border);
-    padding: 5px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
     color: var(--text);
     cursor: pointer;
     transition: all 0.15s;
+    white-space: nowrap;
   }
   .gcp-project-chip:hover {
     border-color: var(--accent);
     background: var(--card-hover);
   }
   .gcp-project-icon {
-    color: var(--gcp-blue);
+    color: var(--accent-light);
     font-size: 13px;
   }
   .gcp-project-label {
@@ -3404,19 +3412,22 @@ function compileSSML(rawText) {
   .gcp-search-box {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 12px;
-    min-width: 280px;
-    max-width: 480px;
-    flex: 1;
+    border-radius: 6px;
+    padding: 4px 10px;
+    width: 190px;
+    max-width: 200px;
+    flex: 0 1 190px;
     cursor: pointer;
     transition: all 0.15s;
   }
-  @media (max-width: 1200px) {
+  @media (max-width: 1440px) {
     .gcp-search-box { display: none; }
+  }
+  .app-sidebar:not(.collapsed) ~ .app-main .gcp-search-box {
+    display: none;
   }
   .gcp-search-box:hover {
     border-color: var(--accent);
@@ -3426,7 +3437,7 @@ function compileSSML(rawText) {
     color: var(--muted);
   }
   .gcp-search-placeholder {
-    font-size: 12px;
+    font-size: 11.5px;
     color: var(--muted);
     flex: 1;
     white-space: nowrap;
@@ -3491,7 +3502,30 @@ function compileSSML(rawText) {
   .topbar-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .topbar-actions .btn-link,
+  .topbar-actions .btn-theme-toggle,
+  .topbar-actions .btn-recreate-dropdown,
+  .topbar-actions .audience-pill-btn,
+  .topbar-actions .status-badge {
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 4px 9px;
+    font-size: 11px;
+  }
+  @media (max-width: 1360px) {
+    .topbar-inner { padding: 5px 10px; gap: 6px; }
+    .topbar-actions { gap: 4px; }
+    .topbar-actions .btn-link,
+    .topbar-actions .btn-theme-toggle,
+    .topbar-actions .btn-recreate-dropdown,
+    .topbar-actions .audience-pill-btn,
+    .topbar-actions .status-badge {
+      padding: 3px 7px;
+      font-size: 10.5px;
+    }
   }
 
   /* Google Cloud Theme Switcher Button */
@@ -3499,16 +3533,17 @@ function compileSSML(rawText) {
     background: var(--card);
     border: 1px solid var(--border);
     color: var(--text);
-    padding: 6px 11px;
+    padding: 5px 10px;
     border-radius: 4px;
     font-family: var(--font-heading);
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     transition: all 0.15s;
+    white-space: nowrap;
   }
   .btn-theme-toggle:hover {
     background: var(--card-hover);
@@ -3520,14 +3555,15 @@ function compileSSML(rawText) {
     background: var(--green-bg);
     color: var(--green);
     border: 1px solid rgba(52, 168, 83, 0.35);
-    padding: 5px 11px;
+    padding: 5px 10px;
     border-radius: 16px;
     font-family: var(--font-heading);
     font-size: 11.5px;
     font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 6px;
+    white-space: nowrap;
     white-space: nowrap;
   }
   .status-dot {
@@ -3857,20 +3893,24 @@ function compileSSML(rawText) {
   .hero-banner {
     background: linear-gradient(135deg, rgba(26, 115, 232, 0.12), rgba(66, 133, 244, 0.04));
     border: 1px solid rgba(66, 133, 244, 0.3);
-    border-radius: 12px;
-    padding: 22px 28px;
-    margin-bottom: 24px;
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px;
     box-shadow: var(--gcp-card-shadow);
+  }
+  .hero-text {
+    flex: 1 1 520px;
+    min-width: 300px;
   }
   .hero-text h1 {
     font-family: var(--font-heading);
-    margin: 0 0 6px 0;
-    font-size: 22px;
+    margin: 0 0 4px 0;
+    font-size: 20px;
     font-weight: 600;
     color: var(--text-heading);
     display: flex;
@@ -3879,9 +3919,9 @@ function compileSSML(rawText) {
   }
   .hero-text p {
     margin: 0;
-    font-size: 13.5px;
+    font-size: 13px;
     color: var(--muted);
-    max-width: 880px;
+    max-width: 960px;
   }
   .hero-text code {
     background: var(--code-bg);
@@ -4241,16 +4281,16 @@ function compileSSML(rawText) {
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 14px 20px;
-    margin-bottom: 20px;
+    padding: 10px 16px;
+    margin-bottom: 12px !important;
     box-shadow: var(--gcp-card-shadow);
   }
   .config-strip-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
     border-bottom: 1px solid var(--border);
     flex-wrap: wrap;
     gap: 8px;
@@ -4265,8 +4305,8 @@ function compileSSML(rawText) {
   }
   .config-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 12px 20px;
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    gap: 8px 16px;
   }
   .config-cell {
     display: flex;
@@ -4288,7 +4328,7 @@ function compileSSML(rawText) {
     line-height: 1.4;
   }
   .config-cell-value.link-val {
-    color: var(--accent);
+    color: var(--accent-light);
     cursor: pointer;
   }
   .config-cell-value.link-val:hover {
@@ -5110,6 +5150,12 @@ function compileSSML(rawText) {
     border: 1px solid var(--border);
     padding: 9px 12px;
     text-align: left;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  table.data-table code {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
   table.data-table th {
     background: var(--panel-header);
@@ -5498,35 +5544,51 @@ function compileSSML(rawText) {
     border-color: var(--accent);
   }
 
-  /* Toast Notification */
+  /* Toast Notification (Compact Bottom-Right Non-Blocking Overlay) */
   .gcp-toast {
     position: fixed;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%) translateY(120px);
-    background: #202124;
-    color: #ffffff;
-    border: 1px solid #4285f4;
-    border-radius: 30px;
-    padding: 10px 22px;
+    bottom: 16px;
+    right: 16px;
+    left: auto;
+    transform: translateY(100px);
+    background: #1e293b;
+    color: #f8fafc;
+    border: 1px solid #3b82f6;
+    border-radius: 10px;
+    padding: 8px 14px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    gap: 10px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.35);
     z-index: 99999;
-    transition: transform 0.28s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.28s ease;
+    transition: transform 0.22s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.22s ease;
     opacity: 0;
     pointer-events: none;
-    max-width: 90vw;
+    max-width: 360px;
   }
   .gcp-toast.visible {
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
     opacity: 1;
     pointer-events: auto;
   }
-  .gcp-toast-icon { font-size: 16px; }
-  .gcp-toast-title { font-size: 12.5px; font-weight: 600; font-family: var(--font-heading); }
-  .gcp-toast-url { font-size: 11px; color: #9aa0a6; font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 420px; }
+  .gcp-toast-icon { font-size: 14px; flex-shrink: 0; }
+  .gcp-toast-title { font-size: 12px; font-weight: 600; font-family: var(--font-heading); line-height: 1.3; }
+  .gcp-toast-url { font-size: 10.5px; color: #cbd5e1; font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px; }
+  .gcp-toast-close {
+    background: transparent;
+    border: none;
+    color: #cbd5e1;
+    font-size: 13px;
+    line-height: 1;
+    padding: 2px 4px;
+    margin-left: auto;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  .gcp-toast-close:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+  }
 
   .gallery-grid {
     display: grid;
@@ -6612,9 +6674,9 @@ function compileSSML(rawText) {
     background: linear-gradient(180deg, rgba(26, 115, 232, 0.07) 0%, rgba(15, 23, 42, 0.55) 100%);
     border: 1px solid rgba(138, 180, 248, 0.32);
     border-left: 4px solid var(--gcp-blue, #4285F4);
-    border-radius: 12px;
-    padding: 16px 20px;
-    margin-bottom: 18px;
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin-bottom: 12px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
   }
   [data-theme="light"] .arch-decision-card,
@@ -6624,6 +6686,32 @@ function compileSSML(rawText) {
     border-left: 4px solid #1d4ed8;
     box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
     color: #0f172a;
+  }
+  .arch-decision-card div,
+  .arch-decision-card p {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .grid-3x2-responsive {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+  @media (max-width: 1100px) {
+    .grid-3x2-responsive {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 700px) {
+    .grid-3x2-responsive {
+      grid-template-columns: 1fr;
+    }
+  }
+  .arch-decision-card code,
+  .arch-matrix-table code {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
   [data-theme="light"] .arch-decision-card code,
   [data-theme="light"] .arch-matrix-table code {
@@ -6642,7 +6730,7 @@ function compileSSML(rawText) {
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 0;
   }
   .arch-decision-title-group {
     display: flex;
@@ -6662,19 +6750,24 @@ function compileSSML(rawText) {
     text-transform: uppercase;
   }
   .arch-mode-pill.hybrid {
-    background: rgba(66, 133, 244, 0.18);
-    color: #8ab4f8;
-    border: 1px solid rgba(66, 133, 244, 0.45);
+    background: #172554;
+    color: #93c5fd;
+    border: 1px solid #3b82f6;
   }
   .arch-mode-pill.spec-custom {
-    background: rgba(251, 188, 4, 0.16);
-    color: #fdd663;
-    border: 1px solid rgba(251, 188, 4, 0.45);
+    background: #3b2506;
+    color: #fde68a;
+    border: 1px solid #f59e0b;
   }
   .arch-mode-pill.unified-custom {
-    background: rgba(52, 168, 83, 0.16);
-    color: #81c995;
-    border: 1px solid rgba(52, 168, 83, 0.45);
+    background: #062e1e;
+    color: #86efac;
+    border: 1px solid #10b981;
+  }
+  .arch-mode-pill.sn-lab-pill {
+    background: #2e1065;
+    color: #ddd6fe;
+    border: 1px solid #8b5cf6;
   }
   [data-theme="light"] .arch-mode-pill.hybrid,
   body.gcp-light-mode .arch-mode-pill.hybrid {
@@ -6693,6 +6786,12 @@ function compileSSML(rawText) {
     background: #d1fae5;
     color: #064e3b;
     border-color: #6ee7b7;
+  }
+  [data-theme="light"] .arch-mode-pill.sn-lab-pill,
+  body.gcp-light-mode .arch-mode-pill.sn-lab-pill {
+    background: #ede9fe;
+    color: #4c1d95;
+    border-color: #a78bfa;
   }
   .arch-summary-banner {
     font-size: 13px;
@@ -6921,8 +7020,8 @@ function compileSSML(rawText) {
     .key-menu-item:hover,
     .key-menu-item.active {
       border-color: var(--accent);
-      background: rgba(26, 115, 232, 0.1);
-      color: var(--accent);
+      background: var(--bg-secondary);
+      color: var(--accent-light);
       box-shadow: 0 2px 8px rgba(26, 115, 232, 0.15);
     }
     .key-menu-icon {
@@ -7022,8 +7121,8 @@ function compileSSML(rawText) {
       transition: background 0.12s;
     }
     .flyout-project-row:hover {
-      background: rgba(26, 115, 232, 0.12);
-      color: var(--accent);
+      background: var(--bg-secondary);
+      color: var(--accent-light);
     }
 
     /* Level 2 Hover Flyout: Hover over each Project -> Shows all its Assets */
@@ -7078,8 +7177,8 @@ function compileSSML(rawText) {
       font-weight: 700;
       padding: 2px 7px;
       border-radius: 999px;
-      background: rgba(26, 115, 232, 0.12);
-      color: var(--accent);
+      background: var(--bg-secondary);
+      color: var(--accent-light);
     }
   </style>
 
@@ -7115,21 +7214,21 @@ function compileSSML(rawText) {
           <span class="key-menu-title">Demo Generator</span>
           <span class="key-menu-sub">12-Step [1]+[2] Studio</span>
         </div>
-        <span class="key-menu-badge" style="font-size:10px;background:rgba(16,185,129,0.16);color:#059669;padding:2px 6px;border-radius:6px;">[1]+[2]</span>
+        <span class="key-menu-badge" style="font-size:10px;background:var(--green-bg);color:var(--green);padding:2px 6px;border-radius:6px;">[1]+[2]</span>
       </div>
 
       <!-- ======================================================== -->
-      <!-- KEY MENU 2: PROJECTS (Hover -> Projects -> Assets)       -->
+      <!-- KEY MENU 2: PROJECTS (Hover or Click -> Projects -> Assets) -->
       <!-- ======================================================== -->
-      <div class="key-menu-item key-menu-projects-wrap" id="sideLink-projects" title="Hover to browse all Projects and their Assets">
+      <div class="key-menu-item key-menu-projects-wrap" id="sideLink-projects" onclick="toggleProjectsFlyout(event)" title="Click or hover to browse all Projects and their Assets">
         <span class="key-menu-icon">📁</span>
         <div class="key-menu-text">
           <span class="key-menu-title">Projects ▸</span>
-          <span class="key-menu-sub">Hover for Projects &amp; Assets</span>
+          <span class="key-menu-sub">Click or Hover for Projects</span>
         </div>
-        <span class="key-menu-badge" style="font-size:10px;background:rgba(37,99,235,0.14);color:#2563EB;padding:2px 6px;border-radius:6px;">6</span>
+        <span class="key-menu-badge" style="font-size:10px;background:rgba(37,99,235,0.14);color:var(--accent-light);padding:2px 6px;border-radius:6px;">6</span>
 
-        <!-- LEVEL 1 HOVER FLYOUT: ALL PROJECTS -->
+        <!-- LEVEL 1 HOVER/CLICK FLYOUT: ALL PROJECTS -->
         <div class="projects-flyout-level1">
           <div class="flyout-header-label">
             <span>Argolis Enterprise Projects</span>
@@ -7137,8 +7236,8 @@ function compileSSML(rawText) {
           </div>
 
           <!-- Project 1: ServiceNow MCP -->
-          <div class="flyout-project-row">
-            <div style="display:flex;align-items:center;gap:8px;" onclick="selectProjectView('servicenow', 'tab-servicenow')">
+          <div class="flyout-project-row" onclick="if(!event.target.closest('.assets-flyout-level2')) selectProjectView('servicenow', 'tab-servicenow')">
+            <div style="display:flex;align-items:center;gap:8px;">
               <span>⚡</span>
               <div>
                 <div>ServiceNow MCP</div>
@@ -7171,8 +7270,8 @@ function compileSSML(rawText) {
           </div>
 
           <!-- Project 2: Veeva Vault MCP -->
-          <div class="flyout-project-row">
-            <div style="display:flex;align-items:center;gap:8px;" onclick="selectProjectView('veeva', 'tab-veeva')">
+          <div class="flyout-project-row" onclick="if(!event.target.closest('.assets-flyout-level2')) selectProjectView('veeva', 'tab-veeva')">
+            <div style="display:flex;align-items:center;gap:8px;">
               <span>🧪</span>
               <div>
                 <div>Veeva Vault MCP</div>
@@ -7205,8 +7304,8 @@ function compileSSML(rawText) {
           </div>
 
           <!-- Project 3: Microsoft Unified -->
-          <div class="flyout-project-row">
-            <div style="display:flex;align-items:center;gap:8px;" onclick="selectProjectView('microsoft', 'tab-microsoft')">
+          <div class="flyout-project-row" onclick="if(!event.target.closest('.assets-flyout-level2')) selectProjectView('microsoft', 'tab-microsoft')">
+            <div style="display:flex;align-items:center;gap:8px;">
               <span>🏢</span>
               <div>
                 <div>Microsoft Unified 365</div>
@@ -7236,8 +7335,8 @@ function compileSSML(rawText) {
           </div>
 
           <!-- Project 4: Meeting Lifecycle -->
-          <div class="flyout-project-row">
-            <div style="display:flex;align-items:center;gap:8px;" onclick="selectProjectView('meetings', 'tab-meetings')">
+          <div class="flyout-project-row" onclick="if(!event.target.closest('.assets-flyout-level2')) selectProjectView('meetings', 'tab-meetings')">
+            <div style="display:flex;align-items:center;gap:8px;">
               <span>🗓️</span>
               <div>
                 <div>Meeting Lifecycle</div>
@@ -7264,8 +7363,8 @@ function compileSSML(rawText) {
           </div>
 
           <!-- Project 5: Spark Desktop -->
-          <div class="flyout-project-row">
-            <div style="display:flex;align-items:center;gap:8px;" onclick="selectProjectView('spark', 'tab-spark')">
+          <div class="flyout-project-row" onclick="if(!event.target.closest('.assets-flyout-level2')) selectProjectView('spark', 'tab-spark')">
+            <div style="display:flex;align-items:center;gap:8px;">
               <span>⚡</span>
               <div>
                 <div>Spark Desktop Agent</div>
@@ -7317,7 +7416,7 @@ function compileSSML(rawText) {
           <span class="key-menu-title">OAuth Setup</span>
           <span class="key-menu-sub">Create &amp; Sync Connections</span>
         </div>
-        <span class="key-menu-badge" style="font-size:10px;background:rgba(16,185,129,0.16);color:#059669;padding:2px 6px;border-radius:6px;">Sync</span>
+        <span class="key-menu-badge" style="font-size:10px;background:var(--green-bg);color:var(--green);padding:2px 6px;border-radius:6px;">Sync</span>
       </div>
     </div>
 
@@ -7353,9 +7452,10 @@ function compileSSML(rawText) {
           <!-- Interactive GCP Project Selector Dropdown -->
           <div class="gcp-project-dropdown-wrapper">
             <div class="gcp-project-chip" id="gcpProjectChip" onclick="toggleProjectMenu(event)" title="Select Enterprise Project Context">
-            <span class="project-dot"></span>
-            <span class="project-label" id="currentProjectName">ServiceNow MCP Connector</span>
-            <span class="project-arrow">▾</span>
+              <span class="project-dot"></span>
+              <span class="project-label" id="currentProjectName">ServiceNow MCP Connector</span>
+              <span class="project-arrow">▾</span>
+            </div>
 
             <div class="gcp-project-menu" id="gcpProjectMenu" style="display:none;" onclick="event.stopPropagation()">
               <div class="project-menu-header">Select Enterprise Project</div>
@@ -7544,7 +7644,7 @@ function compileSSML(rawText) {
         <div class="config-strip-card">
           <div class="config-strip-header">
             <div class="config-strip-title">
-              <span style="color:var(--gcp-blue);">⚡</span>
+              <span style="color:var(--accent-light);">⚡</span>
               <span>ServiceNow BYOMCP Instance Configuration</span>
               <span style="font-size:11px; color:var(--muted); font-family:var(--font-mono); margin-left:6px;">(Project: argolis-ge-enterprise)</span>
             </div>
@@ -7590,10 +7690,10 @@ function compileSSML(rawText) {
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
               <button class="btn-link" style="padding:4px 10px; font-size:11.5px;" onclick="openConnectorArchitectureModal('servicenow')">📊 Full 3-Connector Matrix ↗</button>
-              <button class="btn-link" style="padding:4px 10px; font-size:11.5px;" onclick="toggleArchDecisionCard('archBody-servicenow', this)">▼ Collapse</button>
+              <button id="btnToggleArch-servicenow" class="btn-link" style="padding:4px 10px; font-size:11.5px;" data-expand-label="▶ Expand Pros &amp; Cons" onclick="toggleArchDecisionCard('archBody-servicenow', this)">▶ Expand Pros &amp; Cons</button>
             </div>
           </div>
-          <div id="archBody-servicenow">
+          <div id="archBody-servicenow" style="display:none; margin-top:12px;">
             <div class="arch-summary-banner">
               <strong>How ServiceNow is Connected:</strong> This project uses <strong>BOTH</strong> Google Cloud’s <strong>Official 1st-Party (1P) ServiceNow Connector</strong> (<strong>Mode 2</strong> <code>ACTIONS</code> <code>bap_tool_spec_version_id: "usf-v1"</code> for <code>list_incidents</code>, <code>get_incident</code>, <code>search_knowledge_articles</code> &amp; <strong>Mode 3</strong> <code>FEDERATED</code> / <code>DATA_INGESTION</code>) <strong>AND</strong> a <strong>Custom BYOMCP Server</strong> (<strong>Mode 1</strong> <code>custom_mcp</code> in <code>src/mcp-server/server.mjs</code> at <code>POST /mcp</code>) that proxies the live ServiceNow REST Table API (<code>/api/now/table/...</code>) and adds custom GxP LIMS / CMDB CI asset correlation (<code>CI-LIMS-PROD-04</code>).
             </div>
@@ -7618,21 +7718,21 @@ function compileSSML(rawText) {
         </div>
 
         <!-- 1C. ServiceNow MCP Annotations, 4-Method Gemini Payload Verification Lab & GCP IAM Access Request Card -->
-        <div class="arch-decision-card" id="snVerificationLabCard" style="border-left: 4px solid #7C3AED; margin-bottom: 18px;">
-          <div class="arch-decision-header" style="background: rgba(124, 58, 237, 0.08); padding: 8px 12px; border-radius: 8px;">
+        <div class="arch-decision-card" id="snVerificationLabCard" style="border-left: 4px solid #7C3AED; margin-bottom: 10px;">
+          <div class="arch-decision-header" style="background: rgba(124, 58, 237, 0.08); padding: 6px 10px; border-radius: 8px;">
             <div class="arch-decision-title-group">
-              <span class="arch-mode-pill" style="background:#EDE9FE; color:#4C1D95; border:1px solid #A78BFA;">🔬 MCP Annotations &amp; Wire Verification Lab</span>
-              <span style="font-size:13px; font-weight:700; color:var(--text);">Where ServiceNow Annotations (<code>readOnlyHint</code>) Live + 4 Ways to Verify What Gemini Receives + GCP IAM Access</span>
+              <span class="arch-mode-pill sn-lab-pill">🔬 MCP Annotations &amp; Wire Verification Lab</span>
+              <span style="font-size:12.5px; font-weight:700; color:var(--text);"><code>readOnlyHint</code> Annotations, 6 Wire Verification Tests &amp; ServiceNow ACL/RBAC Proof</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
-              <button class="btn-primary" style="padding:5px 12px; font-size:11.5px; background:#6D28D9; border:none; border-radius:6px; color:#fff; font-weight:700; cursor:pointer;" onclick="runAll4SnVerificationTests()">▶ Run All 4 Verification Tests</button>
-              <button class="btn-link" style="padding:4px 10px; font-size:11.5px;" onclick="toggleArchDecisionCard('snVerificationLabBody', this)">▼ Collapse</button>
+              <button class="btn-primary" style="padding:4px 10px; font-size:11.5px; background:#6D28D9; border:none; border-radius:6px; color:#fff; font-weight:700; cursor:pointer;" onclick="runAll4SnVerificationTests()">▶ Run All 4 Verification Tests</button>
+              <button id="btnToggleSnLab" class="btn-link" style="padding:4px 10px; font-size:11.5px;" data-expand-label="▶ Expand Lab (6 Tests &amp; Proof)" onclick="toggleArchDecisionCard('snVerificationLabBody', this)">▶ Expand Lab (6 Tests &amp; Proof)</button>
             </div>
           </div>
 
-          <div id="snVerificationLabBody" style="padding: 14px 16px;">
+          <div id="snVerificationLabBody" style="display:none; padding: 14px 16px 4px 16px;">
             <!-- Section A: Where Annotations Are Written (2 Places) -->
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin-bottom: 14px;">
               <div style="background:var(--bg-secondary); border:1px solid var(--border); border-radius:8px; padding:12px;">
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
                   <span style="font-size:12px; font-weight:700; color:var(--accent-light);">📍 Location 1: ServiceNow Native MCP Console (<code>merckfv.service-now.com</code>)</span>
@@ -7666,12 +7766,12 @@ function compileSSML(rawText) {
               <span id="snVerifyStatusBadge" style="font-size:11px; font-weight:700; color:var(--purple);">Ready to run live wire verification</span>
             </div>
 
-            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;">
+            <div class="grid-3x2-responsive" style="margin-bottom: 12px;">
               <!-- Method 1 -->
               <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:var(--surface); display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-                    <span style="font-size:11.5px; font-weight:700; color:#5B21B6;">1. JSON-RPC tools/list</span>
+                    <span style="font-size:11.5px; font-weight:700; color:var(--purple);">1. JSON-RPC tools/list</span>
                     <span id="badge-method1_tools_list" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#E2E8F0; color:#0F172A; font-weight:700;">Idle</span>
                   </div>
                   <p style="font-size:11px; color:var(--muted); margin:0 0 8px 0; line-height:1.4;">
@@ -7687,7 +7787,7 @@ function compileSSML(rawText) {
               <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:var(--surface); display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-                    <span style="font-size:11.5px; font-weight:700; color:#0369A1;">2. JSON-RPC tools/call</span>
+                    <span style="font-size:11.5px; font-weight:700; color:var(--cyan);">2. JSON-RPC tools/call</span>
                     <span id="badge-method2_tools_call" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#E2E8F0; color:#0F172A; font-weight:700;">Idle</span>
                   </div>
                   <p style="font-size:11px; color:var(--muted); margin:0 0 8px 0; line-height:1.4;">
@@ -7703,7 +7803,7 @@ function compileSSML(rawText) {
               <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:var(--surface); display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-                    <span style="font-size:11.5px; font-weight:700; color:#92400E;">3. ServiceNow Logs &amp; KB</span>
+                    <span style="font-size:11.5px; font-weight:700; color:var(--amber);">3. ServiceNow Logs &amp; KB</span>
                     <span id="badge-method3_sn_logs_kb2952534" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#E2E8F0; color:#0F172A; font-weight:700;">Idle</span>
                   </div>
                   <p style="font-size:11px; color:var(--muted); margin:0 0 8px 0; line-height:1.4;">
@@ -7719,7 +7819,7 @@ function compileSSML(rawText) {
               <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:var(--surface); display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-                    <span style="font-size:11.5px; font-weight:700; color:#065F46;">4. GCP Cloud Logging</span>
+                    <span style="font-size:11.5px; font-weight:700; color:var(--green);">4. GCP Cloud Logging</span>
                     <span id="badge-method4_gcp_logging_trace" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#E2E8F0; color:#0F172A; font-weight:700;">Idle</span>
                   </div>
                   <p style="font-size:11px; color:var(--muted); margin:0 0 8px 0; line-height:1.4;">
@@ -7735,7 +7835,7 @@ function compileSSML(rawText) {
               <div style="border:1px solid #BE185D; border-radius:8px; padding:10px; background:var(--surface); display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-                    <span style="font-size:11.5px; font-weight:700; color:#9D174D;">5. KB5045566 &amp; Skill Check</span>
+                    <span style="font-size:11.5px; font-weight:700; color:var(--pink-accent);">5. KB5045566 &amp; Skill Check</span>
                     <span id="badge-method5_kb5045566_skill_diagnostic" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#FCE7F3; color:#831843; font-weight:700;">New</span>
                   </div>
                   <p style="font-size:11px; color:var(--muted); margin:0 0 8px 0; line-height:1.4;">
@@ -7751,7 +7851,7 @@ function compileSSML(rawText) {
               <div style="border:1px solid #2563EB; border-radius:8px; padding:10px; background:var(--surface); display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-                    <span style="font-size:11.5px; font-weight:700; color:#1D4ED8;">6. ACL, RBAC &amp; User Criteria</span>
+                    <span style="font-size:11.5px; font-weight:700; color:var(--accent-light);">6. ACL, RBAC &amp; User Criteria</span>
                     <span id="badge-method6_acl_rbac_enforcement_proof" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#DBEAFE; color:#1E3A8A; font-weight:700;">Security Proof</span>
                   </div>
                   <p style="font-size:11px; color:var(--muted); margin:0 0 8px 0; line-height:1.4;">
@@ -7786,7 +7886,7 @@ function compileSSML(rawText) {
               </div>
 
               <!-- 4 Architectural Security Controls Grid -->
-              <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; margin-bottom:12px;">
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:10px; margin-bottom:12px;">
                 <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:var(--bg-secondary);">
                   <div style="font-size:11.5px; font-weight:700; color:var(--accent-light); margin-bottom:4px;">1️⃣ Per-User 3-Legged OAuth (3LO) Identity Passthrough (Never Shared Admin)</div>
                   <div style="font-size:11px; color:var(--text); line-height:1.45;">
@@ -7821,7 +7921,7 @@ function compileSSML(rawText) {
               </div>
 
               <!-- GlideRecordSecure Code Block + Side-by-Side Role Simulation Matrix -->
-              <div style="display:grid; grid-template-columns: 1.15fr 0.85fr; gap:10px; margin-bottom:14px;">
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:10px; margin-bottom:14px;">
                 <div style="background:#0F172A; border:1px solid #334155; border-radius:8px; padding:10px;">
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
                     <span style="font-size:11px; font-weight:700; color:#38BDF8;">💻 ServiceNow Scripted REST API Enforcement (<code>get_knowledge_articles</code> &amp; <code>incident</code>)</span>
@@ -7892,7 +7992,7 @@ function compileSSML(rawText) {
                 <span style="font-size:10.5px; color:var(--accent-light); font-weight:700;">6 Verified Production Captures (GE Console + GE Chat + ServiceNow MCP Console)</span>
               </div>
 
-              <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+              <div class="grid-3x2-responsive">
                 <!-- Screenshot 1: SNOW MCP Console Tool Record & readOnlyHint -->
                 <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--bg-secondary); display:flex; flex-direction:column;">
                   <div style="padding:6px 8px; background:var(--panel-header); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
@@ -7966,7 +8066,7 @@ function compileSSML(rawText) {
                 <!-- Screenshot 6: Load Skill vs Finding Missing Tools When 3LO Unlinked -->
                 <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--bg-secondary); display:flex; flex-direction:column;">
                   <div style="padding:6px 8px; background:var(--panel-header); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
-                    <span style="font-size:10.5px; font-weight:700; color:#BE185D;">6. Load Skill ✔️ vs Unlinked 3LO Tool Gate</span>
+                    <span style="font-size:10.5px; font-weight:700; color:var(--pink-accent);">6. Load Skill ✔️ vs Unlinked 3LO Tool Gate</span>
                     <span style="font-size:9.5px; background:#BE185D; color:#fff; padding:1px 6px; border-radius:4px; font-weight:700;">Skill &amp; Auth Gate</span>
                   </div>
                   <a href="/screenshots/screenshots_acl_rbac_proof/06_ge_chat_load_skill_and_missing_tool_diagnostic.png" target="_blank" style="display:block; border-bottom:1px solid var(--border);">
@@ -8198,10 +8298,10 @@ function compileSSML(rawText) {
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
               <button class="btn-link" style="padding:4px 10px; font-size:11.5px;" onclick="openConnectorArchitectureModal('veeva')">📊 Full 3-Connector Matrix ↗</button>
-              <button class="btn-link" style="padding:4px 10px; font-size:11.5px;" onclick="toggleArchDecisionCard('archBody-veeva', this)">▼ Collapse</button>
+              <button id="btnToggleArch-veeva" class="btn-link" style="padding:4px 10px; font-size:11.5px;" data-expand-label="▶ Expand Pros &amp; Cons" onclick="toggleArchDecisionCard('archBody-veeva', this)">▶ Expand Pros &amp; Cons</button>
             </div>
           </div>
-          <div id="archBody-veeva">
+          <div id="archBody-veeva" style="display:none; margin-top:12px;">
             <div class="arch-summary-banner">
               <strong>How Veeva Vault is Connected:</strong> Implements the exact schema from Google Cloud’s <strong>Official 1st-Party Discovery Engine Registry Spec</strong> (<code>//cloud/ml/discoveryengine/data_connector/registry/connectors/veeva_vault/veeva_vault_v1_0.textproto</code>, target <code>providers/veeva/connectors/veevavault/versions/2</code>), including the 2-step <strong>Federated OIDC (Okta) → Veeva Session Exchange</strong> (<code>https://login.veevavault.com/auth/oauth/session/{oauth_profile_id}</code>) and all <strong>8 official Veeva Document MCP Actions</strong> (<code>search_documents</code>, <code>get_document</code>, <code>get_document_type</code>, <code>get_document_subtype</code>, <code>get_document_versions</code>, <code>get_document_version</code>, <code>get_document_renditions</code>, <code>download_document_file</code>), executed via a dedicated <strong>Custom BYOMCP Server</strong> (<code>src/veeva-mcp-server/server.mjs</code> on port <code>:8792/mcp</code>).
             </div>
@@ -8363,10 +8463,10 @@ function compileSSML(rawText) {
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
               <button class="btn-link" style="padding:4px 10px; font-size:11.5px;" onclick="openConnectorArchitectureModal('microsoft')">📊 Full 3-Connector Matrix ↗</button>
-              <button class="btn-link" style="padding:4px 10px; font-size:11.5px;" onclick="toggleArchDecisionCard('archBody-microsoft', this)">▼ Collapse</button>
+              <button id="btnToggleArch-microsoft" class="btn-link" style="padding:4px 10px; font-size:11.5px;" data-expand-label="▶ Expand Pros &amp; Cons" onclick="toggleArchDecisionCard('archBody-microsoft', this)">▶ Expand Pros &amp; Cons</button>
             </div>
           </div>
-          <div id="archBody-microsoft">
+          <div id="archBody-microsoft" style="display:none; margin-top:12px;">
             <div class="arch-summary-banner">
               <strong>How Microsoft 365 is Connected:</strong> In Google Cloud’s official 1st-Party (1P) catalog, <strong>SharePoint Online</strong>, <strong>Microsoft Teams</strong>, <strong>OneDrive for Business</strong>, and <strong>Exchange/Outlook</strong> are separate per-workload connectors. Here we built a <strong>Custom Unified Microsoft Graph MCP Connector</strong> (<code>custom_mcp</code> / <code>microsoft_graph_v1_0</code> at <code>POST /graph/mcp</code>) that consolidates all 4 Microsoft 365 pillars under a single Entra ID 3LO / Client Credentials connection (<code>https://graph.microsoft.com/v1.0</code> with scopes <code>Sites.Read.All, Files.Read.All, Chat.Read, Mail.Read</code>).
             </div>
@@ -8904,7 +9004,7 @@ function compileSSML(rawText) {
               <div class="card-title" style="margin:0;font-size:15px;">1. Configure New Environment &amp; OAuth 2.0 Connection Profile</div>
               <div style="font-size:12px;color:var(--muted);margin-top:2px;">All fields auto-populated from your discovered Argolis GCP organization &amp; Secret Manager vaults</div>
             </div>
-            <button class="btn-group-action" style="background:#059669;color:#FFFFFF;border:none;padding:8px 16px;font-weight:700;" onclick="createAndSyncOAuthConnection()">
+            <button class="btn-group-action" style="background:#047857;color:#FFFFFF;border:none;padding:8px 16px;font-weight:700;" onclick="createAndSyncOAuthConnection()">
               ✓ Test OAuth Handshake &amp; Save Connection to Demo Generator
             </button>
           </div>
@@ -8978,14 +9078,14 @@ function compileSSML(rawText) {
             </div>
           </div>
 
-          <div id="oauth-save-status-banner" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;background:rgba(16,185,129,0.14);border:1px solid rgba(16,185,129,0.4);color:#059669;font-size:12.5px;font-weight:700;"></div>
+          <div id="oauth-save-status-banner" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;background:var(--green-bg);border:1px solid rgba(16,185,129,0.4);color:var(--green);font-size:12.5px;font-weight:700;"></div>
         </div>
 
         <!-- 2. SAVED OAUTH CONNECTIONS REGISTRY TABLE -->
         <div class="card" style="margin-bottom:18px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
             <div class="card-title" style="margin:0;font-size:15px;">2. Active Saved Connections (Available in 🚀 Demo Generator Dropdown)</div>
-            <span style="font-size:11.5px;font-weight:700;color:#059669;background:rgba(16,185,129,0.14);padding:3px 10px;border-radius:999px;">🛡️ DLP Redacted • Live Sync</span>
+            <span style="font-size:11.5px;font-weight:700;color:var(--green);background:var(--green-bg);padding:3px 10px;border-radius:999px;">🛡️ DLP Redacted • Live Sync</span>
           </div>
           <div id="oauth-connections-table-wrap" style="overflow-x:auto;"></div>
         </div>
@@ -9167,7 +9267,10 @@ function compileSSML(rawText) {
     if (!el) return;
     const isHidden = el.style.display === 'none';
     el.style.display = isHidden ? 'block' : 'none';
-    if (btnEl) btnEl.textContent = isHidden ? '▼ Collapse' : '▶ Expand Pros & Cons';
+    if (btnEl) {
+      const expandLabel = btnEl.getAttribute('data-expand-label') || '▶ Expand Pros & Cons';
+      btnEl.textContent = isHidden ? '▼ Collapse' : expandLabel;
+    }
   }
 </script>
 
@@ -9753,21 +9856,38 @@ function compileSSML(rawText) {
   window.navigateToHome = navigateToHome;
 
   let toastTimer = null;
-  function showToast(title, url) {
+  let userHasInteractedWithPage = false;
+  document.addEventListener('pointerdown', function() { userHasInteractedWithPage = true; }, true);
+  document.addEventListener('keydown', function() { userHasInteractedWithPage = true; }, true);
+
+  function dismissGcpToast() {
+    const toast = document.getElementById('gcpToast');
+    if (toast) toast.classList.remove('visible');
+    clearTimeout(toastTimer);
+  }
+  window.dismissGcpToast = dismissGcpToast;
+
+  function showToast(title, url, forceShow) {
+    if (!forceShow && !userHasInteractedWithPage && typeof performance !== 'undefined' && performance.now() < 2500) {
+      return;
+    }
     const toast = document.getElementById('gcpToast');
     const titleEl = document.getElementById('toastTitle');
     const urlEl = document.getElementById('toastUrl');
     if (!toast) return;
     if (titleEl) titleEl.textContent = title;
-    if (urlEl) urlEl.textContent = url || '';
+    if (urlEl) {
+      urlEl.textContent = url || '';
+      urlEl.style.display = url ? 'block' : 'none';
+    }
     toast.classList.add('visible');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function() {
       toast.classList.remove('visible');
-    }, 3000);
+    }, 2600);
   }
-  function showGcpToast(title, url) {
-    showToast(title, url);
+  function showGcpToast(title, url, forceShow) {
+    showToast(title, url, forceShow);
   }
   window.showToast = showToast;
   window.showGcpToast = showGcpToast;
@@ -10064,6 +10184,25 @@ function compileSSML(rawText) {
     if (btn) btn.textContent = isCollapsed ? '▶' : '◀';
     localStorage.setItem('ge_sidebar_collapsed_v2', isCollapsed ? '1' : '0');
   }
+
+  function toggleProjectsFlyout(e) {
+    const wrap = document.getElementById('sideLink-projects');
+    if (!wrap) return;
+    // If click happened inside the flyout menu itself, let the inner item handler run and close force-open
+    if (e && e.target && e.target.closest('.projects-flyout-level1')) {
+      wrap.classList.remove('force-open');
+      return;
+    }
+    if (e) e.stopPropagation();
+    wrap.classList.toggle('force-open');
+  }
+
+  document.addEventListener('click', function(e) {
+    const wrap = document.getElementById('sideLink-projects');
+    if (wrap && !wrap.contains(e.target)) {
+      wrap.classList.remove('force-open');
+    }
+  });
 
   function initSidebar() {
     const sb = document.getElementById('appSidebar');
@@ -13775,6 +13914,12 @@ function compileSSML(rawText) {
 
   // ServiceNow MCP Annotations, 5-Method Payload Verification Lab & Live GCP IAM Access Grant JS Functions
   async function runSnVerificationTest(testId) {
+    const labBody = document.getElementById('snVerificationLabBody');
+    const labBtn = document.getElementById('btnToggleSnLab');
+    if (labBody && labBody.style.display === 'none') {
+      labBody.style.display = 'block';
+      if (labBtn) labBtn.textContent = '▼ Collapse';
+    }
     const titleEl = document.getElementById('snVerificationOutputTitle');
     const preEl = document.getElementById('snVerificationOutputPre');
     const tsEl = document.getElementById('snVerificationTimestamp');
@@ -13921,10 +14066,11 @@ ${generatePrintDossierHtml(allSlides, totalScreenshots)}
 <!-- GCP Toast Notification for Deep Links -->
 <div id="gcpToast" class="gcp-toast">
   <div class="gcp-toast-icon">🔗</div>
-  <div>
+  <div style="min-width:0; flex:1;">
     <div class="gcp-toast-title" id="toastTitle">Deep link copied to clipboard!</div>
     <div class="gcp-toast-url" id="toastUrl"></div>
   </div>
+  <button class="gcp-toast-close" onclick="dismissGcpToast()" title="Dismiss notification" aria-label="Dismiss notification">✕</button>
 </div>
 
 </body>

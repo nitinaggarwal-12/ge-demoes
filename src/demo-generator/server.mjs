@@ -228,8 +228,12 @@ function renderStudioHtml() {
       --text-muted: #64748B;
       --border-color: #E2E8F0;
       --input-border: #CBD5E1;
-      --accent-blue: #2563EB;
-      --accent-cyan: #0284C7;
+      --accent-blue: #1D4ED8;
+      --accent-cyan: #0369A1;
+      --emerald-text: #047857;
+      --emerald-bg: #D1FAE5;
+      --amber-text: #92400E;
+      --amber-bg: #FEF3C7;
       --code-bg: #EFF6FF;
       --code-text: #1D4ED8;
       --code-border: #BFDBFE;
@@ -254,8 +258,12 @@ function renderStudioHtml() {
       --text-muted: #64748B;
       --border-color: #1E293B;
       --input-border: #334155;
-      --accent-blue: #3B82F6;
+      --accent-blue: #60A5FA;
       --accent-cyan: #38BDF8;
+      --emerald-text: #34D399;
+      --emerald-bg: #062E1E;
+      --amber-text: #FBBF24;
+      --amber-bg: #3B2506;
       --code-bg: #090D16;
       --code-text: #38BDF8;
       --code-border: #1E293B;
@@ -303,7 +311,10 @@ function renderStudioHtml() {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
     }
+    .nav-item:hover { background: #1E293B; color: #F8FAFC; }
     .nav-item.active { background: #1E293B; color: #38BDF8; border: 1px solid #334155; }
 
     /* Main Full-Viewport Container */
@@ -315,28 +326,26 @@ function renderStudioHtml() {
       background: var(--bg-header);
       color: var(--text-primary);
       border-bottom: 1px solid var(--border-color);
-      padding: 10px 22px;
+      padding: 8px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
     }
     .pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 11px;
+      padding: 3px 10px;
       border-radius: 999px;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       white-space: nowrap;
     }
-    .pill-blue { background: #2563EB; color: #FFFFFF; border: 1px solid #1D4ED8; }
-    .pill-green { background: rgba(16, 185, 129, 0.14); color: #059669; border: 1px solid rgba(16, 185, 129, 0.4); }
-    body.dark-theme .pill-green { color: #34D399; }
-    .pill-amber { background: rgba(245, 158, 11, 0.16); color: #D97706; border: 1px solid rgba(245, 158, 11, 0.45); }
-    body.dark-theme .pill-amber { color: #FBBF24; }
+    .pill-blue { background: #1D4ED8; color: #FFFFFF; border: 1px solid #1E40AF; }
+    .pill-green { background: var(--emerald-bg); color: var(--emerald-text); border: 1px solid rgba(16, 185, 129, 0.45); }
+    .pill-amber { background: var(--amber-bg); color: var(--amber-text); border: 1px solid rgba(245, 158, 11, 0.45); }
 
     /* Workspace Container — Zero Empty Margin Gutters */
     main.studio-workspace {
@@ -363,9 +372,9 @@ function renderStudioHtml() {
       padding-bottom: 6px;
       border-bottom: 1px solid var(--border-color);
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px 10px;
     }
-    .card-title { font-size: 13.5px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px; }
+    .card-title { font-size: 13px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
 
     /* Saved OAuth Connection Selector Bar */
     .saved-conn-bar {
@@ -424,22 +433,22 @@ function renderStudioHtml() {
     /* Action Bar Buttons */
     .btn {
       cursor: pointer;
-      padding: 5px 11px;
+      padding: 4px 9px;
       border-radius: 6px;
       font-weight: 700;
-      font-size: 11.5px;
+      font-size: 11px;
       border: none;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       white-space: nowrap;
       transition: opacity 0.15s;
     }
     .btn:hover { opacity: 0.92; }
-    .btn-primary { background: #2563EB; color: #FFFFFF; }
-    .btn-emerald { background: #059669; color: #FFFFFF; }
-    .btn-amber { background: #D97706; color: #FFFFFF; }
-    .btn-danger { background: #DC2626; color: #FFFFFF; }
+    .btn-primary { background: #1D4ED8; color: #FFFFFF; }
+    .btn-emerald { background: #047857; color: #FFFFFF; }
+    .btn-amber { background: #B45309; color: #FFFFFF; }
+    .btn-danger { background: #B91C1C; color: #FFFFFF; }
     .btn-outline { background: var(--btn-outline-bg); color: var(--btn-outline-text); border: 1px solid var(--input-border); }
 
     /* Tier 2: Side-by-Side 12-Step Compact Matrix (Left 63%) + Formatted Architect Copilot (Right 37%) */
@@ -547,9 +556,9 @@ function renderStudioHtml() {
         <span>Argolis Demo Studio</span>
       </div>
       <div style="margin-top:20px;">
-        <div class="nav-item active"><span>1. Demo Generator</span><span>●</span></div>
-        <div class="nav-item"><span>2. Projects &amp; Assets</span><span>6</span></div>
-        <div class="nav-item"><span>3. OAuth Setup</span><span>✓</span></div>
+        <div class="nav-item active" onclick="window.location.href='/demo-generator'"><span>🚀 1. Demo Generator</span><span>●</span></div>
+        <div class="nav-item" onclick="window.location.href='/?tab=tab-servicenow'"><span>📁 2. Projects &amp; Assets</span><span>6</span></div>
+        <div class="nav-item" onclick="window.location.href='/?tab=tab-oauth'"><span>🔐 3. OAuth Setup</span><span>✓</span></div>
       </div>
     </div>
     <div style="background:#111827;border:1px solid #1F2937;padding:12px;border-radius:8px;font-size:11.5px;color:#9CA3AF;">
@@ -563,13 +572,13 @@ function renderStudioHtml() {
   <div class="studio-shell">
     <header class="studio-header">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <h1 style="margin:0;font-size:15.5px;font-weight:800;color:var(--text-primary);">Argolis Autonomous Demo Generator &amp; Dual-Evidence ([1] REST + [2] Chrome) Verifier</h1>
+        <h1 style="margin:0;font-size:15px;font-weight:800;color:var(--text-primary);">Argolis Autonomous Demo Generator &amp; Dual-Evidence ([1] REST + [2] Chrome) Verifier</h1>
         <span id="plan-version-badge" class="pill pill-blue">Plan v1.0</span>
         <span id="browser-priority-badge" class="pill pill-green">Priority 1: Google Signed Local Chrome (EQHXZ8M8AV)</span>
       </div>
       <div style="display:flex;align-items:center;gap:12px;">
         <span class="pill pill-green" style="font-size:11px;padding:3px 10px;">🛡️ DLP Guard: Confidential / PII / PHI Auto-Redacted by Default</span>
-        <span style="font-size:12px;color:var(--text-secondary);">Argolis Identity: <strong style="color:#059669;">${envInfo.accounts[0].id}</strong></span>
+        <span style="font-size:12px;color:var(--text-secondary);">Argolis Identity: <strong style="color:var(--emerald-text);">${envInfo.accounts[0].id}</strong></span>
       </div>
     </header>
 
@@ -579,20 +588,20 @@ function renderStudioHtml() {
         <div class="card-header">
           <div>
             <h2 class="card-title">
-              <span>1. Select Configured OAuth Connection &amp; Demo Scope</span>
-              <span class="pill pill-green" style="font-size:11px;padding:2px 8px;">Synced with 🔐 OAuth Setup</span>
+              <span>1. Select OAuth Connection &amp; Scope</span>
+              <span class="pill pill-green" style="font-size:10.5px;padding:2px 7px;">Synced with 🔐 OAuth Setup</span>
             </h2>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <label style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-primary);background:var(--bg-subcard);padding:6px 10px;border-radius:8px;border:1px solid var(--input-border);cursor:pointer;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <label style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text-primary);background:var(--bg-subcard);padding:4px 8px;border-radius:6px;border:1px solid var(--input-border);cursor:pointer;white-space:nowrap;">
               <input type="checkbox" id="toggle-simulate-fallback" checked />
-              <span>Auto-Fallback on 1P Block (CB b/505111548)</span>
+              <span>Auto-Fallback (b/505111548)</span>
             </label>
-            <button id="btn-validate-form" class="btn btn-outline" onclick="validateFormInputs()">🔄 Rebuild 12-Step Plan</button>
+            <button id="btn-validate-form" class="btn btn-outline" onclick="validateFormInputs()">🔄 Rebuild Plan</button>
             <button id="btn-approve-execute" class="btn btn-emerald" onclick="approveAndExecutePlan()">✓ Approve &amp; Execute 12-Step Demo</button>
             <button id="btn-partial-modify" class="btn btn-amber" onclick="runPartialModify()">⚡ Partial Modify (Reuse 1–8, Re-Run 9–12)</button>
             <button id="btn-reject-rollback" class="btn btn-outline" onclick="rejectAndRollback()">✕ Rollback</button>
-            <button id="btn-file-ticket" class="btn btn-danger" onclick="fileTicketOnBehalf()">🐞 File Buganizer Ticket (b/505111548)</button>
+            <button id="btn-file-ticket" class="btn btn-danger" onclick="fileTicketOnBehalf()">🐞 File Ticket (b/505111548)</button>
           </div>
         </div>
 
@@ -746,16 +755,16 @@ function renderStudioHtml() {
         </div>
 
         <!-- Honest Fallback Disclosure Banner -->
-        <div id="honest-fallback-banner" style="display:none;background:rgba(245, 158, 11, 0.12);border:1px solid rgba(245, 158, 11, 0.45);border-radius:8px;padding:10px 14px;margin-bottom:12px;">
-          <div style="font-weight:800;color:#D97706;font-size:12.5px;">⚠️ Honest Multi-Path Fallback Disclosure — Primary Path A Encountered Known Blocker, Automatically Recovered via Path B!</div>
+        <div id="honest-fallback-banner" style="display:none;background:var(--amber-bg);border:1px solid rgba(245, 158, 11, 0.45);border-radius:8px;padding:10px 14px;margin-bottom:12px;">
+          <div style="font-weight:800;color:var(--amber-text);font-size:12.5px;">⚠️ Honest Multi-Path Fallback Disclosure — Primary Path A Encountered Known Blocker, Automatically Recovered via Path B!</div>
           <div id="honest-fallback-details" style="font-size:11.5px;color:var(--text-primary);margin-top:4px;line-height:1.45;"></div>
         </div>
 
         <!-- Support & Buganizer Escalation Receipt Panel -->
-        <div id="ticket-confirmation-panel" style="display:none;background:rgba(16, 185, 129, 0.1);border:1px solid rgba(16, 185, 129, 0.4);border-radius:8px;padding:12px;margin-bottom:12px;">
+        <div id="ticket-confirmation-panel" style="display:none;background:var(--emerald-bg);border:1px solid rgba(16, 185, 129, 0.4);border-radius:8px;padding:12px;margin-bottom:12px;">
           <div style="display:flex;align-items:center;justify-content:space-between;">
             <div>
-              <span style="font-weight:800;color:#059669;font-size:13.5px;">✅ Support &amp; Buganizer Escalation Filed on Your Behalf!</span>
+              <span style="font-weight:800;color:var(--emerald-text);font-size:13.5px;">✅ Support &amp; Buganizer Escalation Filed on Your Behalf!</span>
               <span id="filed-ticket-id-pill" class="pill pill-green" style="margin-left:10px;"></span>
               <span id="filed-ticket-cb-pill" class="pill pill-blue" style="margin-left:6px;"></span>
             </div>
@@ -810,11 +819,11 @@ function renderStudioHtml() {
     function openOAuthSetupInParent() {
       try {
         if (window.parent && window.parent !== window && typeof window.parent.switchTab === 'function') {
-          window.parent.switchTab('oauth-setup');
+          window.parent.switchTab('tab-oauth');
           return;
         }
       } catch (e) {}
-      window.location.href = '/?tab=oauth-setup';
+      window.location.href = '/?tab=tab-oauth';
     }
 
     async function refreshConnectionsDropdown(selectIdToPick) {
@@ -889,7 +898,7 @@ function renderStudioHtml() {
           <div class="plan-step-row" data-step-number="\${s.stepNumber}">
             <div class="step-top">
               <strong style="color:var(--accent-cyan);font-size:11.5px;">Step \${String(s.stepNumber).padStart(2, '0')}</strong>
-              <span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(16,185,129,0.14);color:#059669;border:1px solid rgba(16,185,129,0.35);">\${s.status || 'READY'}</span>
+              <span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--emerald-bg);color:var(--emerald-text);border:1px solid rgba(16,185,129,0.35);">\${s.status || 'READY'}</span>
             </div>
             <div style="color:var(--text-primary);font-weight:700;font-size:11px;line-height:1.3;">\${s.title}</div>
             <div style="color:var(--text-secondary);font-size:10px;line-height:1.25;">\${s.surface}</div>
