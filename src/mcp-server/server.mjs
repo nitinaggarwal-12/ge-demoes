@@ -2914,6 +2914,8 @@ function compileSSML(rawText) {
 
     /* Google Cloud Console Dark Mode (Default) */
     --bg: #1f2128;
+    --bg-secondary: #20232b;
+    --surface: #252830;
     --sidebar-bg: #1a1c23;
     --sidebar-border: #2e323b;
     --topbar-bg: #1e2025;
@@ -2924,8 +2926,11 @@ function compileSSML(rawText) {
     --border: #3c4043;
     --border-hover: #5f6368;
     --text: #e8eaed;
+    --text-primary: #e8eaed;
+    --text-secondary: #bdc1c6;
     --text-heading: #ffffff;
     --muted: #9aa0a6;
+    --text-muted: #9aa0a6;
     --accent: #1a73e8;
     --accent-hover: #1557b0;
     --accent-light: #8ab4f8;
@@ -2933,8 +2938,10 @@ function compileSSML(rawText) {
     --green: #34a853;
     --green-bg: rgba(52, 168, 83, 0.16);
     --amber: #fbbc04;
+    --yellow: #fbbc04;
     --purple: #a142f4;
     --cyan: #24c1e0;
+    --red-text: #f28b82;
     --code-bg: #15171c;
     --code-border: #2e323b;
     --sidebar-width: 270px;
@@ -2946,34 +2953,41 @@ function compileSSML(rawText) {
     --gcp-card-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.25);
   }
 
-  /* Google Cloud Console Light Mode (Toggleable) */
+  /* Google Cloud Console Light Mode (Toggleable) — WCAG AAA High Contrast */
   [data-theme="light"] {
-    --bg: #f8f9fa;
+    --bg: #f8fafc;
+    --bg-secondary: #f1f5f9;
+    --surface: #ffffff;
     --sidebar-bg: #ffffff;
-    --sidebar-border: #dadce0;
+    --sidebar-border: #cbd5e1;
     --topbar-bg: #ffffff;
     --panel: #ffffff;
-    --panel-header: #f1f3f4;
+    --panel-header: #f1f5f9;
     --card: #ffffff;
-    --card-hover: #f1f3f4;
-    --border: #dadce0;
-    --border-hover: #bdc1c6;
-    --text: #202124;
-    --text-heading: #202124;
-    --muted: #5f6368;
-    --accent: #1a73e8;
-    --accent-hover: #1557b0;
-    --accent-light: #1a73e8;
-    --accent-glow: rgba(26, 115, 232, 0.2);
-    --green: #1e8e3e;
-    --green-bg: rgba(30, 142, 62, 0.12);
-    --amber: #f9ab00;
-    --purple: #9334e6;
-    --cyan: #12b5cb;
-    --code-bg: #f8f9fa;
-    --code-border: #dadce0;
-    --gcp-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
-    --gcp-card-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.15);
+    --card-hover: #f1f5f9;
+    --border: #cbd5e1;
+    --border-hover: #94a3b8;
+    --text: #0f172a;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-heading: #0f172a;
+    --muted: #475569;
+    --text-muted: #475569;
+    --accent: #1d4ed8;
+    --accent-hover: #1e40af;
+    --accent-light: #1d4ed8;
+    --accent-glow: rgba(29, 78, 216, 0.2);
+    --green: #047857;
+    --green-bg: rgba(4, 120, 87, 0.12);
+    --amber: #b45309;
+    --yellow: #b45309;
+    --purple: #6d28d9;
+    --cyan: #0369a1;
+    --red-text: #b91c1c;
+    --code-bg: #f1f5f9;
+    --code-border: #cbd5e1;
+    --gcp-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.15), 0 1px 3px 1px rgba(15, 23, 42, 0.08);
+    --gcp-card-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.12);
   }
 
   * { box-sizing: border-box; }
@@ -6603,11 +6617,24 @@ function compileSSML(rawText) {
     margin-bottom: 18px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
   }
+  [data-theme="light"] .arch-decision-card,
   body.gcp-light-mode .arch-decision-card {
-    background: linear-gradient(180deg, #f0f6ff 0%, #ffffff 100%);
-    border: 1px solid #c2dbff;
-    border-left: 4px solid #1a73e8;
-    box-shadow: 0 2px 10px rgba(26, 115, 232, 0.08);
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-left: 4px solid #1d4ed8;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+    color: #0f172a;
+  }
+  [data-theme="light"] .arch-decision-card code,
+  [data-theme="light"] .arch-matrix-table code {
+    background: #e2e8f0;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
   }
   .arch-decision-header {
     display: flex;
@@ -6649,20 +6676,23 @@ function compileSSML(rawText) {
     color: #81c995;
     border: 1px solid rgba(52, 168, 83, 0.45);
   }
+  [data-theme="light"] .arch-mode-pill.hybrid,
   body.gcp-light-mode .arch-mode-pill.hybrid {
-    background: #e8f0fe;
-    color: #174ea6;
-    border-color: #aecbfa;
+    background: #dbeafe;
+    color: #1e3a8a;
+    border-color: #93c5fd;
   }
+  [data-theme="light"] .arch-mode-pill.spec-custom,
   body.gcp-light-mode .arch-mode-pill.spec-custom {
-    background: #fef7e0;
-    color: #b06000;
-    border-color: #fde293;
+    background: #fef3c7;
+    color: #78350f;
+    border-color: #f59e0b;
   }
+  [data-theme="light"] .arch-mode-pill.unified-custom,
   body.gcp-light-mode .arch-mode-pill.unified-custom {
-    background: #e6f4ea;
-    color: #137333;
-    border-color: #ceead6;
+    background: #d1fae5;
+    color: #064e3b;
+    border-color: #6ee7b7;
   }
   .arch-summary-banner {
     font-size: 13px;
@@ -6674,10 +6704,11 @@ function compileSSML(rawText) {
     padding: 11px 14px;
     margin-bottom: 14px;
   }
+  [data-theme="light"] .arch-summary-banner,
   body.gcp-light-mode .arch-summary-banner {
-    background: #f8fafd;
-    border-color: #dadce0;
-    color: #202124;
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #0f172a;
   }
   .arch-pros-cons-grid {
     display: grid;
@@ -6703,13 +6734,17 @@ function compileSSML(rawText) {
     background: rgba(249, 171, 0, 0.09);
     border: 1px solid rgba(251, 188, 4, 0.35);
   }
+  [data-theme="light"] .arch-pc-box.pros-box,
   body.gcp-light-mode .arch-pc-box.pros-box {
-    background: #f2fbf5;
-    border-color: #a8dab5;
+    background: #f0fdf4;
+    border-color: #86efac;
+    color: #0f172a;
   }
+  [data-theme="light"] .arch-pc-box.cons-box,
   body.gcp-light-mode .arch-pc-box.cons-box {
-    background: #fffbf0;
-    border-color: #fde293;
+    background: #fffbeb;
+    border-color: #fcd34d;
+    color: #0f172a;
   }
   .arch-pc-heading {
     font-weight: 700;
@@ -6727,19 +6762,22 @@ function compileSSML(rawText) {
   .arch-pc-box.cons-box .arch-pc-heading {
     color: #fdd663;
   }
+  [data-theme="light"] .arch-pc-box.pros-box .arch-pc-heading,
   body.gcp-light-mode .arch-pc-box.pros-box .arch-pc-heading {
-    color: #137333;
+    color: #065f46;
   }
+  [data-theme="light"] .arch-pc-box.cons-box .arch-pc-heading,
   body.gcp-light-mode .arch-pc-box.cons-box .arch-pc-heading {
-    color: #b06000;
+    color: #92400e;
   }
   .arch-pc-list {
     margin: 0;
     padding-left: 18px;
     color: var(--text-primary, #e8eaed);
   }
+  [data-theme="light"] .arch-pc-list,
   body.gcp-light-mode .arch-pc-list {
-    color: #3c4043;
+    color: #0f172a;
   }
   .arch-pc-list li {
     margin-bottom: 6px;
@@ -6774,10 +6812,11 @@ function compileSSML(rawText) {
     overflow: hidden;
     color: #e8eaed;
   }
+  [data-theme="light"] .arch-modal-container,
   body.gcp-light-mode .arch-modal-container {
     background: #ffffff;
-    border-color: #dadce0;
-    color: #202124;
+    border-color: #cbd5e1;
+    color: #0f172a;
   }
   .arch-modal-header {
     padding: 14px 24px;
@@ -6787,9 +6826,11 @@ function compileSSML(rawText) {
     align-items: center;
     background: rgba(26, 115, 232, 0.1);
   }
+  [data-theme="light"] .arch-modal-header,
   body.gcp-light-mode .arch-modal-header {
-    background: #f8fafd;
-    border-bottom-color: #dadce0;
+    background: #f1f5f9;
+    border-bottom-color: #cbd5e1;
+    color: #0f172a;
   }
   .arch-modal-body {
     padding: 16px 24px;
@@ -6812,9 +6853,12 @@ function compileSSML(rawText) {
     word-break: break-word;
     overflow-wrap: anywhere;
   }
+  [data-theme="light"] .arch-matrix-table th,
+  [data-theme="light"] .arch-matrix-table td,
   body.gcp-light-mode .arch-matrix-table th,
   body.gcp-light-mode .arch-matrix-table td {
-    border-color: #dadce0;
+    border-color: #cbd5e1;
+    color: #0f172a;
   }
   .arch-matrix-table th {
     background: rgba(66, 133, 244, 0.14);
@@ -6824,9 +6868,10 @@ function compileSSML(rawText) {
     font-size: 11px;
     letter-spacing: 0.4px;
   }
+  [data-theme="light"] .arch-matrix-table th,
   body.gcp-light-mode .arch-matrix-table th {
-    background: #e8f0fe;
-    color: #174ea6;
+    background: #dbeafe;
+    color: #1e3a8a;
   }
 </style>
 </head>
@@ -7456,7 +7501,7 @@ function compileSSML(rawText) {
             </button>
           </div>
 
-          <button class="btn-link" onclick="openConnectorArchitectureModal()" title="Compare Official 1P Connectors vs Custom BYOMCP Servers & Pros/Cons" style="border-color:rgba(138,180,248,0.5); color:#8ab4f8; font-weight:600;">
+          <button class="btn-link" onclick="openConnectorArchitectureModal()" title="Compare Official 1P Connectors vs Custom BYOMCP Servers & Pros/Cons" style="border-color:rgba(29,78,216,0.45); color:var(--accent-light); font-weight:700;">
             <span>⚖️</span>
             <span>1P vs. BYOMCP Matrix</span>
           </button>
@@ -7574,13 +7619,13 @@ function compileSSML(rawText) {
 
         <!-- 1C. ServiceNow MCP Annotations, 4-Method Gemini Payload Verification Lab & GCP IAM Access Request Card -->
         <div class="arch-decision-card" id="snVerificationLabCard" style="border-left: 4px solid #7C3AED; margin-bottom: 18px;">
-          <div class="arch-decision-header" style="background: rgba(124, 58, 237, 0.06);">
+          <div class="arch-decision-header" style="background: rgba(124, 58, 237, 0.08); padding: 8px 12px; border-radius: 8px;">
             <div class="arch-decision-title-group">
-              <span class="arch-mode-pill" style="background:#EDE9FE; color:#5B21B6; border:1px solid #C4B5FD;">🔬 MCP Annotations &amp; Wire Verification Lab</span>
+              <span class="arch-mode-pill" style="background:#EDE9FE; color:#4C1D95; border:1px solid #A78BFA;">🔬 MCP Annotations &amp; Wire Verification Lab</span>
               <span style="font-size:13px; font-weight:700; color:var(--text);">Where ServiceNow Annotations (<code>readOnlyHint</code>) Live + 4 Ways to Verify What Gemini Receives + GCP IAM Access</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
-              <button class="btn-primary" style="padding:5px 12px; font-size:11.5px; background:#7C3AED; border:none; border-radius:6px; color:#fff; font-weight:600; cursor:pointer;" onclick="runAll4SnVerificationTests()">▶ Run All 4 Verification Tests</button>
+              <button class="btn-primary" style="padding:5px 12px; font-size:11.5px; background:#6D28D9; border:none; border-radius:6px; color:#fff; font-weight:700; cursor:pointer;" onclick="runAll4SnVerificationTests()">▶ Run All 4 Verification Tests</button>
               <button class="btn-link" style="padding:4px 10px; font-size:11.5px;" onclick="toggleArchDecisionCard('snVerificationLabBody', this)">▼ Collapse</button>
             </div>
           </div>
@@ -7588,10 +7633,10 @@ function compileSSML(rawText) {
           <div id="snVerificationLabBody" style="padding: 14px 16px;">
             <!-- Section A: Where Annotations Are Written (2 Places) -->
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
-              <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px;">
+              <div style="background:var(--bg-secondary); border:1px solid var(--border); border-radius:8px; padding:12px;">
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
-                  <span style="font-size:12px; font-weight:700; color:#60A5FA;">📍 Location 1: ServiceNow Native MCP Console (<code>merckfv.service-now.com</code>)</span>
-                  <span style="font-size:10.5px; background:#DBEAFE; color:#1E40AF; padding:2px 7px; border-radius:999px; font-weight:700;">Matches Screenshot 1</span>
+                  <span style="font-size:12px; font-weight:700; color:var(--accent-light);">📍 Location 1: ServiceNow Native MCP Console (<code>merckfv.service-now.com</code>)</span>
+                  <span style="font-size:10.5px; background:#DBEAFE; color:#1E3A8A; padding:2px 7px; border-radius:999px; font-weight:700;">Matches Screenshot 1</span>
                 </div>
                 <div style="font-size:11.5px; color:var(--text); line-height:1.55;">
                   <div>• <strong>Navigation Path:</strong> <code>All &gt; MCP Server Console &gt; MCP Servers &gt; SN_Gem_MCP &gt; Tools</code></div>
@@ -7601,16 +7646,16 @@ function compileSSML(rawText) {
                 </div>
               </div>
 
-              <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px;">
+              <div style="background:var(--bg-secondary); border:1px solid var(--border); border-radius:8px; padding:12px;">
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
-                  <span style="font-size:12px; font-weight:700; color:#34D399;">📍 Location 2: Local / Cloud Run BYOMCP Server (<code>src/mcp-server/server.mjs</code>)</span>
-                  <span style="font-size:10.5px; background:#D1FAE5; color:#065F46; padding:2px 7px; border-radius:999px; font-weight:700;">Lines 386–445</span>
+                  <span style="font-size:12px; font-weight:700; color:var(--green);">📍 Location 2: Local / Cloud Run BYOMCP Server (<code>src/mcp-server/server.mjs</code>)</span>
+                  <span style="font-size:10.5px; background:#D1FAE5; color:#064E3B; padding:2px 7px; border-radius:999px; font-weight:700;">Lines 386–445</span>
                 </div>
                 <div style="font-size:11.5px; color:var(--text); line-height:1.55;">
                   <div>• <strong>Source File:</strong> <code>src/mcp-server/server.mjs</code> &rarr; <code>const MCP_TOOLS = [...]</code> (Lines 386–445)</div>
                   <div>• <strong>JSON-RPC Method:</strong> Emitted dynamically on <code>POST /mcp</code> when Gemini sends <code>{"method":"tools/list"}</code></div>
                   <div>• <strong>Registered Tools with <code>annotations: { readOnlyHint: true }</code>:</strong></div>
-                  <div style="font-family:monospace; font-size:11px; color:#34D399; margin-top:2px;">search_incidents, get_incident_by_number, list_recent_p1_p2_incidents, search_cmdb_ci_assets, get_change_requests_for_ci</div>
+                  <div style="font-family:monospace; font-size:11px; color:var(--green); font-weight:700; margin-top:2px;">search_incidents, get_incident_by_number, list_recent_p1_p2_incidents, search_cmdb_ci_assets, get_change_requests_for_ci</div>
                 </div>
               </div>
             </div>
@@ -7618,7 +7663,7 @@ function compileSSML(rawText) {
             <!-- Section B: 6 Interactive Verification Methods ("Test Each" Grid) -->
             <div style="font-size:12px; font-weight:700; color:var(--text); margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">
               <span>🧪 6 Ways to Verify What Gemini Enterprise Receives (Annotations, Wire Payload, <code>KB5045566</code> Skill &amp; ServiceNow ACL/RBAC Enforcement):</span>
-              <span id="snVerifyStatusBadge" style="font-size:11px; font-weight:600; color:#6D28D9;">Ready to run live wire verification</span>
+              <span id="snVerifyStatusBadge" style="font-size:11px; font-weight:700; color:var(--purple);">Ready to run live wire verification</span>
             </div>
 
             <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;">
@@ -7627,13 +7672,13 @@ function compileSSML(rawText) {
                 <div>
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
                     <span style="font-size:11.5px; font-weight:700; color:#5B21B6;">1. JSON-RPC tools/list</span>
-                    <span id="badge-method1_tools_list" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#F3F4F6; color:#374151;">Idle</span>
+                    <span id="badge-method1_tools_list" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#E2E8F0; color:#0F172A; font-weight:700;">Idle</span>
                   </div>
                   <p style="font-size:11px; color:var(--muted); margin:0 0 8px 0; line-height:1.4;">
                     Inspects the exact <code>tools/list</code> JSON-RPC schema &amp; verifies <code>annotations.readOnlyHint: true</code> on all tools + <code>lookup_knowledge_articles</code>.
                   </p>
                 </div>
-                <button id="btn-method1_tools_list" onclick="runSnVerificationTest('method1_tools_list')" style="width:100%; padding:6px 10px; font-size:11.5px; font-weight:600; border-radius:6px; border:1px solid #7C3AED; background:#F5F3FF; color:#5B21B6; cursor:pointer;">
+                <button id="btn-method1_tools_list" onclick="runSnVerificationTest('method1_tools_list')" style="width:100%; padding:6px 10px; font-size:11.5px; font-weight:700; border-radius:6px; border:1px solid #7C3AED; background:#F5F3FF; color:#4C1D95; cursor:pointer;">
                   🧪 Test 1: Verify Annotations
                 </button>
               </div>
@@ -7643,13 +7688,13 @@ function compileSSML(rawText) {
                 <div>
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
                     <span style="font-size:11.5px; font-weight:700; color:#0369A1;">2. JSON-RPC tools/call</span>
-                    <span id="badge-method2_tools_call" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#F3F4F6; color:#374151;">Idle</span>
+                    <span id="badge-method2_tools_call" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#E2E8F0; color:#0F172A; font-weight:700;">Idle</span>
                   </div>
                   <p style="font-size:11px; color:var(--muted); margin:0 0 8px 0; line-height:1.4;">
                     Simulates Gemini calling <code>POST /mcp</code> (<code>tools/call</code>) &amp; captures the exact raw <code>result.content[0].text</code> JSON string Gemini receives.
                   </p>
                 </div>
-                <button id="btn-method2_tools_call" onclick="runSnVerificationTest('method2_tools_call')" style="width:100%; padding:6px 10px; font-size:11.5px; font-weight:600; border-radius:6px; border:1px solid #0284C7; background:#F0F9FF; color:#0369A1; cursor:pointer;">
+                <button id="btn-method2_tools_call" onclick="runSnVerificationTest('method2_tools_call')" style="width:100%; padding:6px 10px; font-size:11.5px; font-weight:700; border-radius:6px; border:1px solid #0284C7; background:#F0F9FF; color:#0C4A6E; cursor:pointer;">
                   🧪 Test 2: Inspect Wire Payload
                 </button>
               </div>
@@ -7658,14 +7703,14 @@ function compileSSML(rawText) {
               <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:var(--surface); display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-                    <span style="font-size:11.5px; font-weight:700; color:#B45309;">3. ServiceNow Logs &amp; KB</span>
-                    <span id="badge-method3_sn_logs_kb2952534" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#F3F4F6; color:#374151;">Idle</span>
+                    <span style="font-size:11.5px; font-weight:700; color:#92400E;">3. ServiceNow Logs &amp; KB</span>
+                    <span id="badge-method3_sn_logs_kb2952534" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#E2E8F0; color:#0F172A; font-weight:700;">Idle</span>
                   </div>
                   <p style="font-size:11px; color:var(--muted); margin:0 0 8px 0; line-height:1.4;">
                     Verifies ServiceNow inbound REST logs (<code>syslog_transaction.list</code>, <code>sn_mcp_execution_log.list</code>) &amp; diagnoses <code>KB2952534</code> missing parameter errors.
                   </p>
                 </div>
-                <button id="btn-method3_sn_logs_kb2952534" onclick="runSnVerificationTest('method3_sn_logs_kb2952534')" style="width:100%; padding:6px 10px; font-size:11.5px; font-weight:600; border-radius:6px; border:1px solid #D97706; background:#FFFBEB; color:#B45309; cursor:pointer;">
+                <button id="btn-method3_sn_logs_kb2952534" onclick="runSnVerificationTest('method3_sn_logs_kb2952534')" style="width:100%; padding:6px 10px; font-size:11.5px; font-weight:700; border-radius:6px; border:1px solid #D97706; background:#FFFBEB; color:#78350F; cursor:pointer;">
                   🧪 Test 3: SN Logs &amp; KB2952534
                 </button>
               </div>
@@ -7674,14 +7719,14 @@ function compileSSML(rawText) {
               <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:var(--surface); display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-                    <span style="font-size:11.5px; font-weight:700; color:#047857;">4. GCP Cloud Logging</span>
-                    <span id="badge-method4_gcp_logging_trace" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#F3F4F6; color:#374151;">Idle</span>
+                    <span style="font-size:11.5px; font-weight:700; color:#065F46;">4. GCP Cloud Logging</span>
+                    <span id="badge-method4_gcp_logging_trace" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#E2E8F0; color:#0F172A; font-weight:700;">Idle</span>
                   </div>
                   <p style="font-size:11px; color:var(--muted); margin:0 0 8px 0; line-height:1.4;">
                     Runs live <code>gcloud</code> IAM &amp; Discovery Engine <code>StreamAssist</code> trace check (<code>functionCall</code> &rarr; <code>functionResponse</code>) on <code>ge-spark-field-dev</code>.
                   </p>
                 </div>
-                <button id="btn-method4_gcp_logging_trace" onclick="runSnVerificationTest('method4_gcp_logging_trace')" style="width:100%; padding:6px 10px; font-size:11.5px; font-weight:600; border-radius:6px; border:1px solid #059669; background:#ECFDF5; color:#047857; cursor:pointer;">
+                <button id="btn-method4_gcp_logging_trace" onclick="runSnVerificationTest('method4_gcp_logging_trace')" style="width:100%; padding:6px 10px; font-size:11.5px; font-weight:700; border-radius:6px; border:1px solid #059669; background:#ECFDF5; color:#064E3B; cursor:pointer;">
                   🧪 Test 4: GCP Trace &amp; IAM
                 </button>
               </div>
@@ -7690,14 +7735,14 @@ function compileSSML(rawText) {
               <div style="border:1px solid #BE185D; border-radius:8px; padding:10px; background:var(--surface); display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-                    <span style="font-size:11.5px; font-weight:700; color:#BE185D;">5. KB5045566 &amp; Skill Check</span>
-                    <span id="badge-method5_kb5045566_skill_diagnostic" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#FCE7F3; color:#9D174D;">New</span>
+                    <span style="font-size:11.5px; font-weight:700; color:#9D174D;">5. KB5045566 &amp; Skill Check</span>
+                    <span id="badge-method5_kb5045566_skill_diagnostic" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#FCE7F3; color:#831843; font-weight:700;">New</span>
                   </div>
                   <p style="font-size:11px; color:var(--muted); margin:0 0 8px 0; line-height:1.4;">
                     Tests <code>"Show me published knowledge articles - KB5045566"</code>, verifies <code>1p-skill-custom-mcp-...</code> skill &amp; diagnoses <code>Authorize</code> vs active toggle.
                   </p>
                 </div>
-                <button id="btn-method5_kb5045566_skill_diagnostic" onclick="runSnVerificationTest('method5_kb5045566_skill_diagnostic')" style="width:100%; padding:6px 10px; font-size:11.5px; font-weight:600; border-radius:6px; border:1px solid #BE185D; background:#FDF2F8; color:#9D174D; cursor:pointer;">
+                <button id="btn-method5_kb5045566_skill_diagnostic" onclick="runSnVerificationTest('method5_kb5045566_skill_diagnostic')" style="width:100%; padding:6px 10px; font-size:11.5px; font-weight:700; border-radius:6px; border:1px solid #BE185D; background:#FDF2F8; color:#831843; cursor:pointer;">
                   🧪 Test 5: KB5045566 &amp; Skill
                 </button>
               </div>
@@ -7706,14 +7751,14 @@ function compileSSML(rawText) {
               <div style="border:1px solid #2563EB; border-radius:8px; padding:10px; background:var(--surface); display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-                    <span style="font-size:11.5px; font-weight:700; color:#2563EB;">6. ACL, RBAC &amp; User Criteria</span>
-                    <span id="badge-method6_acl_rbac_enforcement_proof" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#DBEAFE; color:#1E40AF;">Security Proof</span>
+                    <span style="font-size:11.5px; font-weight:700; color:#1D4ED8;">6. ACL, RBAC &amp; User Criteria</span>
+                    <span id="badge-method6_acl_rbac_enforcement_proof" style="font-size:10px; padding:1px 6px; border-radius:4px; background:#DBEAFE; color:#1E3A8A; font-weight:700;">Security Proof</span>
                   </div>
                   <p style="font-size:11px; color:var(--muted); margin:0 0 8px 0; line-height:1.4;">
                     Simulates 3LO OAuth identity passthrough (<code>itil</code> user vs restricted <code>employee</code>) proving <code>GlideRecordSecure</code> + <code>gr.canRead()</code> zero-leakage filtering.
                   </p>
                 </div>
-                <button id="btn-method6_acl_rbac_enforcement_proof" onclick="runSnVerificationTest('method6_acl_rbac_enforcement_proof')" style="width:100%; padding:6px 10px; font-size:11.5px; font-weight:600; border-radius:6px; border:1px solid #2563EB; background:#EFF6FF; color:#1D4ED8; cursor:pointer;">
+                <button id="btn-method6_acl_rbac_enforcement_proof" onclick="runSnVerificationTest('method6_acl_rbac_enforcement_proof')" style="width:100%; padding:6px 10px; font-size:11.5px; font-weight:700; border-radius:6px; border:1px solid #2563EB; background:#EFF6FF; color:#1E3A8A; cursor:pointer;">
                   🛡️ Test 6: ACL &amp; RBAC Proof
                 </button>
               </div>
@@ -7723,9 +7768,9 @@ function compileSSML(rawText) {
             <div id="snVerificationOutputBox" style="background:#0F172A; color:#F8FAFC; border-radius:8px; padding:12px; font-family:monospace; font-size:11.5px; max-height:260px; overflow-y:auto; margin-bottom:14px; border:1px solid #334155;">
               <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #1E293B; padding-bottom:6px; margin-bottom:8px;">
                 <span id="snVerificationOutputTitle" style="color:#38BDF8; font-weight:700;">📡 Live Wire Verification Output (Click Test 1–6 above to inspect live JSON-RPC, KB5045566 &amp; ServiceNow ACL/RBAC payloads)</span>
-                <span id="snVerificationTimestamp" style="color:#94A3B8; font-size:10.5px;">Awaiting execution...</span>
+                <span id="snVerificationTimestamp" style="color:#CBD5E1; font-size:10.5px;">Awaiting execution...</span>
               </div>
-              <pre id="snVerificationOutputPre" style="margin:0; white-space:pre-wrap; word-break:break-word; color:#E2E8F0; font-size:11px; line-height:1.45;">Click "▶ Run All 4 Verification Tests" or any individual "🧪 Test 1..6" button above to execute live JSON-RPC wire inspection, KB5045566 skill checks, and ServiceNow ACL/RBAC enforcement proofs.</pre>
+              <pre id="snVerificationOutputPre" style="margin:0; white-space:pre-wrap; word-break:break-word; color:#F8FAFC; font-size:11px; line-height:1.45;">Click "▶ Run All 4 Verification Tests" or any individual "🧪 Test 1..6" button above to execute live JSON-RPC wire inspection, KB5045566 skill checks, and ServiceNow ACL/RBAC enforcement proofs.</pre>
             </div>
 
             <!-- Section D: ServiceNow ACL, RBAC, Before-Query Business Rules & Knowledge Base User Criteria Enforcement + Live GE & SNOW Screenshot Proof Gallery -->
@@ -7735,39 +7780,39 @@ function compileSSML(rawText) {
                   <span style="background:#1D4ED8; color:#fff; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px; margin-right:6px;">🛡️ ZERO-LEAKAGE SECURITY ARCHITECTURE</span>
                   <span style="font-size:13px; font-weight:700; color:var(--text);">How to Ensure Gemini Enterprise Strictly Respects ServiceNow ACLs, RBAC, Before-Query Business Rules &amp; KB User Criteria</span>
                 </div>
-                <button onclick="runSnVerificationTest('method6_acl_rbac_enforcement_proof')" style="padding:5px 10px; font-size:11px; font-weight:700; border-radius:6px; border:1px solid #2563EB; background:#2563EB; color:#fff; cursor:pointer;">
+                <button onclick="runSnVerificationTest('method6_acl_rbac_enforcement_proof')" style="padding:5px 10px; font-size:11px; font-weight:700; border-radius:6px; border:1px solid #1D4ED8; background:#1D4ED8; color:#fff; cursor:pointer;">
                   ▶ Run Live ACL &amp; RBAC Comparison Test (ITIL vs Employee)
                 </button>
               </div>
 
               <!-- 4 Architectural Security Controls Grid -->
               <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; margin-bottom:12px;">
-                <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:rgba(37,99,235,0.04);">
-                  <div style="font-size:11.5px; font-weight:700; color:#3B82F6; margin-bottom:4px;">1️⃣ Per-User 3-Legged OAuth (3LO) Identity Passthrough (Never Shared Admin)</div>
+                <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:var(--bg-secondary);">
+                  <div style="font-size:11.5px; font-weight:700; color:var(--accent-light); margin-bottom:4px;">1️⃣ Per-User 3-Legged OAuth (3LO) Identity Passthrough (Never Shared Admin)</div>
                   <div style="font-size:11px; color:var(--text); line-height:1.45;">
                     • Every user in Gemini Enterprise Chat must click <strong><code>Authorize</code></strong> in the Tools drawer to mint their own individual ServiceNow OAuth token (<code>Authorization: Bearer &lt;user_oauth_token&gt;</code>).<br/>
                     • ServiceNow resolves <code>gs.getUserID()</code> and <code>gs.getUser().getRoles()</code> directly from that human user’s token—never a shared system/admin service account.
                   </div>
                 </div>
 
-                <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:rgba(16,185,129,0.04);">
-                  <div style="font-size:11.5px; font-weight:700; color:#10B981; margin-bottom:4px;">2️⃣ Enforce <code>GlideRecordSecure</code> + <code>gr.canRead()</code> in Scripted REST APIs</div>
+                <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:var(--bg-secondary);">
+                  <div style="font-size:11.5px; font-weight:700; color:var(--green); margin-bottom:4px;">2️⃣ Enforce <code>GlideRecordSecure</code> + <code>gr.canRead()</code> in Scripted REST APIs</div>
                   <div style="font-size:11px; color:var(--text); line-height:1.45;">
                     • Standard <code>new GlideRecord('incident')</code> in ServiceNow server scripts <strong>bypasses</strong> Table/Field ACLs unless explicitly checked!<br/>
                     • Always use <strong><code>new GlideRecordSecure('incident')</code></strong> for tables and <strong><code>gr.canRead()</code></strong> on <code>kb_knowledge</code> to enforce <strong>User Criteria (<code>kb_uc_can_read_mtom</code>)</strong> and Before-Query Business Rules.
                   </div>
                 </div>
 
-                <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:rgba(245,158,11,0.04);">
-                  <div style="font-size:11.5px; font-weight:700; color:#F59E0B; margin-bottom:4px;">3️⃣ OAuth <code>useraccount</code> Scope &amp; <code>REST_Endpoint</code> ACLs</div>
+                <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:var(--bg-secondary);">
+                  <div style="font-size:11.5px; font-weight:700; color:var(--amber); margin-bottom:4px;">3️⃣ OAuth <code>useraccount</code> Scope &amp; <code>REST_Endpoint</code> ACLs</div>
                   <div style="font-size:11px; color:var(--text); line-height:1.45;">
                     • In <code>System OAuth &gt; Application Registry</code>, bind the OAuth Client to the <strong><code>useraccount</code></strong> scope and require <strong><code>snc_platform_rest_api_access</code></strong>.<br/>
                     • Attach <strong><code>REST_Endpoint</code></strong> ACLs to <code>[GET] /mein/knowledge_articles_retrieval_service/get_knowledge_articles</code> so unauthorized roles are rejected before script execution.
                   </div>
                 </div>
 
-                <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:rgba(139,92,246,0.04);">
-                  <div style="font-size:11.5px; font-weight:700; color:#A78BFA; margin-bottom:4px;">4️⃣ Audit Identity in <code>syslog_transaction.list</code> &amp; Zero-Leakage Empty Results</div>
+                <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:var(--bg-secondary);">
+                  <div style="font-size:11.5px; font-weight:700; color:var(--purple); margin-bottom:4px;">4️⃣ Audit Identity in <code>syslog_transaction.list</code> &amp; Zero-Leakage Empty Results</div>
                   <div style="font-size:11px; color:var(--text); line-height:1.45;">
                     • Verify in <code>syslog_transaction.list</code> that the <strong><code>Created by</code></strong> column shows the individual employee (e.g. <code>nitin.aggarwal</code>) and <strong>not</strong> <code>admin</code>.<br/>
                     • When <code>KB5045566</code> is restricted, ServiceNow returns HTTP <code>200</code> with <code>"articles": []</code> so Gemini states <em>"No matching published articles found for your account permissions"</em> without leaking titles.
@@ -7782,7 +7827,7 @@ function compileSSML(rawText) {
                     <span style="font-size:11px; font-weight:700; color:#38BDF8;">💻 ServiceNow Scripted REST API Enforcement (<code>get_knowledge_articles</code> &amp; <code>incident</code>)</span>
                     <span style="font-size:10px; color:#34D399; font-family:monospace;">100% ACL + User Criteria Safe</span>
                   </div>
-                  <pre style="margin:0; font-family:monospace; font-size:10.5px; line-height:1.4; color:#E2E8F0; white-space:pre-wrap;">(function process(request, response) {
+                  <pre style="margin:0; font-family:monospace; font-size:10.5px; line-height:1.4; color:#F8FAFC; white-space:pre-wrap;">(function process(request, response) {
   var number = request.queryParams.number || 'KB5045566';
   // 1. GlideRecordSecure automatically enforces Table ACLs, Field ACLs &amp; Before-Query Business Rules
   var gr = new GlideRecordSecure('kb_knowledge');
@@ -7805,12 +7850,12 @@ function compileSSML(rawText) {
 })(request, response);</pre>
                 </div>
 
-                <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:var(--surface); display:flex; flex-direction:column; justify-content:space-between;">
+                <div style="border:1px solid var(--border); border-radius:8px; padding:10px; background:var(--bg-secondary); display:flex; flex-direction:column; justify-content:space-between;">
                   <div>
                     <div style="font-size:11.5px; font-weight:700; color:var(--text); margin-bottom:6px;">🔬 Two-User Live Verification Matrix (How to Test in GE Chat)</div>
-                    <table style="width:100%; border-collapse:collapse; font-size:10.5px;">
+                    <table style="width:100%; border-collapse:collapse; font-size:10.5px; background:var(--surface);">
                       <thead>
-                        <tr style="background:rgba(148,163,184,0.12); text-align:left;">
+                        <tr style="background:var(--panel-header); text-align:left; color:var(--text-heading);">
                           <th style="padding:5px 6px; border:1px solid var(--border);">Persona / OAuth Token</th>
                           <th style="padding:5px 6px; border:1px solid var(--border);">ServiceNow Evaluation</th>
                           <th style="padding:5px 6px; border:1px solid var(--border);">Gemini Response</th>
@@ -7818,19 +7863,19 @@ function compileSSML(rawText) {
                       </thead>
                       <tbody>
                         <tr>
-                          <td style="padding:5px 6px; border:1px solid var(--border);"><strong>User A (Authorized)</strong><br/><code>itil</code>, <code>knowledge</code></td>
-                          <td style="padding:5px 6px; border:1px solid var(--border); color:#10B981;"><code>gr.canRead() === true</code><br/><code>total_returned: 1</code></td>
-                          <td style="padding:5px 6px; border:1px solid var(--border);">Returns full <code>KB5045566</code> summary &amp; workflow state</td>
+                          <td style="padding:5px 6px; border:1px solid var(--border); color:var(--text);"><strong>User A (Authorized)</strong><br/><code>itil</code>, <code>knowledge</code></td>
+                          <td style="padding:5px 6px; border:1px solid var(--border); color:var(--green); font-weight:700;"><code>gr.canRead() === true</code><br/><code>total_returned: 1</code></td>
+                          <td style="padding:5px 6px; border:1px solid var(--border); color:var(--text);">Returns full <code>KB5045566</code> summary &amp; workflow state</td>
                         </tr>
                         <tr>
-                          <td style="padding:5px 6px; border:1px solid var(--border);"><strong>User B (Restricted)</strong><br/><code>snc_internal</code> only</td>
-                          <td style="padding:5px 6px; border:1px solid var(--border); color:#F59E0B;"><code>gr.canRead() === false</code><br/><code>total_returned: 0</code></td>
-                          <td style="padding:5px 6px; border:1px solid var(--border);">Zero leakage: <em>"No published article KB5045566 found for your permissions"</em></td>
+                          <td style="padding:5px 6px; border:1px solid var(--border); color:var(--text);"><strong>User B (Restricted)</strong><br/><code>snc_internal</code> only</td>
+                          <td style="padding:5px 6px; border:1px solid var(--border); color:var(--amber); font-weight:700;"><code>gr.canRead() === false</code><br/><code>total_returned: 0</code></td>
+                          <td style="padding:5px 6px; border:1px solid var(--border); color:var(--text);">Zero leakage: <em>"No published article KB5045566 found for your permissions"</em></td>
                         </tr>
                         <tr>
-                          <td style="padding:5px 6px; border:1px solid var(--border);"><strong>User C (Unlinked 3LO)</strong><br/>Toggle shows <code>Authorize</code></td>
-                          <td style="padding:5px 6px; border:1px solid var(--border); color:#EF4444;">Skill loads, tool withheld from planner</td>
-                          <td style="padding:5px 6px; border:1px solid var(--border);"><code>Finding Missing Tools</code> until user clicks <code>Authorize</code></td>
+                          <td style="padding:5px 6px; border:1px solid var(--border); color:var(--text);"><strong>User C (Unlinked 3LO)</strong><br/>Toggle shows <code>Authorize</code></td>
+                          <td style="padding:5px 6px; border:1px solid var(--border); color:var(--red-text); font-weight:700;">Skill loads, tool withheld from planner</td>
+                          <td style="padding:5px 6px; border:1px solid var(--border); color:var(--text);"><code>Finding Missing Tools</code> until user clicks <code>Authorize</code></td>
                         </tr>
                       </tbody>
                     </table>
@@ -7844,90 +7889,90 @@ function compileSSML(rawText) {
               <!-- Live GE & ServiceNow (SNOW) Instance Screenshot Evidence Gallery (6 Real Captures) -->
               <div style="font-size:12px; font-weight:700; color:var(--text); margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">
                 <span>📸 Live Gemini Enterprise (GE) &amp; ServiceNow (SNOW) Instance Screenshot Proof Gallery (Click any screenshot to open full-res):</span>
-                <span style="font-size:10.5px; color:#38BDF8;">6 Verified Production Captures (GE Console + GE Chat + ServiceNow MCP Console)</span>
+                <span style="font-size:10.5px; color:var(--accent-light); font-weight:700;">6 Verified Production Captures (GE Console + GE Chat + ServiceNow MCP Console)</span>
               </div>
 
               <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
                 <!-- Screenshot 1: SNOW MCP Console Tool Record & readOnlyHint -->
-                <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden; background:#0F172A; display:flex; flex-direction:column;">
-                  <div style="padding:6px 8px; background:#1E293B; display:flex; align-items:center; justify-content:space-between;">
-                    <span style="font-size:10.5px; font-weight:700; color:#38BDF8;">1. ServiceNow MCP Tool Record &amp; Annotations</span>
-                    <span style="font-size:9.5px; background:#0284C7; color:#fff; padding:1px 6px; border-radius:4px;">SNOW Instance</span>
+                <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--bg-secondary); display:flex; flex-direction:column;">
+                  <div style="padding:6px 8px; background:var(--panel-header); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
+                    <span style="font-size:10.5px; font-weight:700; color:var(--accent-light);">1. ServiceNow MCP Tool Record &amp; Annotations</span>
+                    <span style="font-size:9.5px; background:#0369A1; color:#fff; padding:1px 6px; border-radius:4px; font-weight:700;">SNOW Instance</span>
                   </div>
-                  <a href="/screenshots/screenshots_acl_rbac_proof/01_snow_mcp_tool_record_readonlyhint_kb2952534.png" target="_blank" style="display:block; border-bottom:1px solid #1E293B;">
+                  <a href="/screenshots/screenshots_acl_rbac_proof/01_snow_mcp_tool_record_readonlyhint_kb2952534.png" target="_blank" style="display:block; border-bottom:1px solid var(--border);">
                     <img src="/screenshots/screenshots_acl_rbac_proof/01_snow_mcp_tool_record_readonlyhint_kb2952534.png" alt="ServiceNow MCP Tool Record Lookup Knowledge Articles" style="width:100%; height:135px; object-fit:cover; object-position:top; display:block;" />
                   </a>
-                  <div style="padding:7px 8px; font-size:10.5px; color:#CBD5E1; line-height:1.35;">
+                  <div style="padding:7px 8px; font-size:10.5px; color:var(--text); line-height:1.4;">
                     <strong><code>merckfv.service-now.com</code>:</strong> Shows <code>Lookup knowledge articles</code> (<code>REST Endpoint</code> &rarr; <code>[GET] /mein/knowledge_articles_retrieval_service/get_knowledge_articles</code>) with <code>readOnlyHint</code> annotation &amp; <code>KB2952534</code> test log.
                   </div>
                 </div>
 
                 <!-- Screenshot 2: GE GCP Console Actions Enabled & Reload Custom Actions -->
-                <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden; background:#0F172A; display:flex; flex-direction:column;">
-                  <div style="padding:6px 8px; background:#1E293B; display:flex; align-items:center; justify-content:space-between;">
-                    <span style="font-size:10.5px; font-weight:700; color:#34D399;">2. GE Console: Actions Enabled &amp; Schema Sync</span>
-                    <span style="font-size:9.5px; background:#059669; color:#fff; padding:1px 6px; border-radius:4px;">GE GCP Console</span>
+                <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--bg-secondary); display:flex; flex-direction:column;">
+                  <div style="padding:6px 8px; background:var(--panel-header); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
+                    <span style="font-size:10.5px; font-weight:700; color:var(--green);">2. GE Console: Actions Enabled &amp; Schema Sync</span>
+                    <span style="font-size:9.5px; background:#047857; color:#fff; padding:1px 6px; border-radius:4px; font-weight:700;">GE GCP Console</span>
                   </div>
-                  <a href="/screenshots/screenshots_acl_rbac_proof/02_ge_console_actions_enabled_reload_custom_actions.png" target="_blank" style="display:block; border-bottom:1px solid #1E293B;">
+                  <a href="/screenshots/screenshots_acl_rbac_proof/02_ge_console_actions_enabled_reload_custom_actions.png" target="_blank" style="display:block; border-bottom:1px solid var(--border);">
                     <img src="/screenshots/screenshots_acl_rbac_proof/02_ge_console_actions_enabled_reload_custom_actions.png" alt="Gemini Enterprise Console Actions Enabled" style="width:100%; height:135px; object-fit:cover; object-position:top; display:block;" />
                   </a>
-                  <div style="padding:7px 8px; font-size:10.5px; color:#CBD5E1; line-height:1.35;">
+                  <div style="padding:7px 8px; font-size:10.5px; color:var(--text); line-height:1.4;">
                     <strong><code>ServiceNow MCP Connector v2 &gt; Actions</code>:</strong> Confirms <code>Lookup Catalog Items</code>, <code>Lookup Knowledge Articles</code>, and <code>Search Or Retrieve Incident Records</code> are all <code>✅ Enabled</code> with <code>↻ Reload custom actions</code>.
                   </div>
                 </div>
 
                 <!-- Screenshot 3: GE Chat 3LO OAuth Authorize vs Active Blue Toggle -->
-                <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden; background:#0F172A; display:flex; flex-direction:column;">
-                  <div style="padding:6px 8px; background:#1E293B; display:flex; align-items:center; justify-content:space-between;">
-                    <span style="font-size:10.5px; font-weight:700; color:#FBBF24;">3. Per-User 3LO OAuth: Authorize vs Linked Toggle</span>
-                    <span style="font-size:9.5px; background:#D97706; color:#fff; padding:1px 6px; border-radius:4px;">GE Chat 3LO OAuth</span>
+                <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--bg-secondary); display:flex; flex-direction:column;">
+                  <div style="padding:6px 8px; background:var(--panel-header); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
+                    <span style="font-size:10.5px; font-weight:700; color:var(--amber);">3. Per-User 3LO OAuth: Authorize vs Linked Toggle</span>
+                    <span style="font-size:9.5px; background:#B45309; color:#fff; padding:1px 6px; border-radius:4px; font-weight:700;">GE Chat 3LO OAuth</span>
                   </div>
-                  <a href="/screenshots/screenshots_acl_rbac_proof/03_ge_chat_3lo_oauth_authorize_vs_linked_toggle.png" target="_blank" style="display:block; border-bottom:1px solid #1E293B;">
+                  <a href="/screenshots/screenshots_acl_rbac_proof/03_ge_chat_3lo_oauth_authorize_vs_linked_toggle.png" target="_blank" style="display:block; border-bottom:1px solid var(--border);">
                     <img src="/screenshots/screenshots_acl_rbac_proof/03_ge_chat_3lo_oauth_authorize_vs_linked_toggle.png" alt="Gemini Enterprise Chat 3LO OAuth Authorize vs Linked Toggle" style="width:100%; height:135px; object-fit:cover; object-position:center; display:block;" />
                   </a>
-                  <div style="padding:7px 8px; font-size:10.5px; color:#CBD5E1; line-height:1.35;">
+                  <div style="padding:7px 8px; font-size:10.5px; color:var(--text); line-height:1.4;">
                     <strong>Per-User ACL Identity Gate:</strong> Shows unlinked connectors requiring <strong><code>Authorize</code></strong> (3LO OAuth login) vs. linked connectors with active blue toggles (<code>🔵</code>) passing the user's own ServiceNow identity.
                   </div>
                 </div>
 
                 <!-- Screenshot 4: GE Chat Tools Menu (Servicenow Mcp Cloudrun Gxp Active) -->
-                <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden; background:#0F172A; display:flex; flex-direction:column;">
-                  <div style="padding:6px 8px; background:#1E293B; display:flex; align-items:center; justify-content:space-between;">
-                    <span style="font-size:10.5px; font-weight:700; color:#A78BFA;">4. GE Chat Tools Drawer: CloudRun GxP Active</span>
-                    <span style="font-size:9.5px; background:#7C3AED; color:#fff; padding:1px 6px; border-radius:4px;">GE Chat Instance</span>
+                <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--bg-secondary); display:flex; flex-direction:column;">
+                  <div style="padding:6px 8px; background:var(--panel-header); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
+                    <span style="font-size:10.5px; font-weight:700; color:var(--purple);">4. GE Chat Tools Drawer: CloudRun GxP Active</span>
+                    <span style="font-size:9.5px; background:#6D28D9; color:#fff; padding:1px 6px; border-radius:4px; font-weight:700;">GE Chat Instance</span>
                   </div>
-                  <a href="/screenshots/screenshots_acl_rbac_proof/04_ge_chat_tools_menu_cloudrun_gxp_active.png" target="_blank" style="display:block; border-bottom:1px solid #1E293B;">
+                  <a href="/screenshots/screenshots_acl_rbac_proof/04_ge_chat_tools_menu_cloudrun_gxp_active.png" target="_blank" style="display:block; border-bottom:1px solid var(--border);">
                     <img src="/screenshots/screenshots_acl_rbac_proof/04_ge_chat_tools_menu_cloudrun_gxp_active.png" alt="Gemini Enterprise Tools Drawer Cloudrun Gxp Active" style="width:100%; height:135px; object-fit:cover; object-position:center; display:block;" />
                   </a>
-                  <div style="padding:7px 8px; font-size:10.5px; color:#CBD5E1; line-height:1.35;">
+                  <div style="padding:7px 8px; font-size:10.5px; color:var(--text); line-height:1.4;">
                     <strong><code>nitinagga-ge-2</code> (<code>cid/e823f383...</code>):</strong> Shows <code>Servicenow Mcp Cloudrun Gxp</code> enabled with blue toggle in the Gemini Enterprise Tools menu without duplicate greyed-out connectors.
                   </div>
                 </div>
 
                 <!-- Screenshot 5: Live GE Chat Action Confirmed & ServiceNow Response -->
-                <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden; background:#0F172A; display:flex; flex-direction:column;">
-                  <div style="padding:6px 8px; background:#1E293B; display:flex; align-items:center; justify-content:space-between;">
-                    <span style="font-size:10.5px; font-weight:700; color:#34D399;">5. Live Tool Invocation &amp; ServiceNow RBAC Data</span>
-                    <span style="font-size:9.5px; background:#059669; color:#fff; padding:1px 6px; border-radius:4px;">Live E2E Proof</span>
+                <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--bg-secondary); display:flex; flex-direction:column;">
+                  <div style="padding:6px 8px; background:var(--panel-header); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
+                    <span style="font-size:10.5px; font-weight:700; color:var(--green);">5. Live Tool Invocation &amp; ServiceNow RBAC Data</span>
+                    <span style="font-size:9.5px; background:#047857; color:#fff; padding:1px 6px; border-radius:4px; font-weight:700;">Live E2E Proof</span>
                   </div>
-                  <a href="/screenshots/screenshots_acl_rbac_proof/05_ge_chat_live_servicenow_p1_p2_and_cmdb_ci_response.png" target="_blank" style="display:block; border-bottom:1px solid #1E293B;">
+                  <a href="/screenshots/screenshots_acl_rbac_proof/05_ge_chat_live_servicenow_p1_p2_and_cmdb_ci_response.png" target="_blank" style="display:block; border-bottom:1px solid var(--border);">
                     <img src="/screenshots/screenshots_acl_rbac_proof/05_ge_chat_live_servicenow_p1_p2_and_cmdb_ci_response.png" alt="Gemini Enterprise Live ServiceNow Tool Execution" style="width:100%; height:135px; object-fit:cover; object-position:top; display:block;" />
                   </a>
-                  <div style="padding:7px 8px; font-size:10.5px; color:#CBD5E1; line-height:1.35;">
+                  <div style="padding:7px 8px; font-size:10.5px; color:var(--text); line-height:1.4;">
                     <strong>Live Execution Proof:</strong> Gemini invokes <code>servicenow_list_incidents</code> &amp; <code>servicenow_query_cmdb_ci</code> (<code>Action Confirmed</code>) and renders live records from <code>persistentsystemsdev.service-now.com</code>.
                   </div>
                 </div>
 
                 <!-- Screenshot 6: Load Skill vs Finding Missing Tools When 3LO Unlinked -->
-                <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden; background:#0F172A; display:flex; flex-direction:column;">
-                  <div style="padding:6px 8px; background:#1E293B; display:flex; align-items:center; justify-content:space-between;">
-                    <span style="font-size:10.5px; font-weight:700; color:#F472B6;">6. Load Skill ✔️ vs Unlinked 3LO Tool Gate</span>
-                    <span style="font-size:9.5px; background:#BE185D; color:#fff; padding:1px 6px; border-radius:4px;">Skill &amp; Auth Gate</span>
+                <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--bg-secondary); display:flex; flex-direction:column;">
+                  <div style="padding:6px 8px; background:var(--panel-header); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
+                    <span style="font-size:10.5px; font-weight:700; color:#BE185D;">6. Load Skill ✔️ vs Unlinked 3LO Tool Gate</span>
+                    <span style="font-size:9.5px; background:#BE185D; color:#fff; padding:1px 6px; border-radius:4px; font-weight:700;">Skill &amp; Auth Gate</span>
                   </div>
-                  <a href="/screenshots/screenshots_acl_rbac_proof/06_ge_chat_load_skill_and_missing_tool_diagnostic.png" target="_blank" style="display:block; border-bottom:1px solid #1E293B;">
+                  <a href="/screenshots/screenshots_acl_rbac_proof/06_ge_chat_load_skill_and_missing_tool_diagnostic.png" target="_blank" style="display:block; border-bottom:1px solid var(--border);">
                     <img src="/screenshots/screenshots_acl_rbac_proof/06_ge_chat_load_skill_and_missing_tool_diagnostic.png" alt="Gemini Enterprise Load Skill vs Finding Missing Tools" style="width:100%; height:135px; object-fit:cover; object-position:top; display:block;" />
                   </a>
-                  <div style="padding:7px 8px; font-size:10.5px; color:#CBD5E1; line-height:1.35;">
+                  <div style="padding:7px 8px; font-size:10.5px; color:var(--text); line-height:1.4;">
                     <strong>Why 3LO Auth Protects RBAC:</strong> Even when Gemini loads <code>1p-skill-custom-mcp-...</code> (<code>Load Skill ✔️</code>), Discovery Engine withholds the tool until the user completes 3LO OAuth (<code>Authorize</code>).
                   </div>
                 </div>
@@ -7935,11 +7980,11 @@ function compileSSML(rawText) {
             </div>
 
             <!-- Section C: GCP IAM Access Request & Live Policy Binding Status (Resolving Screenshot 2: gexxxxev / ge-spark-field-dev) -->
-            <div style="background:linear-gradient(90deg, rgba(16,185,129,0.08) 0%, rgba(59,130,246,0.08) 100%); border:1px solid #10B981; border-radius:8px; padding:12px;">
+            <div style="background:var(--bg-secondary); border:1.5px solid var(--green); border-radius:8px; padding:12px;">
               <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
                 <div>
                   <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-                    <span style="background:#059669; color:#fff; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px;">✅ IAM ACCESS GRANTED LIVE</span>
+                    <span style="background:#047857; color:#fff; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px;">✅ IAM ACCESS GRANTED LIVE</span>
                     <span style="font-size:12.5px; font-weight:700; color:var(--text);">GCP Console Access Request Resolution for <code>gexxxxev</code> (<code>ge-spark-field-dev</code> • Project #<code>478742434273</code>) &amp; <code>nixxxx-2</code> (<code>nitina-ggarwal-sandbox-647724</code>)</span>
                   </div>
                   <div style="font-size:11.5px; color:var(--text); line-height:1.45;">
@@ -7952,7 +7997,7 @@ function compileSSML(rawText) {
                   <div style="display:flex; gap:6px;">
                     <input id="iamJustificationInput" type="text" value="Need to demo setup with the customers" style="flex:1; padding:5px 8px; font-size:11px; border:1px solid var(--border); border-radius:6px; background:var(--surface); color:var(--text);" />
                   </div>
-                  <button id="btnSubmitIamGrant" onclick="submitGcpAccessRequestLive()" style="padding:7px 12px; font-size:11.5px; font-weight:700; border-radius:6px; border:none; background:#059669; color:#fff; cursor:pointer;">
+                  <button id="btnSubmitIamGrant" onclick="submitGcpAccessRequestLive()" style="padding:7px 12px; font-size:11.5px; font-weight:700; border-radius:6px; border:none; background:#047857; color:#fff; cursor:pointer;">
                     🔐 Re-Submit &amp; Verify Live IAM Grants
                   </button>
                 </div>
@@ -8513,7 +8558,7 @@ function compileSSML(rawText) {
                 <div class="tool-item tool-card-item selected" id="meetingTool-prepare_meeting_brief" data-tool-name="prepare_meeting_brief" onclick="selectMeetingTool('prepare_meeting_brief')">
                   <div class="tool-card-top">
                     <span class="tool-card-name">prepare_meeting_brief</span>
-                    <span class="tool-tag" style="background:rgba(66,133,244,0.15); color:#8ab4f8; border-color:rgba(66,133,244,0.4);">Stage 1 • Prep</span>
+                    <span class="tool-tag" style="background:rgba(66,133,244,0.15); color:var(--accent-light); border-color:rgba(66,133,244,0.4);">Stage 1 • Prep</span>
                   </div>
                   <div class="tool-card-desc">Gathers calendar context, participant profiles, linked Drive design docs, and strategic talking points 30m before call.</div>
                   <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); selectProjectView('meetings', 'tab-gallery', 'meeting-lifecycle')" title="Jump to linked visual proof in gallery">
@@ -8524,7 +8569,7 @@ function compileSSML(rawText) {
                 <div class="tool-item tool-card-item" id="meetingTool-summarize_meeting_transcript" data-tool-name="summarize_meeting_transcript" onclick="selectMeetingTool('summarize_meeting_transcript')">
                   <div class="tool-card-top">
                     <span class="tool-card-name">summarize_meeting_transcript</span>
-                    <span class="tool-tag" style="background:rgba(52,168,83,0.15); color:#81c995; border-color:rgba(52,168,83,0.4);">Stage 2 • Summarize</span>
+                    <span class="tool-tag" style="background:rgba(52,168,83,0.15); color:var(--green); border-color:rgba(52,168,83,0.4);">Stage 2 • Summarize</span>
                   </div>
                   <div class="tool-card-desc">Streams live Meet audio &amp; transcript, synthesizes executive summary, and ratifies key architectural decisions &amp; action items.</div>
                   <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); selectProjectView('meetings', 'tab-gallery', 'meeting-lifecycle')" title="Jump to linked visual proof in gallery">
@@ -8535,7 +8580,7 @@ function compileSSML(rawText) {
                 <div class="tool-item tool-card-item" id="meetingTool-generate_meeting_followup" data-tool-name="generate_meeting_followup" onclick="selectMeetingTool('generate_meeting_followup')">
                   <div class="tool-card-top">
                     <span class="tool-card-name">generate_meeting_followup</span>
-                    <span class="tool-tag" style="background:rgba(251,188,4,0.15); color:#fdd663; border-color:rgba(251,188,4,0.4);">Stage 3 • Follow Up</span>
+                    <span class="tool-tag" style="background:rgba(251,188,4,0.15); color:var(--amber); border-color:rgba(251,188,4,0.4);">Stage 3 • Follow Up</span>
                   </div>
                   <div class="tool-card-desc">Autonomous follow-through engine: generates personalized Gmail drafts, stages Jira tracking issues, and auto-schedules calendar milestones.</div>
                   <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); selectProjectView('meetings', 'tab-gallery', 'meeting-lifecycle')" title="Jump to linked visual proof in gallery">
@@ -8652,7 +8697,7 @@ function compileSSML(rawText) {
                 <div class="tool-item tool-card-item selected" id="sparkTool-scan_morning_calendar" data-tool-name="scan_morning_calendar" onclick="selectSparkTool('scan_morning_calendar')">
                   <div class="tool-card-top">
                     <span class="tool-card-name">scan_morning_calendar</span>
-                    <span class="tool-tag" style="background:rgba(66,133,244,0.15); color:#8ab4f8; border-color:rgba(66,133,244,0.4);">Stage 1 • Cal</span>
+                    <span class="tool-tag" style="background:rgba(66,133,244,0.15); color:var(--accent-light); border-color:rgba(66,133,244,0.4);">Stage 1 • Cal</span>
                   </div>
                   <div class="tool-card-desc">Gathers calendar context, detects attendee conflicts, and identifies high-urgency steering committee events.</div>
                   <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); selectProjectView('spark', 'tab-gallery', 'spark-desktop-ui')" title="Jump to linked visual proof in gallery">
@@ -8663,7 +8708,7 @@ function compileSSML(rawText) {
                 <div class="tool-item tool-card-item" id="sparkTool-triage_overnight_emails" data-tool-name="triage_overnight_emails" onclick="selectSparkTool('triage_overnight_emails')">
                   <div class="tool-card-top">
                     <span class="tool-card-name">triage_overnight_emails</span>
-                    <span class="tool-tag" style="background:rgba(234,67,53,0.15); color:#f28b82; border-color:rgba(234,67,53,0.4);">Stage 2 • Mail</span>
+                    <span class="tool-tag" style="background:rgba(234,67,53,0.15); color:var(--red-text); border-color:rgba(234,67,53,0.4);">Stage 2 • Mail</span>
                   </div>
                   <div class="tool-card-desc">Triages overnight Gmail threads, flags P1 blockers, and requests Orcas policy approval for sensitive disclosures.</div>
                   <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); selectProjectView('spark', 'tab-gallery', 'spark-desktop-governance')" title="Jump to linked visual proof in gallery">
@@ -8674,7 +8719,7 @@ function compileSSML(rawText) {
                 <div class="tool-item tool-card-item" id="sparkTool-reconcile_trial_budget" data-tool-name="reconcile_trial_budget" onclick="selectSparkTool('reconcile_trial_budget')">
                   <div class="tool-card-top">
                     <span class="tool-card-name">reconcile_trial_budget</span>
-                    <span class="tool-tag" style="background:rgba(52,168,83,0.15); color:#81c995; border-color:rgba(52,168,83,0.4);">Stage 3 • Sheets</span>
+                    <span class="tool-tag" style="background:rgba(52,168,83,0.15); color:var(--green); border-color:rgba(52,168,83,0.4);">Stage 3 • Sheets</span>
                   </div>
                   <div class="tool-card-desc">Cross-references Study Protocol docs in Drive and updates Financial Forecast Google Sheet cells autonomously.</div>
                   <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); selectProjectView('spark', 'tab-gallery', 'spark-desktop-governance')" title="Jump to linked visual proof in gallery">
@@ -8685,7 +8730,7 @@ function compileSSML(rawText) {
                 <div class="tool-item tool-card-item" id="sparkTool-generate_briefing_and_notify" data-tool-name="generate_briefing_and_notify" onclick="selectSparkTool('generate_briefing_and_notify')">
                   <div class="tool-card-top">
                     <span class="tool-card-name">generate_briefing_and_notify</span>
-                    <span class="tool-tag" style="background:rgba(251,188,4,0.15); color:#fdd663; border-color:rgba(251,188,4,0.4);">Stage 4 • Slides &amp; Chat</span>
+                    <span class="tool-tag" style="background:rgba(251,188,4,0.15); color:var(--amber); border-color:rgba(251,188,4,0.4);">Stage 4 • Slides &amp; Chat</span>
                   </div>
                   <div class="tool-card-desc">Compiles a 3-slide executive briefing presentation and dispatches summary cards to Google Chat leadership spaces.</div>
                   <div class="tool-card-asset-chip linked-asset-link" onclick="event.stopPropagation(); selectProjectView('spark', 'tab-gallery', 'spark-desktop-workflows')" title="Jump to linked visual proof in gallery">
@@ -13095,7 +13140,7 @@ function compileSSML(rawText) {
       const b = data;
       html = '<div style="display:flex; flex-direction:column; gap:16px;">' +
         '<div style="background:rgba(66,133,244,0.08); border-left:4px solid #4285f4; padding:16px 20px; border-radius:0 8px 8px 0;">' +
-          '<div style="font-size:12px; font-weight:700; color:#8ab4f8; text-transform:uppercase; margin-bottom:4px;">Strategic Executive Objective</div>' +
+          '<div style="font-size:12px; font-weight:700; color:var(--accent-light); text-transform:uppercase; margin-bottom:4px;">Strategic Executive Objective</div>' +
           '<div style="font-size:14px; color:var(--text-primary); line-height:1.5;">' + (b.executive_context || '') + '</div>' +
         '</div>' +
 
@@ -13117,11 +13162,11 @@ function compileSSML(rawText) {
         '</div>' +
 
         '<div style="background:var(--bg-secondary); border:1px solid var(--border); padding:16px; border-radius:8px;">' +
-          '<div style="font-size:12px; font-weight:700; color:#fbbf24; text-transform:uppercase; margin-bottom:10px;">🎯 Strategic Talking Points</div>' +
+          '<div style="font-size:12px; font-weight:700; color:var(--amber); text-transform:uppercase; margin-bottom:10px;">🎯 Strategic Talking Points</div>' +
           '<div style="display:flex; flex-direction:column; gap:8px;">' +
             (b.strategic_talking_points || []).map(function(pt) {
               return '<div style="font-size:13px; color:var(--text-primary); display:flex; gap:8px;">' +
-                '<span style="color:#4285f4; font-weight:700;">•</span>' +
+                '<span style="color:var(--accent-light); font-weight:700;">•</span>' +
                 '<span>' + pt + '</span>' +
               '</div>';
             }).join('') +
@@ -13129,7 +13174,7 @@ function compileSSML(rawText) {
         '</div>' +
 
         '<div style="background:rgba(234,67,53,0.08); border:1px solid rgba(234,67,53,0.3); padding:14px 16px; border-radius:8px;">' +
-          '<div style="font-size:12px; font-weight:700; color:#f28b82; text-transform:uppercase; margin-bottom:4px;">⚠️ Proactive Blocker Radar</div>' +
+          '<div style="font-size:12px; font-weight:700; color:var(--red-text); text-transform:uppercase; margin-bottom:4px;">⚠️ Proactive Blocker Radar</div>' +
           '<div style="font-size:13px; color:var(--text-primary);">' + ((b.potential_blockers && b.potential_blockers[0]) || '') + '</div>' +
         '</div>' +
       '</div>';
@@ -13140,7 +13185,7 @@ function compileSSML(rawText) {
       const acts = s.action_items || [];
       html = '<div style="display:flex; flex-direction:column; gap:16px;">' +
         '<div style="background:rgba(52,168,83,0.08); border-left:4px solid #34a853; padding:16px 20px; border-radius:0 8px 8px 0;">' +
-          '<div style="font-size:12px; font-weight:700; color:#81c995; text-transform:uppercase; margin-bottom:4px;">Executive Decision &amp; Progress Summary</div>' +
+          '<div style="font-size:12px; font-weight:700; color:var(--green); text-transform:uppercase; margin-bottom:4px;">Executive Decision &amp; Progress Summary</div>' +
           '<div style="font-size:14px; color:var(--text-primary); line-height:1.5;">' + (s.executive_summary || s.summary || '') + '</div>' +
         '</div>' +
 
@@ -13167,7 +13212,7 @@ function compileSSML(rawText) {
               '<td>' + (act.owner || '') + '</td>' +
               '<td>' + (act.deadline || '') + '</td>' +
               '<td><span class="badge-status-pill ' + (act.priority === 'High' ? 'priority-p1' : 'state-closed') + '">' + (act.priority || 'Medium') + '</span></td>' +
-              '<td><span style="font-size:11px; font-family:monospace; color:#8ab4f8;">' + (act.system || '') + '</span></td>' +
+              '<td><span style="font-size:11px; font-family:monospace; color:var(--accent-light); font-weight:700;">' + (act.system || '') + '</span></td>' +
             '</tr>';
           }).join('') +
           '</tbody></table>' +
@@ -13181,7 +13226,7 @@ function compileSSML(rawText) {
       html = '<div style="display:flex; flex-direction:column; gap:16px;">' +
         '<div style="background:rgba(251,188,4,0.08); border-left:4px solid #fbbc04; padding:16px 20px; border-radius:0 8px 8px 0; display:flex; justify-content:space-between; align-items:center;">' +
           '<div>' +
-            '<div style="font-size:12px; font-weight:700; color:#fdd663; text-transform:uppercase; margin-bottom:4px;">Autonomous Dispatch Engine Status</div>' +
+            '<div style="font-size:12px; font-weight:700; color:var(--amber); text-transform:uppercase; margin-bottom:4px;">Autonomous Dispatch Engine Status</div>' +
             '<div style="font-size:14px; color:var(--text-primary); font-weight:600;">Execution Complete • ' + drafts.length + ' Gmail Drafts Staged • ' + tickets.length + ' Jira Tickets Created • 2 Calendar Checkpoints</div>' +
           '</div>' +
           '<span class="badge" style="background:rgba(52,168,83,0.15); color:var(--green); border-color:rgba(52,168,83,0.3); font-size:12px;">' + (f.latency || '1.42s dispatch') + '</span>' +
@@ -13193,8 +13238,8 @@ function compileSSML(rawText) {
             const preview = m.body_preview || m.body_snippet || '';
             return '<div style="background:var(--bg-secondary); border:1px solid var(--border); padding:12px 14px; border-radius:8px;">' +
               '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">' +
-                '<span style="font-size:12px; font-weight:700; color:#8ab4f8;">📧 ' + (recipient.split('@')[0] || recipient) + '</span>' +
-                '<span class="badge" style="font-size:10px; background:rgba(66,133,244,0.15); color:#8ab4f8;">Gmail Draft Staged</span>' +
+                '<span style="font-size:12px; font-weight:700; color:var(--accent-light);">📧 ' + (recipient.split('@')[0] || recipient) + '</span>' +
+                '<span class="badge" style="font-size:10px; background:rgba(66,133,244,0.15); color:var(--accent-light);">Gmail Draft Staged</span>' +
               '</div>' +
               '<div style="font-size:12.5px; font-weight:600; color:var(--text-heading); margin-bottom:4px;">' + (m.subject || '') + '</div>' +
               '<div style="font-size:11.5px; color:var(--muted); line-height:1.4;">' + preview + '</div>' +
@@ -13207,7 +13252,7 @@ function compileSSML(rawText) {
           '<table class="data-table"><thead><tr><th>KEY</th><th>SUMMARY</th><th>ASSIGNEE</th><th>PRIORITY</th><th>SPRINT / DUE</th><th>STORY PTS / STATUS</th></tr></thead><tbody>' +
           tickets.map(function(j) {
             return '<tr>' +
-              '<td><span class="table-mono-id" style="color:#8ab4f8;">' + (j.key || '') + '</span></td>' +
+              '<td><span class="table-mono-id" style="color:var(--accent-light); font-weight:700;">' + (j.key || '') + '</span></td>' +
               '<td style="font-weight:600;">' + (j.summary || '') + '</td>' +
               '<td>' + (j.assignee || '') + '</td>' +
               '<td><span class="badge-status-pill ' + (j.priority === 'High' || j.priority === 'Highest' ? 'priority-p1' : 'state-closed') + '">' + (j.priority || 'Normal') + '</span></td>' +
@@ -13220,7 +13265,7 @@ function compileSSML(rawText) {
 
         '<div style="background:rgba(52,168,83,0.06); border:1px solid rgba(52,168,83,0.25); padding:12px 16px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">' +
           '<div style="font-size:12.5px; color:var(--text-primary); font-weight:600;">⚡ ROI Metric: ' + (f.roi_summary || '110 minutes saved across 4 participants') + '</div>' +
-          '<span class="badge" style="background:#34a853; color:#fff;">94.4% Administrative Reduction</span>' +
+          '<span class="badge" style="background:#047857; color:#fff;">94.4% Administrative Reduction</span>' +
         '</div>' +
       '</div>';
     }
@@ -13430,18 +13475,18 @@ function compileSSML(rawText) {
       html = '<div style="display:flex; flex-direction:column; gap:16px;">' +
         '<div style="background:rgba(66,133,244,0.08); border-left:4px solid #4285f4; padding:16px 20px; border-radius:0 8px 8px 0; display:flex; justify-content:space-between; align-items:center;">' +
           '<div>' +
-            '<div style="font-size:12px; font-weight:700; color:#8ab4f8; text-transform:uppercase; margin-bottom:4px;">Stage 1 • Autonomous Calendar Intelligence</div>' +
+            '<div style="font-size:12px; font-weight:700; color:var(--accent-light); text-transform:uppercase; margin-bottom:4px;">Stage 1 • Autonomous Calendar Intelligence</div>' +
             '<div style="font-size:14px; color:var(--text-primary); font-weight:600;">Scanned Executive Schedule • 1 Critical Sign-Off Meeting Detected • 1 Conflict Auto-Mitigated</div>' +
           '</div>' +
-          '<span class="badge" style="background:rgba(66,133,244,0.15); color:#8ab4f8; border-color:rgba(66,133,244,0.3); font-size:11.5px;">gcalendar_oauth • 3 Tools</span>' +
+          '<span class="badge" style="background:rgba(66,133,244,0.15); color:var(--accent-light); border-color:rgba(66,133,244,0.3); font-size:11.5px;">gcalendar_oauth • 3 Tools</span>' +
         '</div>' +
 
         '<div style="background:var(--bg-secondary); border:1px solid var(--border); padding:16px; border-radius:8px;">' +
           '<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; gap:8px;">' +
             '<div>' +
-              '<span class="badge" style="background:rgba(234,67,53,0.15); color:#f28b82; border-color:rgba(234,67,53,0.4); margin-bottom:6px; display:inline-block;">CRITICAL SIGN-OFF</span>' +
+              '<span class="badge" style="background:rgba(234,67,53,0.15); color:var(--red-text); border-color:rgba(234,67,53,0.4); margin-bottom:6px; display:inline-block;">CRITICAL SIGN-OFF</span>' +
               '<div style="font-size:15px; font-weight:700; color:var(--text-heading);">' + (c.title || 'ONCO-304 Phase III Steering Committee & Safety Protocol Sign-Off') + '</div>' +
-              '<div style="font-size:12.5px; color:var(--muted); margin-top:2px;">🕒 ' + (c.time || '10:00 AM – 11:30 AM EDT') + ' • <a href="' + (c.meet_url || '#') + '" target="_blank" style="color:#8ab4f8; text-decoration:none;">Join Google Meet ↗</a></div>' +
+              '<div style="font-size:12.5px; color:var(--muted); margin-top:2px;">🕒 ' + (c.time || '10:00 AM – 11:30 AM EDT') + ' • <a href="' + (c.meet_url || '#') + '" target="_blank" style="color:var(--accent-light); font-weight:700; text-decoration:none;">Join Google Meet ↗</a></div>' +
             '</div>' +
             '<span class="badge" style="background:#1a73e8; color:#fff;">Executive Attendance Required</span>' +
           '</div>' +
@@ -13453,7 +13498,7 @@ function compileSSML(rawText) {
                 const isObj = typeof a === 'object' && a !== null;
                 const name = isObj ? (a.name || '') : (typeof a === 'string' && a.includes('(') ? a.split('(')[0].trim() : a);
                 const role = isObj ? (a.role || '') : (typeof a === 'string' && a.includes('(') ? a.split('(')[1].replace(')', '').trim() : '');
-                return '<div style="background:rgba(255,255,255,0.06); border:1px solid var(--border); padding:6px 12px; border-radius:6px; font-size:12px; display:inline-flex; align-items:center; gap:6px;">' +
+                return '<div style="background:var(--surface); border:1px solid var(--border); padding:6px 12px; border-radius:6px; font-size:12px; display:inline-flex; align-items:center; gap:6px;">' +
                   '<strong style="color:var(--text-heading);">' + name + '</strong>' + (role ? ' <span style="color:var(--muted);">(' + role + ')</span>' : '') +
                 '</div>';
               }).join('') +
@@ -13461,7 +13506,7 @@ function compileSSML(rawText) {
           '</div>' +
 
           (c.conflict_detected ? (
-            '<div style="margin-top:14px; background:rgba(251,188,4,0.08); border:1px solid rgba(251,188,4,0.3); padding:10px 14px; border-radius:6px; font-size:12.5px; color:#fdd663;">' +
+            '<div style="margin-top:14px; background:rgba(251,188,4,0.08); border:1px solid rgba(251,188,4,0.3); padding:10px 14px; border-radius:6px; font-size:12.5px; color:var(--amber);">' +
               '<strong>⚠️ Schedule Conflict Alert:</strong> ' + c.conflict_detected + '<br/>' +
               '<span style="color:var(--text-primary); font-size:12px;">💡 <strong>Resolution:</strong> ' + (c.resolution || 'Dispatched autonomous reschedule suggestion to EA.') + '</span>' +
             '</div>'
@@ -13474,10 +13519,10 @@ function compileSSML(rawText) {
       html = '<div style="display:flex; flex-direction:column; gap:16px;">' +
         '<div style="background:rgba(234,67,53,0.08); border-left:4px solid #ea4335; padding:16px 20px; border-radius:0 8px 8px 0; display:flex; justify-content:space-between; align-items:center;">' +
           '<div>' +
-            '<div style="font-size:12px; font-weight:700; color:#f28b82; text-transform:uppercase; margin-bottom:4px;">Stage 2 • Overnight Inbox Triage & Escalation Extraction</div>' +
+            '<div style="font-size:12px; font-weight:700; color:var(--red-text); text-transform:uppercase; margin-bottom:4px;">Stage 2 • Overnight Inbox Triage & Escalation Extraction</div>' +
             '<div style="font-size:14px; color:var(--text-primary); font-weight:600;">48 Messages Analyzed • ' + (data.blocker_count || 1) + ' Blocker • ' + (data.critical_count || 2) + ' Critical • 45 Filed Autonomously</div>' +
           '</div>' +
-          '<span class="badge" style="background:rgba(234,67,53,0.15); color:#f28b82; border-color:rgba(234,67,53,0.3); font-size:11.5px;">gmail_oauth • 3 Tools</span>' +
+          '<span class="badge" style="background:rgba(234,67,53,0.15); color:var(--red-text); border-color:rgba(234,67,53,0.3); font-size:11.5px;">gmail_oauth • 3 Tools</span>' +
         '</div>' +
 
         '<div style="display:flex; flex-direction:column; gap:10px;">' +
@@ -13500,7 +13545,7 @@ function compileSSML(rawText) {
 
         '<div style="background:rgba(251,188,4,0.06); border:1px solid rgba(251,188,4,0.3); padding:12px 16px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">' +
           '<div style="font-size:12.5px; color:var(--text-primary); font-weight:600;">🛡️ Orcas Governance Policy: "Approve For Me" armed for FDA regulatory response. Zero unauthorized egress.</div>' +
-          '<span class="badge" style="background:#fbbc04; color:#202124; font-weight:700;">Human Approval Armed</span>' +
+          '<span class="badge" style="background:#fbbc04; color:#0f172a; font-weight:700;">Human Approval Armed</span>' +
         '</div>' +
       '</div>';
 
@@ -13509,34 +13554,34 @@ function compileSSML(rawText) {
       html = '<div style="display:flex; flex-direction:column; gap:16px;">' +
         '<div style="background:rgba(52,168,83,0.08); border-left:4px solid #34a853; padding:16px 20px; border-radius:0 8px 8px 0; display:flex; justify-content:space-between; align-items:center;">' +
           '<div>' +
-            '<div style="font-size:12px; font-weight:700; color:#81c995; text-transform:uppercase; margin-bottom:4px;">Stage 3 • Google Drive & Sheets Protocol Reconciliation</div>' +
+            '<div style="font-size:12px; font-weight:700; color:var(--green); text-transform:uppercase; margin-bottom:4px;">Stage 3 • Google Drive & Sheets Protocol Reconciliation</div>' +
             '<div style="font-size:14px; color:var(--text-primary); font-weight:600;">Discrepancy Detected & Auto-Healed in Master Clinical Sheet Cell D14</div>' +
           '</div>' +
-          '<span class="badge" style="background:rgba(52,168,83,0.15); color:#81c995; border-color:rgba(52,168,83,0.3); font-size:11.5px;">gsheets_oauth • gdrive_oauth</span>' +
+          '<span class="badge" style="background:rgba(52,168,83,0.15); color:var(--green); border-color:rgba(52,168,83,0.3); font-size:11.5px;">gsheets_oauth • gdrive_oauth</span>' +
         '</div>' +
 
         '<div style="background:var(--bg-secondary); border:1px solid var(--border); padding:16px; border-radius:8px;">' +
           '<table class="data-table"><thead><tr><th>DATA SOURCE</th><th>RESOURCE IDENTIFIER</th><th>RECORDED VALUE</th><th>VARIANCE / ACTION</th></tr></thead><tbody>' +
             '<tr>' +
-              '<td><span class="badge" style="background:rgba(66,133,244,0.15); color:#8ab4f8;">Google Drive</span></td>' +
-              '<td style="font-family:monospace; font-size:12px; color:#8ab4f8;">' + (r.document || r.target_doc || 'CSR-ONCO304-2026-v2.pdf') + '</td>' +
-              '<td style="font-weight:700; font-size:13px; color:#34a853;">' + (r.amended_budget || (r.updates_applied && r.updates_applied[1] ? r.updates_applied[1].new_value : '$2,780,000.00')) + '</td>' +
-              '<td><span class="badge" style="background:rgba(52,168,83,0.15); color:#81c995;">Approved Amendment #4</span></td>' +
+              '<td><span class="badge" style="background:rgba(66,133,244,0.15); color:var(--accent-light);">Google Drive</span></td>' +
+              '<td style="font-family:monospace; font-size:12px; color:var(--accent-light); font-weight:700;">' + (r.document || r.target_doc || 'CSR-ONCO304-2026-v2.pdf') + '</td>' +
+              '<td style="font-weight:700; font-size:13px; color:var(--green);">' + (r.amended_budget || (r.updates_applied && r.updates_applied[1] ? r.updates_applied[1].new_value : '$2,780,000.00')) + '</td>' +
+              '<td><span class="badge" style="background:rgba(52,168,83,0.15); color:var(--green);">Approved Amendment #4</span></td>' +
             '</tr>' +
             '<tr>' +
-              '<td><span class="badge" style="background:rgba(52,168,83,0.15); color:#81c995;">Google Sheets</span></td>' +
-              '<td style="font-family:monospace; font-size:12px; color:#81c995;">' + (r.spreadsheet || r.target_sheet || 'ONCO-304 Master v4.2') + ' (' + (r.cell_location || 'Cell D14') + ')</td>' +
-              '<td style="font-weight:700; font-size:13px; color:#f28b82; text-decoration:line-through;">' + (r.prior_budget || (r.updates_applied && r.updates_applied[0] ? r.updates_applied[0].old_value : '$2,450,000.00')) + '</td>' +
-              '<td><span class="badge" style="background:rgba(234,67,53,0.15); color:#f28b82;">Delta: ' + (r.variance || '+$330,000.00 (+13.47%)') + '</span></td>' +
+              '<td><span class="badge" style="background:rgba(52,168,83,0.15); color:var(--green);">Google Sheets</span></td>' +
+              '<td style="font-family:monospace; font-size:12px; color:var(--green); font-weight:700;">' + (r.spreadsheet || r.target_sheet || 'ONCO-304 Master v4.2') + ' (' + (r.cell_location || 'Cell D14') + ')</td>' +
+              '<td style="font-weight:700; font-size:13px; color:var(--red-text); text-decoration:line-through;">' + (r.prior_budget || (r.updates_applied && r.updates_applied[0] ? r.updates_applied[0].old_value : '$2,450,000.00')) + '</td>' +
+              '<td><span class="badge" style="background:rgba(234,67,53,0.15); color:var(--red-text);">Delta: ' + (r.variance || '+$330,000.00 (+13.47%)') + '</span></td>' +
             '</tr>' +
           '</tbody></table>' +
 
           '<div style="margin-top:14px; background:rgba(52,168,83,0.06); border:1px solid rgba(52,168,83,0.25); padding:12px 16px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">' +
             '<div>' +
-              '<div style="font-size:12px; font-weight:700; color:#81c995;">✅ Auto-Heal Resolution: Cell D14 Updated &amp; Highlighted</div>' +
+              '<div style="font-size:12px; font-weight:700; color:var(--green);">✅ Auto-Heal Resolution: Cell D14 Updated &amp; Highlighted</div>' +
               '<div style="font-size:11.5px; color:var(--muted); font-family:monospace; margin-top:2px;">Audit Note Appended: ' + (r.audit_hash || 'GS-AUDIT-4491-GxP-VALIDATED') + '</div>' +
             '</div>' +
-            '<span class="badge" style="background:#34a853; color:#fff;">Status: ' + (r.auto_heal_status || 'CELL_UPDATED') + '</span>' +
+            '<span class="badge" style="background:#047857; color:#fff;">Status: ' + (r.auto_heal_status || 'CELL_UPDATED') + '</span>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -13547,25 +13592,25 @@ function compileSSML(rawText) {
       html = '<div style="display:flex; flex-direction:column; gap:16px;">' +
         '<div style="background:rgba(251,188,4,0.08); border-left:4px solid #fbbc04; padding:16px 20px; border-radius:0 8px 8px 0; display:flex; justify-content:space-between; align-items:center;">' +
           '<div>' +
-            '<div style="font-size:12px; font-weight:700; color:#fdd663; text-transform:uppercase; margin-bottom:4px;">Stage 4 • Executive Briefing Synthesis &amp; Chat Dispatch</div>' +
+            '<div style="font-size:12px; font-weight:700; color:var(--amber); text-transform:uppercase; margin-bottom:4px;">Stage 4 • Executive Briefing Synthesis &amp; Chat Dispatch</div>' +
             '<div style="font-size:14px; color:var(--text-primary); font-weight:600;">Generated 3-Slide Briefing Deck • Adaptive Card Dispatched to ' + (ch.space || '#leadership-morning-handoff') + '</div>' +
           '</div>' +
-          '<span class="badge" style="background:rgba(251,188,4,0.15); color:#fdd663; border-color:rgba(251,188,4,0.3); font-size:11.5px;">gslides_oauth • gchat_oauth</span>' +
+          '<span class="badge" style="background:rgba(251,188,4,0.15); color:var(--amber); border-color:rgba(251,188,4,0.3); font-size:11.5px;">gslides_oauth • gchat_oauth</span>' +
         '</div>' +
 
         '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:14px;">' +
           '<div style="background:var(--bg-secondary); border:1px solid var(--border); padding:16px; border-radius:8px;">' +
-            '<div style="font-size:12px; font-weight:700; color:#fdd663; text-transform:uppercase; margin-bottom:8px;">📊 Google Slides Deck Generated</div>' +
+            '<div style="font-size:12px; font-weight:700; color:var(--amber); text-transform:uppercase; margin-bottom:8px;">📊 Google Slides Deck Generated</div>' +
             '<div style="font-size:14px; font-weight:700; color:var(--text-heading); margin-bottom:6px;">' + (d.title || 'Morning Handoff Executive Briefing') + '</div>' +
             '<div style="font-size:12px; color:var(--muted); margin-bottom:10px;">Generated from master template • 3 formatted executive slides ready for presentation.</div>' +
             '<a href="' + (d.slides_url || d.url || '#') + '" target="_blank" class="btn-link accent" style="display:inline-flex; align-items:center; gap:6px;">Open in Google Slides ↗</a>' +
           '</div>' +
 
           '<div style="background:var(--bg-secondary); border:1px solid var(--border); padding:16px; border-radius:8px;">' +
-            '<div style="font-size:12px; font-weight:700; color:#8ab4f8; text-transform:uppercase; margin-bottom:8px;">💬 Google Chat Webhook Dispatch</div>' +
+            '<div style="font-size:12px; font-weight:700; color:var(--accent-light); text-transform:uppercase; margin-bottom:8px;">💬 Google Chat Webhook Dispatch</div>' +
             '<div style="font-size:14px; font-weight:700; color:var(--text-heading); margin-bottom:6px;">Target Space: ' + (ch.space || '#leadership-morning-handoff') + '</div>' +
-            '<div style="font-size:12px; color:var(--muted); margin-bottom:10px;">Status: <span style="color:#34a853; font-weight:700;">' + (ch.status || 'CARD_POSTED') + '</span> • Latency: ' + (ch.latency || '1.18s') + ' • Delivered to 14 executives</div>' +
-            '<div class="badge" style="background:rgba(52,168,83,0.15); color:#81c995;">Card Verification Confirmed</div>' +
+            '<div style="font-size:12px; color:var(--muted); margin-bottom:10px;">Status: <span style="color:var(--green); font-weight:700;">' + (ch.status || 'CARD_POSTED') + '</span> • Latency: ' + (ch.latency || '1.18s') + ' • Delivered to 14 executives</div>' +
+            '<div class="badge" style="background:rgba(52,168,83,0.15); color:var(--green);">Card Verification Confirmed</div>' +
           '</div>' +
         '</div>' +
       '</div>';
